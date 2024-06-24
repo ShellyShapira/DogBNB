@@ -1,7 +1,7 @@
 import React from 'react';
 import { BrowserRouter as Router, Route, Switch, Link } from 'react-router-dom';
-import VolunteerProfiles from './VolunteerProfiles'; // ודא שהקובץ קיים בנתיב זה
-import MyVolunteerProfile from './MyVolunteerProfile';
+import DogProfiles from './DogProfiles';
+import MyProfile from './MyProfile';
 import './App.css';
 
 function App() {
@@ -9,21 +9,21 @@ function App() {
     <Router>
       <div className="App">
         <Switch>
-          <Route path="/my-volunteer-profile">
-            <MyVolunteerProfile />
+          <Route path="/my-profile">
+            <MyProfile />
           </Route>
-          <Route path="/volunteer-profile">
-            <VolunteerProfiles />
+          <Route path="/dog-profile">
+            <DogProfiles />
           </Route>
           <Route path="/">
             <div>
-              <h1>Welcome to the Volunteer Profiles</h1>
+              <h1>Welcome to the Dog Profiles</h1>
               <ul>
                 <li>
-                  <Link to="/volunteer-profile">View Volunteer Profile</Link>
+                  <Link to="/dog-profile">View Dog Profile</Link>
                 </li>
                 <li>
-                  <Link to="/my-volunteer-profile">View My Profile</Link>
+                  <Link to="/my-profile">View My Profile</Link>
                 </li>
               </ul>
             </div>

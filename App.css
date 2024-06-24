@@ -1,4 +1,4 @@
-/* App.css */
+/* DogProfile.css */
 :root {
   --FONT_H1: Arial, sans-serif; 
   --TITLE_COLOR_H1: #4C7572;
@@ -7,7 +7,6 @@
   --BUTTON_COLOR_H1: #605F85;
   --DARKER_TITLE_COLOR: #2C5C4A; /* צבע כהה יותר עבור Meet John */
   --DARKER_TEXT_COLOR: #363636; /* צבע אפור כהה יותר עבור הטקסט */
-  --REVIEW_BG_COLOR: #f5f5f5; /* צבע רקע בהיר יותר לביקורות */
 }
 
 body {
@@ -24,7 +23,7 @@ body {
   width: 80%;
   margin: auto;
   background-color: #fff;
-  padding: 40px;
+  padding: 20px;
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
   border-radius: 8px;
   margin-bottom: 20px; /* מרווח בין הפרופילים */
@@ -33,7 +32,7 @@ body {
 .header {
   display: flex;
   align-items: center;
-  margin-bottom: 10px;
+  margin-bottom: 20px;
 }
 
 .profile-image img {
@@ -41,8 +40,8 @@ body {
   height: 200px;
   border-radius: 50%;
   object-fit: cover;
-  margin-right: 20px;
-  padding: 40px; /* רווח בין התמונה לטקסט */
+  margin-right: 20px; /* רווח בין התמונה לטקסט */
+  padding: 40px;
 }
 
 .basic-info {
@@ -56,7 +55,7 @@ h1 {
 
 h2 {
   font-family: var(--FONT_H1);
-  color: var(--TITLE_COLOR_H1); /* Center align the headings */
+  color: var(--TITLE_COLOR_H1);
 }
 
 .basic-info p {
@@ -80,18 +79,29 @@ button:hover {
   background-color: var(--BUTTON_COLOR_H1);
 }
 
+button.contact-button {
+  display: block;
+  margin: 20px auto;
+  padding: 10px 20px;
+  background-color: var(--BUTTON_COLOR_H1);
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 16px;
+}
+
 .profile-info {
   display: flex;
   justify-content: space-between;
-  margin-bottom: 20px;
-  text-align: center;
-  padding-left: 50px; /* רווח פנימי משמאל */
-  padding-right: 50px; /* רווח פנימי מימי
- */
+  margin-bottom: 10px;
+  text-align: left;
 }
 
-.profile-info .column {
+.profile-info .left-column, .profile-info .right-column {
   width: 48%;
+  text-align: center;
+  padding: 50px;
 }
 
 .profile-info .detail-row {
@@ -111,61 +121,23 @@ button:hover {
   text-align: right;
 }
 
-.description {
-  text-align: center; /* מרכז את הטקסט של A Little About Me */
-  margin-top: 20px;
-
+.description-row {
+  display: flex;
+  justify-content: space-between;
+  text-align: left;
+  margin-top: 5px;
 }
 
-.description p {
+.text-section {
+  width: 48%;
+  text-align: center;
+  padding: 50px;
+}
+
+.text-section p {
   background-color: #f0f0f0;
   padding: 15px;
   border-radius: 5px;
+  display: inline-block;
   text-align: left;
-}
-
-.reviews {
-  text-align: center;
-  margin-top: 50px;
-  padding-left: 50px; /* רווח פנימי משמאל */
-  padding-right: 50px; /* רווח פנימי מימי
- */
-}
-
-.reviews .reviews-container {
-  max-height: 400px; /* גובה מקסימלי של הביקורות */
-  overflow-y: auto; /* הוספת גלילה אנכית אם יש יותר מ-4 ביקורות */
-  padding-right: 20px; /* רווח עבור גלילה */
-}
-
-.reviews-row {
-  display: flex;
-  justify-content: space-between;
-  flex-wrap: wrap;
-  gap: 10px; /* מרווח בין הביקורות */
-}
-
-.review {
-  background-color: var(--REVIEW_BG_COLOR); /* צבע רקע בהיר יותר עבור הביקורות */
-  padding: 10px;
-  border-radius: 5px;
-  width: 48%; /* כל ביקורת תתפוס חצי מהשורה */
-  box-sizing: border-box;
-  text-align: left; /* טקסט צמוד לשמאל */
-}
-
-.review strong {
-  font-size: 14px; 
-}
-
-.review .date-location {
-  font-size: 12px; /* גודל טקסט קטן יותר עבור התאריך והמיקום */
-  color: #888; /* צבע פחות בולט */
-  display: block;
-  margin-top: 5px;
-}
-
-.review p {
-  font-size: 13px; 
-  margin-top: 5px;
 }

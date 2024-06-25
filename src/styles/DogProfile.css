@@ -1,0 +1,142 @@
+/* DogProfile.css */
+:root {
+  --FONT_H1: Arial, sans-serif; 
+  --TITLE_COLOR_H1: #4C7572;
+  --BACKGROUND_COLOR: #F0EDEB;
+  --TEXT_COLOR_H1: #46454A;
+  --BUTTON_COLOR_H1: #605F85;
+  --DARKER_TITLE_COLOR: #2C5C4A; 
+  --DARKER_TEXT_COLOR: #363636; 
+}
+
+body {
+  font-family: var(--FONT_H1);
+  direction: ltr;
+  text-align: center;
+  margin: 0;
+  padding: 0;
+  background-color: var(--BACKGROUND_COLOR);
+  color: var(--TEXT_COLOR_H1);
+}
+
+.container {
+  width: 80%;
+  margin: auto;
+  background-color: #fff;
+  padding: 20px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  border-radius: 8px;
+  margin-bottom: 20px; 
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.profile-image img {
+  width: 200px;
+  height: 200px;
+  border-radius: 50%;
+  object-fit: cover;
+  margin-right: 20px; 
+}
+
+.basic-info {
+  text-align: left;
+}
+
+h1 {
+  font-family: var(--FONT_H1);
+  color: var(--DARKER_TITLE_COLOR); 
+}
+
+h2 {
+  font-family: var(--FONT_H1);
+  color: var(--TITLE_COLOR_H1);
+}
+
+.basic-info p {
+  color: var(--DARKER_TEXT_COLOR); 
+  font-weight: bold; 
+}
+
+button {
+  display: block;
+  margin: 20px auto;
+  padding: 10px 20px;
+  background-color: var(--BUTTON_COLOR_H1);
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 16px;
+}
+
+button:hover {
+  background-color: var(--BUTTON_COLOR_H1);
+}
+
+button.contact-button {
+  display: block;
+  margin: 20px auto;
+  padding: 10px 20px;
+  background-color: var(--BUTTON_COLOR_H1);
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 16px;
+}
+
+.profile-info {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 10px;
+  text-align: left;
+}
+
+.profile-info .left-column, .profile-info .right-column {
+  width: 48%;
+  text-align: center;
+  padding: 50px;
+}
+
+.profile-info .detail-row {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 5px;
+}
+
+.profile-info .detail-label {
+  flex: 1;
+  text-align: left;
+  font-weight: bold;
+}
+
+.profile-info .detail-value {
+  flex: 1;
+  text-align: right;
+}
+
+.description-row {
+  display: flex;
+  justify-content: space-between;
+  text-align: left;
+  margin-top: 5px;
+}
+
+.text-section {
+  width: 48%;
+  text-align: center;
+  padding: 50px;
+}
+
+.text-section p {
+  background-color: #f0f0f0;
+  padding: 15px;
+  border-radius: 5px;
+  display: inline-block;
+  text-align: left;
+}

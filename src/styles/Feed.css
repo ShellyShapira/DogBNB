@@ -1,0 +1,250 @@
+/* App.css */
+:root {
+  --FONT_H1: Arial, sans-serif; 
+  --TITLE_COLOR_H1: #4C7572;
+  --BACKGROUND_COLOR: #F0EDEB;
+  --TEXT_COLOR_H1: #46454A;
+  --BUTTON_COLOR_H1: #605F85;
+}
+
+body {
+  font-family: var(--FONT_H1);
+  direction: ltr;
+  text-align: center;
+  margin: 0;
+  padding: 0;
+  background-color: var(--BACKGROUND_COLOR);
+  color: var(--TEXT_COLOR_H1);
+  height: 100vh;
+}
+
+.container {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  width: 100%;
+  margin: auto;
+  background-color: var(--BACKGROUND_COLOR);
+  padding: 20px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  border-radius: 8px;
+  margin-bottom: 20px;
+  align-items: center;
+}
+
+.header {
+  padding: 20px 0;
+  background-color: white;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  border-radius: 8px;
+  margin-bottom: 20px;
+}
+
+.header h1 {
+  font-size: 24px;
+  color: var(--TITLE_COLOR_H1);
+  margin: 0;
+}
+
+.header-buttons {
+  display: flex;
+  justify-content: center;
+  padding: 20px;
+  gap: 10px;
+  background-color:var(--BACKGROUND_COLOR);
+  border-radius: 8px;
+}
+
+
+.post-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  row-gap: 15px; /* Vertical spacing between rows */
+  column-gap: 10px; /* Horizontal spacing between columns */
+  width: 100%; /* Ensure the grid takes up the full width of the container */
+  max-width: 1400px; /* Optional: limit the maximum width of the grid */
+  justify-items: center; /* Center the grid items */
+}
+
+
+ /* each post in the grid*/
+.post {
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  background-color: white;
+  display: flex;
+  flex-direction: column;
+  align-items: center; /* Center children horizontally */
+  text-align: center; /* Center-align text inside the post */
+  padding: 20px; /* Optional: padding inside each post */
+  border: 1px solid #ddd; /* Optional: border around each post */
+  height: 400px;
+  width: 350px; /* Fixed width to ensure proper centering */
+  margin: 10px; /* Margin to create space around posts */
+  border-radius: 8px;
+}
+
+.post img {
+  width: 150px;
+  height: 150px;
+  border-radius: 50%;
+  margin-bottom: 10px;
+}
+
+.post h2 {
+  font-size: 20px;
+  margin: 10px 0;
+}
+
+.post p {
+  margin: 5px 0;
+  font-size: 18px;
+
+}
+
+  button {
+  display: block;
+  padding: 10px 20px;
+  background-color: var(--BUTTON_COLOR_H1);
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 16px;
+}
+
+button:hover {
+  background-color: var(--BUTTON_COLOR_H1);
+}
+
+.filter-container {
+  padding: 20px;
+  background-color: #fff;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  border-radius: 8px;
+  margin-bottom: 20px;
+  max-width: 400px;
+  margin-left: auto;
+  margin-right: auto;
+  position: relative;
+}
+
+.filter-options label {
+  display: block;
+  margin-top: 10px;
+  margin-bottom: 5px;
+}
+
+.filter-options input, .filter-options select {
+  width: 300px;
+  padding: 8px;
+  margin-top: 5px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
+
+
+.exit-filters {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  padding: 8px 12px;
+  background-color: var(--BUTTON_COLOR_H1);
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.clear {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  margin-top: auto;
+  padding: 7px 15px;
+  background-color: var(--BUTTON_COLOR_H1);
+  color: white;
+  border-radius: 10px;
+  cursor: pointer;
+  font-size: 14px;
+  display: flex;
+  justify-content: center;
+}
+
+/*delete if decide not to do hover*/
+.clear:hover {
+  box-shadow: 0 0 10px var(--BUTTON_COLOR_H1);
+  background-color: var(--BUTTON_COLOR_H1); /* Darker blue on hover */
+  color:white;
+}
+
+.new-post-form {
+  padding: 20px;
+  background-color: #fff;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  border-radius: 8px;
+  width: 310px;
+  height: 275;
+  margin: 20px auto;
+  position: relative;
+}
+
+.new-post-form label {
+  display: block;
+  margin-bottom: 10px;
+  margin-top: 10px;
+}
+
+.new-post-form input {
+  width: calc(100% - 16px);
+  padding: 8px;
+  margin-top: 5px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
+
+.new-post-form .post-button {
+  display: block;
+  margin: 20px auto 0;
+  padding: 10px 20px;
+  background-color: var(--BUTTON_COLOR_H1);
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 16px;
+}
+
+.new-post-form .post-button:hover {
+  background-color: #524A85;
+}
+
+.new-post-form .close-button {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  padding: 8px 12px;
+  background-color: var(--BUTTON_COLOR_H1);
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.more-info {
+  margin-top: auto;
+  padding: 7px 15px;
+  background-color: var(--BUTTON_COLOR_H1);
+  color: white;
+  border-radius: 10px;
+  cursor: pointer;
+  font-size: 16px;
+  display: flex;
+  justify-content: center;
+}
+
+/*delete if decide not to do hover*/
+.more-info:hover {
+  box-shadow: 0 0 10px var(--BUTTON_COLOR_H1);
+  background-color: var(--BUTTON_COLOR_H1); /* Darker blue on hover */
+  color:white;
+}

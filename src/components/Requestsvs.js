@@ -1,8 +1,6 @@
 import React from 'react';
 import styled from 'styled-components';
-
-
-
+import { useNavigate } from 'react-router-dom';
 
 const Card = styled.div`
   background-color: white;
@@ -38,6 +36,7 @@ const Info = styled.div`
 
 const Name = styled.div`
   font-weight: bold;
+  cursor: pointer;
 `;
 
 const Date = styled.div`
@@ -59,6 +58,12 @@ const Button = styled.button`
 `;
 
 const RequestActions = ({ requests, onAccept, onDelete }) => {
+  const navigate = useNavigate();
+
+  const handleNameClick = (id) => {
+    navigate(`/volunteer-profile/${id}`);
+  };
+
   return (
     <Card>
       <Title>Requests</Title>
@@ -66,7 +71,7 @@ const RequestActions = ({ requests, onAccept, onDelete }) => {
         <RequestItem key={index}>
           <Avatar src={request.avatar} alt={request.name} />
           <Info>
-            <Name>{request.name}</Name>
+            <Name onClick={() => handleNameClick(request.id)}>{request.name}</Name>
             <Date>{request.date}</Date>
           </Info>
           <ActionButtons>

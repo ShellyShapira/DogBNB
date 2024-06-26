@@ -1,5 +1,5 @@
-import React, { useState, useContext } from "react";
-import { Link } from 'react-router-dom';
+import React, { useContext, useEffect } from "react";
+import { Link, useNavigate } from 'react-router-dom';
 import { GoogleAuthProvider, getAdditionalUserInfo } from "firebase/auth";
 import { getAuth, signInWithPopup } from "firebase/auth";
 import { UserContext } from "../App";
@@ -9,6 +9,7 @@ const provider = new GoogleAuthProvider();
 
 function Home() {
     const { user, setUser } = useContext(UserContext);
+    const navigate = useNavigate();
 
     const handleLogOut = async () => {
         await LogOut();
@@ -22,7 +23,7 @@ function Home() {
             const user = result.user;            
             const additionalInfo = getAdditionalUserInfo(result);
             
-            setUser({user, isNewUser: additionalInfo.isNewUser});
+            setUser({ user, isNewUser: additionalInfo.isNewUser });
             // ...
         }).catch((error) => {
             // Handle Errors here.
@@ -35,6 +36,12 @@ function Home() {
             // ...
         });
     }
+
+    useEffect(() => {
+        if (user && !user.isNewUser) {
+            navigate('/feed');
+        }
+    }, [user, navigate]);
 
     if (user === null) {
         return (

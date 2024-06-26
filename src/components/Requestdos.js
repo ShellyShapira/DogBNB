@@ -1,9 +1,9 @@
 import React from 'react';
 import styled from 'styled-components';
+import { useNavigate } from 'react-router-dom';
 import avatar1 from "../images/avatar1.jpg";
 import avatar2 from "../images/avatar2.jpg";
 import avatar3 from "../images/avatar3.jpg";
-
 
 const Card = styled.div`
   background-color: white;
@@ -39,6 +39,7 @@ const Info = styled.div`
 
 const Name = styled.div`
   font-weight: bold;
+  cursor: pointer;
 `;
 
 const Date = styled.div`
@@ -56,18 +57,21 @@ const PhoneButton = styled.a`
 
 const requests = [
   {
+    id: 1,
     name: "Rina Cohen",
     date: "12/03/24 - 11/04/2024",
     phone: "0555555555",
     avatar: avatar1
   },
   {
+    id: 2,
     name: "Elad Farber",
     date: "12/03/24 - 11/04/2024",
     phone: "0555555555",
     avatar: avatar2
   },
   {
+    id: 3,
     name: "Miki Shapira",
     date: "12/03/24 - 11/04/2024",
     phone: "0555555555",
@@ -76,14 +80,20 @@ const requests = [
 ];
 
 const RequestDOS = () => {
+  const navigate = useNavigate();
+
+  const handleNameClick = (id) => {
+    navigate(`/volunteer-profile/${id}`);
+  };
+
   return (
     <Card>
-      <Title>Approved Requests</Title> {/* עדכון הכותרת */}
-      {requests.map((request, index) => (
-        <RequestItem key={index}>
+      <Title>Approved Requests</Title>
+      {requests.map((request) => (
+        <RequestItem key={request.id}>
           <Avatar src={request.avatar} alt={request.name} />
           <Info>
-            <Name>{request.name}</Name>
+            <Name onClick={() => handleNameClick(request.id)}>{request.name}</Name>
             <Date>{request.date}</Date>
           </Info>
           <PhoneButton href={`https://wa.me/${request.phone}`} target="_blank">
@@ -96,5 +106,3 @@ const RequestDOS = () => {
 };
 
 export default RequestDOS;
-
-

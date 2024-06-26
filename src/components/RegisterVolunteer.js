@@ -51,7 +51,7 @@ const RegisterVolunteer = () => {
                 <form id="signup-form" onSubmit={handleSubmit}>
                     <div className={styles.profilePicture}>
                         <label htmlFor="profilePic" className={styles.profilePicLabel}>
-                            <img src={profilePic || defaultProfile} alt="Profile Picture Placeholder" id="profilePicPreview" />
+                            <img src={profilePic || defaultProfile} alt="Volunteer profile picture" id="profilePicPreview" />
                         </label>
                         <input type="file" id="profilePic" name="profilePic" accept="image/*" style={{ display: 'none' }} onChange={handleImageChange} />
                     </div>

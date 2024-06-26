@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import '../styles/Feed.css';
 
 const Feed = () => {
@@ -15,6 +16,8 @@ const Feed = () => {
         { id: 8, image: 'images/dog8.jpg', name: 'Molly', city: 'San Diego', description: 'Super friendly',startDate:'15/08/24',endDate:'27/08/24' , gender: 'female', needsGarden:'Yes' },
         { id: 9, image: 'images/dog9.jpg', name: 'Duke', city: 'Dallas', description: 'Great guard dog', startDate:'03/06/24',endDate:'26/03/24' , gender: 'male', needsGarden:'Yes' },
     ]);
+
+    const navigate = useNavigate();
 
     const [filterCity, setFilterCity] = useState('');
     const [filterDuration, setFilterDuration] = useState('');
@@ -44,49 +47,46 @@ const Feed = () => {
     };
 
     const calculateDurationInDays = (startDate, endDate) => {
-    // Parse the start and end dates in "day/month/year" format
-    const [startDay, startMonth, startYear] = startDate.split('/').map(Number);
-    const [endDay, endMonth, endYear] = endDate.split('/').map(Number);
+        // Parse the start and end dates in "day/month/year" format
+        const [startDay, startMonth, startYear] = startDate.split('/').map(Number);
+        const [endDay, endMonth, endYear] = endDate.split('/').map(Number);
 
-    // Create Date objects
-    const start = new Date(startYear, startMonth - 1, startDay); 
-    const end = new Date(endYear, endMonth - 1, endDay); 
+        // Create Date objects
+        const start = new Date(startYear, startMonth - 1, startDay); 
+        const end = new Date(endYear, endMonth - 1, endDay); 
 
-    // Calculate difference in milliseconds
-    const diffTime = Math.abs(end - start);
+        // Calculate difference in milliseconds
+        const diffTime = Math.abs(end - start);
 
-    // Convert milliseconds to days and round up
-    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+        // Convert milliseconds to days and round up
+        const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
 
-    return diffDays;
-};
+        return diffDays;
+    };
 
-  const filteredPosts = posts.filter(post => {
-    const durationDays = calculateDurationInDays(post.startDate, post.endDate);
+    const filteredPosts = posts.filter(post => {
+        const durationDays = calculateDurationInDays(post.startDate, post.endDate);
 
-    return (
-        (filterCity === '' || post.city.toLowerCase().includes(filterCity.toLowerCase())) &&
-        ((filterDuration === '1-6' && durationDays >= 1 && durationDays <= 6) ||
-         (filterDuration === '7-14' && durationDays >= 7 && durationDays <= 14) ||
-         (filterDuration === '14+' && durationDays > 14) ||
-         (filterDuration === '')) &&
-        (filterGender === '' || post.gender.toLowerCase() === filterGender.toLowerCase()) &&
-        (filterNeedsGarden === '' || post.needsGarden.toLowerCase() === filterNeedsGarden.toLowerCase())
-    );
-});
+        return (
+            (filterCity === '' || post.city.toLowerCase().includes(filterCity.toLowerCase())) &&
+            ((filterDuration === '1-6' && durationDays >= 1 && durationDays <= 6) ||
+             (filterDuration === '7-14' && durationDays >= 7 && durationDays <= 14) ||
+             (filterDuration === '14+' && durationDays > 14) ||
+             (filterDuration === '')) &&
+            (filterGender === '' || post.gender.toLowerCase() === filterGender.toLowerCase()) &&
+            (filterNeedsGarden === '' || post.needsGarden.toLowerCase() === filterNeedsGarden.toLowerCase()))
+    });
 
     return (
         <div className="container">
-            
-                <div className="header-buttons">
-                    <button onClick={toggleFilter}>Filter</button>
-                    <button onClick={toggleAddPost}>Add Post</button>
-                </div>
+            <div className="header-buttons">
+                <button onClick={toggleFilter}>Filter</button>
+                <button onClick={toggleAddPost}>Add Post</button>
+            </div>
 
             {showFilter && (
                 <div className="filter-container">
                     <div className="filter-options">
-                        
                         <label htmlFor="city">City</label>
                         <input type="text" id="city" name="city" value={filterCity} onChange={(e) => setFilterCity(e.target.value)} />
                         <label htmlFor="duration">Duration</label>
@@ -148,7 +148,7 @@ const Feed = () => {
                         <p>{post.city}</p>
                         <p>{post.startDate} - {post.endDate}</p>
                         <p>{post.description}</p>
-                        <button type="button" className="more-info">more info</button>
+                        <button type="button" className="more-info" onClick={() => navigate(`/dog-profile/${post.id}`)}>more info</button>
                     </div>
                 ))}
             </div>

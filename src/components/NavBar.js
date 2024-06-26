@@ -1,4 +1,3 @@
-
 import React from 'react';
 import styled from 'styled-components';
 import { Link } from 'react-router-dom';
@@ -33,9 +32,9 @@ const Navbar = () => {
   return (
     <NavbarContainer>
       <NavbarList>
-        <NavbarItem><NavbarLink to="/">Home</NavbarLink></NavbarItem>
+        <NavbarItem><NavbarLink to="/feed">Home</NavbarLink></NavbarItem>
         <NavbarItem><NavbarLink to="/about">About Us</NavbarLink></NavbarItem>
-        <NavbarItem><NavbarLink to="/profile">My Profile</NavbarLink></NavbarItem>
+        <NavbarItem><NavbarLink to="/my-profile">My Profile</NavbarLink></NavbarItem>
         <NavbarItem><NavbarLink to="/requests">Requests</NavbarLink></NavbarItem>
       </NavbarList>
     </NavbarContainer>

@@ -74,7 +74,7 @@ function FormSection() {
       <form id="signup-form" onSubmit={handleSubmit}>
         <div className={styles["profile-picture"]}>
           <label htmlFor="profilePic" className={styles["profile-pic-label"]}>
-            <img src={profilePic || dogProfile} alt="Profile Picture Placeholder" id="profilePicPreview" />
+            <img src={profilePic || dogProfile} alt="Form section illustration" id="profilePicPreview" />
           </label>
           <input type="file" id="profilePic" name="profilePic" accept="image/*" style={{ display: 'none' }} onChange={previewImage} />
         </div>

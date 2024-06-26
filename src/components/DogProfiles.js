@@ -84,7 +84,7 @@ const DogProfileCard = ({ profile }) => {
     <div className="container">
       <div className="header">
         <div className="profile-image">
-          <img src={photoUrl} alt={`${profile.name}'s Photo`} />
+          <img src={photoUrl} alt="Dog" />
         </div>
         <div className="basic-info">
           <h1>Meet {profile.name}</h1>

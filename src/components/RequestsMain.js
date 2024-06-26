@@ -1,26 +1,27 @@
 import React, { useState } from 'react';
 import '../App.css';
-import Navbar from "./NavBar.js";
 import RequestDOS from './Requestdos.js';
 import RequestActions from './Requestsvs.js';
 import DogSitters from './DogSitters.js';
-import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import person1 from "../images/person1.jpg";
 import person2 from "../images/person2.jpg";
 import person3 from "../images/person3.jpg";
 
 const initialRequests = [
   {
+    id: 1,
     name: "Rina Cohen",
     date: "Today, 9.52pm",
     person: person1
   },
   {
+    id: 2,
     name: "Elad Farber",
     date: "Yesterday, 12.31pm",
     person: person2
   },
   {
+    id: 3,
     name: "Miki Shapira",
     date: "Wednesday, 9.12am",
     person: person3
@@ -51,35 +52,22 @@ function RequestsMain() {
   };
 
   return (
-    <Router>
-      <div className="requestsMain">
-        <Navbar />
-        <div className="content">
-          <Routes>
-            <Route path="/" element={
-              <>
-                <h1>It's time to contact your dog's family!</h1>
-                <RequestDOS />
-              </>
-            } />
-            <Route path="/requests" element={
-              <>
-                <h1>Review and Manage Requests</h1>
-                <RequestActions 
-                  requests={requests} 
-                  onAccept={handleAccept} 
-                  onDelete={handleDelete} 
-                />
-                <DogSitters 
-                  sitters={sitters} 
-                  onDelete={handleSitterDelete} 
-                />
-              </>
-            } />
-          </Routes>
-        </div>
+    <div className="requestsMain">
+      <div className="content">
+        <h1>It's time to contact your dog's family!</h1>
+        <RequestDOS />
+        <h1>Review and Manage Requests</h1>
+        <RequestActions 
+          requests={requests} 
+          onAccept={handleAccept} 
+          onDelete={handleDelete} 
+        />
+        <DogSitters 
+          sitters={sitters} 
+          onDelete={handleSitterDelete} 
+        />
       </div>
-    </Router>
+    </div>
   );
 }
 

@@ -57,7 +57,7 @@ const ProfileCard = ({ profile }) => {
     <div className="container">
       <div className="header">
         <div className="profile-image">
-          <img src={photo} alt={`${profile.name}'s Photo`} />
+          <img src={photo} alt="Volunteer profile picture" />
         </div>
         <div className="basic-info">
           <h1>Meet {profile.name.split(' ')[0]}</h1>

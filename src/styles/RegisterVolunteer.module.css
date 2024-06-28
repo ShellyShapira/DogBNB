@@ -77,11 +77,11 @@ button {
     padding: 12px;
     border: none;
     border-radius: 5px;
-    background-color: #605F85;
+    background-color: #628991;
     color: white;
     cursor: pointer;
 }
 
 button:hover {
-    background-color: #484761;
-}
+    background-color: var(--BUTTON_COLOR_H1);
+  }

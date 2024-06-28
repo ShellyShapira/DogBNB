@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import '../styles/Feed.css';
+import { FaFilter, FaPlus } from 'react-icons/fa'; // Import the icons
 
 const Feed = () => {
     const [showFilter, setShowFilter] = useState(false);
@@ -47,26 +48,17 @@ const Feed = () => {
     };
 
     const calculateDurationInDays = (startDate, endDate) => {
-        // Parse the start and end dates in "day/month/year" format
         const [startDay, startMonth, startYear] = startDate.split('/').map(Number);
         const [endDay, endMonth, endYear] = endDate.split('/').map(Number);
-
-        // Create Date objects
         const start = new Date(startYear, startMonth - 1, startDay); 
         const end = new Date(endYear, endMonth - 1, endDay); 
-
-        // Calculate difference in milliseconds
         const diffTime = Math.abs(end - start);
-
-        // Convert milliseconds to days and round up
         const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-
         return diffDays;
     };
 
     const filteredPosts = posts.filter(post => {
         const durationDays = calculateDurationInDays(post.startDate, post.endDate);
-
         return (
             (filterCity === '' || post.city.toLowerCase().includes(filterCity.toLowerCase())) &&
             ((filterDuration === '1-6' && durationDays >= 1 && durationDays <= 6) ||
@@ -80,12 +72,13 @@ const Feed = () => {
     return (
         <div className="container">
             <div className="header-buttons">
-                <button onClick={toggleFilter}>Filter</button>
-                <button onClick={toggleAddPost}>Add Post</button>
+                <button onClick={toggleFilter}><FaFilter /> Filter</button>
+                <button onClick={toggleAddPost}><FaPlus /> Add Post</button>
             </div>
 
             {showFilter && (
                 <div className="filter-container">
+                    <button className="exit-filters" onClick={toggleFilter}>X</button>
                     <div className="filter-options">
                         <label htmlFor="city">City</label>
                         <input type="text" id="city" name="city" value={filterCity} onChange={(e) => setFilterCity(e.target.value)} />
@@ -108,9 +101,7 @@ const Feed = () => {
                             <option value="yes">Yes</option>
                             <option value="no">No</option>
                         </select>
-                        <button className="clear" onClick={clearFilters}>clear</button>
                     </div>
-                    <button className="exit-filters" onClick={toggleFilter}>X</button>
                 </div>
             )}
 
@@ -157,3 +148,4 @@ const Feed = () => {
 };
 
 export default Feed;
+

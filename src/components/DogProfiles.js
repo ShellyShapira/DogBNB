@@ -1,6 +1,153 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
-import '../styles/DogProfile.css';
+import styled, { createGlobalStyle } from 'styled-components';
+import Collapsible from 'react-collapsible';
+
+const GlobalStyle = createGlobalStyle`
+  :root {
+    --TITLE_FONT: 'Source Serif Pro', serif;
+    --TEXT_FONT: Arial, sans-serif;
+    --TITLE_COLOR_H1: #4C7572;
+    --BACKGROUND_COLOR: #F0EDEB;
+    --TEXT_COLOR_H1: #46454A;
+    --BUTTON_COLOR_H1: #628991;
+  }
+
+  body {
+    font-family: var(--TEXT_FONT);
+    direction: ltr;
+    margin: 0;
+    padding: 0;
+    background-color: var(--BACKGROUND_COLOR);
+    color: var(--TEXT_COLOR_H1);
+    height: 100vh;
+    width: 100%;
+    box-sizing: border-box;
+  }
+
+  *, *::before, *::after {
+    box-sizing: inherit;
+  }
+`;
+
+const Container = styled.div`
+  width: 30%;
+  max-width: 1200px;
+  margin: 20px auto;
+  text-align: left;
+  background: var(--BACKGROUND_COLOR);
+`;
+
+const Header = styled.div`
+  width: 100%;
+  display: flex;
+  align-items: center;
+  margin-bottom: 20px;
+  padding: 20px;
+  background: none;
+  box-shadow: none;
+`;
+
+const ProfileImage = styled.img`
+  border-radius: 50%;
+  width: 150px;
+  height: 150px;
+  object-fit: cover;
+  margin-left: 20px;
+`;
+
+const BasicInfo = styled.div`
+  text-align: left;
+  flex-grow: 1;
+`;
+
+const Title = styled.h1`
+  font-family: var(--TITLE_FONT);
+  font-size: 2rem;
+  margin-bottom: 20px;
+  color: var(--TITLE_COLOR_H1);
+`;
+
+const SubTitle = styled.h2`
+  font-family: var(--TEXT_FONT);
+  font-size: 1.5rem;
+  margin: 5px 0;
+  color: #555;
+`;
+
+const Text = styled.p`
+  font-family: var(--TEXT_FONT);
+  font-size: 1rem;
+  margin: 5px 0;
+  color: var(--TEXT_COLOR_H1);
+`;
+
+const Card = styled.div`
+  background-color: transparent;
+  border-radius: 0;
+  padding: 15px;
+  margin: 10px 0;
+  box-shadow: none;
+  text-align: left;
+`;
+
+const DetailRow = styled.div`
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 5px;
+`;
+
+const DetailLabel = styled.label`
+  font-weight: bold;
+  color: #333;
+`;
+
+const DetailValue = styled.span`
+  color: #666;
+`;
+
+const ContactButton = styled.button`
+  background-color: #628991;
+  color: #ffffff;
+  border: none;
+  padding: 5px 10px;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 1rem;
+  margin-top: 20px;
+  transition: box-shadow 0.3s ease-in-out;
+  display: inline-block;
+  width: auto;
+
+  &:hover {
+    box-shadow: 0px 8px 20px rgba(0, 0, 0, 0.5);
+    background-color: #628991;
+  }
+`;
+
+const CollapsibleTrigger = styled.div`
+  font-size: 1.2rem;
+  font-weight: bold;
+  cursor: pointer;
+  color: #333;
+  padding: 10px;
+  background-color: #e0e0e0;
+  border-radius: 5px;
+  transition: background-color 0.3s ease;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+
+  &::after {
+    content: '▼';
+    font-size: 1rem;
+    margin-left: 10px;
+  }
+
+  &:hover {
+    background-color: #d5d5d5;
+  }
+`;
 
 const breeds = ['labrador', 'poodle', 'bulldog', 'beagle', 'pug', 'husky', 'goldenretriever', 'dachshund', 'rottweiler', 'chihuahua'];
 const locations = ['Jerusalem', 'Tel Aviv', 'Haifa', 'Eilat', 'Beer Sheva'];
@@ -81,92 +228,83 @@ const DogProfileCard = ({ profile }) => {
   }, [profile.breed]);
 
   return (
-    <div className="container">
-      <div className="header">
-        <div className="profile-image">
-          <img src={photoUrl} alt="Dog" />
-        </div>
-        <div className="basic-info">
-          <h1>Meet {profile.name}</h1>
-          <p>{profile.breed}, {profile.age}, {profile.size}</p>
-          <p>{profile.address}</p>
-          <p>Dates for BBsitting: {profile.datesForBBsitting}</p>
-        </div>
-      </div>
-      <div id={`details-${profile.id}`}>
-        <div className="profile-info">
-          <div className="left-column">
-            <h2>Dog I.D</h2>
-            <div className="detail-row">
-              <span className="detail-label"><strong>Breed:</strong></span>
-              <span className="detail-value">{profile.breed}</span>
-            </div>
-            <div className="detail-row">
-              <span className="detail-label"><strong>Age:</strong></span>
-              <span className="detail-value">{profile.age}</span>
-            </div>
-            <div className="detail-row">
-              <span className="detail-label"><strong>Gender:</strong></span>
-              <span className="detail-value">{profile.gender}</span>
-            </div>
-            <div className="detail-row">
-              <span className="detail-label"><strong>Size:</strong></span>
-              <span className="detail-value">{profile.size}</span>
-            </div>
-            <div className="detail-row">
-              <span className="detail-label"><strong>Immune:</strong></span>
-              <span className="detail-value">{profile.immune}</span>
-            </div>
-            <div className="detail-row">
-              <span className="detail-label"><strong>Neutered:</strong></span>
-              <span className="detail-value">{profile.neutered}</span>
-            </div>
-            <div className="detail-row">
-              <span className="detail-label"><strong>Suitable For:</strong></span>
-              <span className="detail-value">{profile.suitableFor}</span>
-            </div>
-            <div className="detail-row">
-              <span className="detail-label"><strong>Friendly with children:</strong></span>
-              <span className="detail-value">{profile.friendlyWithChildren}</span>
-            </div>
-          </div>
-          <div className="right-column">
-            <h2>Owner I.D</h2>
-            <div className="detail-row">
-              <span className="detail-label"><strong>Name:</strong></span>
-              <span className="detail-value">{profile.ownerName}</span>
-            </div>
-            <div className="detail-row">
-              <span className="detail-label"><strong>Address:</strong></span>
-              <span className="detail-value">{profile.address}</span>
-            </div>
-            <div className="detail-row">
-              <span className="detail-label"><strong>Availability:</strong></span>
-              <span className="detail-value">{profile.availability}</span>
-            </div>
-            <div className="detail-row">
-              <span className="detail-label"><strong>Date Reserve:</strong></span>
-              <span className="detail-value">{profile.datesForBBsitting}</span>
-            </div>
-            <div className="detail-row">
-              <span className="detail-label"><strong>Other:</strong></span>
-              <span className="detail-value">N/A</span>
-            </div>
-          </div>
-        </div>
-        <div className="description-row">
-          <div className="text-section">
-            <h2>A Little About Me</h2>
-            <p>{profile.description}</p>
-          </div>
-          <div className="text-section">
-            <h2>Care Instructions</h2>
-            <p>{profile.careInstructions}</p>
-          </div>
-        </div>
-      </div>
-      <button className="contact-button">Contact</button>
-    </div>
+    <Container>
+      <GlobalStyle />
+      <Title>Dog's Profile</Title>
+      <Header>
+        <BasicInfo>
+          <SubTitle>{profile.name}</SubTitle>
+          <Text>{profile.breed}, {profile.age}, {profile.size}</Text>
+          <Text>{profile.address}</Text>
+          <Text>Dates for BBsitting: {profile.datesForBBsitting}</Text>
+        </BasicInfo>
+        <ProfileImage src={photoUrl} alt={`${profile.name}`} />
+      </Header>
+
+      <Collapsible trigger={<CollapsibleTrigger>Dog I.D</CollapsibleTrigger>}>
+        <Card>
+          <DetailRow>
+            <DetailLabel><strong>Breed:</strong></DetailLabel>
+            <DetailValue>{profile.breed}</DetailValue>
+          </DetailRow>
+          <DetailRow>
+            <DetailLabel><strong>Age:</strong></DetailLabel>
+            <DetailValue>{profile.age}</DetailValue>
+          </DetailRow>
+          <DetailRow>
+            <DetailLabel><strong>Gender:</strong></DetailLabel>
+            <DetailValue>{profile.gender}</DetailValue>
+          </DetailRow>
+          <DetailRow>
+            <DetailLabel><strong>Size:</strong></DetailLabel>
+            <DetailValue>{profile.size}</DetailValue>
+          </DetailRow>
+          <DetailRow>
+            <DetailLabel><strong>Immune:</strong></DetailLabel>
+            <DetailValue>{profile.immune}</DetailValue>
+          </DetailRow>
+          <DetailRow>
+            <DetailLabel><strong>Neutered:</strong></DetailLabel>
+            <DetailValue>{profile.neutered}</DetailValue>
+          </DetailRow>
+          <DetailRow>
+            <DetailLabel><strong>Suitable For:</strong></DetailLabel>
+            <DetailValue>{profile.suitableFor}</DetailValue>
+          </DetailRow>
+          <DetailRow>
+            <DetailLabel><strong>Friendly with children:</strong></DetailLabel>
+            <DetailValue>{profile.friendlyWithChildren}</DetailValue>
+          </DetailRow>
+        </Card>
+      </Collapsible>
+
+      <Collapsible trigger={<CollapsibleTrigger>Owner I.D</CollapsibleTrigger>}>
+        <Card>
+          <DetailRow>
+            <DetailLabel><strong>Name:</strong></DetailLabel>
+            <DetailValue>{profile.ownerName}</DetailValue>
+          </DetailRow>
+          <DetailRow>
+            <DetailLabel><strong>Address:</strong></DetailLabel>
+            <DetailValue>{profile.address}</DetailValue>
+          </DetailRow>
+        </Card>
+      </Collapsible>
+
+      <Collapsible trigger={<CollapsibleTrigger>A Little About Me</CollapsibleTrigger>}>
+        <Card>
+          <Text>{profile.description}</Text>
+        </Card>
+      </Collapsible>
+
+      <Collapsible trigger={<CollapsibleTrigger>Care Instructions</CollapsibleTrigger>}>
+        <Card>
+          <Text>{profile.careInstructions}</Text>
+        </Card>
+      </Collapsible>
+
+      <ContactButton>Contact</ContactButton>
+    </Container>
   );
 };
 

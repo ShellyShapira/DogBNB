@@ -1,130 +1,153 @@
 /* DogProfile.css */
+
 :root {
-  --FONT_H1: Arial, sans-serif; 
+  --FONT_H1: 'Source Serif Pro', serif; 
+  --TITLE_FONT: 'Source Serif Pro', serif;
   --TITLE_COLOR_H1: #4C7572;
   --BACKGROUND_COLOR: #F0EDEB;
   --TEXT_COLOR_H1: #46454A;
-  --BUTTON_COLOR_H1: #605F85;
-  --DARKER_TITLE_COLOR: #2C5C4A; 
-  --DARKER_TEXT_COLOR: #363636; 
+  --BUTTON_COLOR_H1: #628991;
 }
 
 body {
   font-family: var(--FONT_H1);
   direction: ltr;
-  text-align: center;
   margin: 0;
   padding: 0;
   background-color: var(--BACKGROUND_COLOR);
   color: var(--TEXT_COLOR_H1);
+  height: 100vh;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+*, *::before, *::after {
+  box-sizing: inherit;
 }
 
 .container {
-  width: 80%;
-  margin: auto;
-  background-color: #fff;
-  padding: 20px;
-  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-  border-radius: 8px;
-  margin-bottom: 20px; 
+  width: 90%;
+  max-width: 1200px;
+  margin: 20px auto;
+  text-align: left;
 }
 
 .header {
+  width: 100%;
   display: flex;
   align-items: center;
   margin-bottom: 20px;
+  padding: 20px;
+  background: none;
+  box-shadow: none;
 }
 
 .profile-image img {
-  width: 200px;
-  height: 200px;
   border-radius: 50%;
+  width: 150px;
+  height: 150px;
   object-fit: cover;
-  margin-right: 20px; 
+  margin-left: 20px;
 }
 
 .basic-info {
   text-align: left;
+  flex-grow: 1;
 }
 
-h1 {
-  font-family: var(--FONT_H1);
-  color: var(--DARKER_TITLE_COLOR); 
+.basic-info h1 {
+  font-family: var(--TITLE_FONT);
+  font-size: 2rem;
+  margin-bottom: 20px;
+  color: #333;
 }
 
-h2 {
-  font-family: var(--FONT_H1);
-  color: var(--TITLE_COLOR_H1);
+.basic-info h2 {
+  font-size: 1.5rem;
+  margin: 5px 0;
+  color: #555;
 }
 
 .basic-info p {
-  color: var(--DARKER_TEXT_COLOR); 
-  font-weight: bold; 
+  font-size: 1rem;
+  margin: 5px 0;
+  color: #666;
 }
 
-button {
-  display: block;
-  margin: 20px auto;
-  padding: 10px 20px;
-  background-color: var(--BUTTON_COLOR_H1);
-  color: white;
-  border: none;
-  border-radius: 5px;
-  cursor: pointer;
-  font-size: 16px;
+.card {
+  background-color: transparent;
+  border-radius: 0;
+  padding: 15px;
+  margin: 10px 0;
+  box-shadow: none;
+  text-align: justify;
 }
 
-button:hover {
-  background-color: var(--BUTTON_COLOR_H1);
-}
-
-button.contact-button {
-  display: block;
-  margin: 20px auto;
-  padding: 10px 20px;
-  background-color: var(--BUTTON_COLOR_H1);
-  color: white;
-  border: none;
-  border-radius: 5px;
-  cursor: pointer;
-  font-size: 16px;
-}
-
-.profile-info {
-  display: flex;
-  justify-content: space-between;
-  margin-bottom: 10px;
-  text-align: left;
-}
-
-.profile-info .left-column, .profile-info .right-column {
-  width: 48%;
-  text-align: center;
-  padding: 50px;
-}
-
-.profile-info .detail-row {
+.detail-row {
   display: flex;
   justify-content: space-between;
   margin-bottom: 5px;
 }
 
-.profile-info .detail-label {
-  flex: 1;
-  text-align: left;
+.detail-label {
   font-weight: bold;
+  color: #333;
 }
 
-.profile-info .detail-value {
-  flex: 1;
-  text-align: right;
+.detail-value {
+  color: #666;
 }
 
-.description-row {
+.edit-profile-button {
+  background-color: #628991;
+  color: #ffffff;
+  border: none;
+  padding: 5px 10px;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 1rem;
+  margin-top: 20px;
+  transition: box-shadow 0.3s ease-in-out;
+  display: inline-block;
+  width: auto;
+}
+
+.edit-profile-button:hover {
+  box-shadow: 0px 8px 20px rgba(0, 0, 0, 0.5);
+  background-color: #628991;
+}
+
+.Collapsible {
+  margin: 10px 0;
+  margin-bottom: 30px;
+}
+
+.Collapsible__trigger {
+  font-size: 1.2rem;
+  font-weight: bold;
+  cursor: pointer;
+  color: #333;
+  padding: 10px;
+  background-color: #e0e0e0;
+  border-radius: 5px;
+  transition: background-color 0.3s ease;
   display: flex;
   justify-content: space-between;
-  text-align: left;
-  margin-top: 5px;
+  align-items: center;
+}
+
+.Collapsible__trigger::after {
+  content: '▼';
+  font-size: 1rem;
+  margin-left: 10px;
+}
+
+.Collapsible__trigger:hover {
+  background-color: #d5d5d5;
+}
+
+.Collapsible__contentInner {
+  padding: 10px;
 }
 
 .text-section {

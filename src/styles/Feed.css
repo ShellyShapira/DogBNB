@@ -1,10 +1,9 @@
-/* App.css */
 :root {
   --FONT_H1: Arial, sans-serif; 
   --TITLE_COLOR_H1: #4C7572;
   --BACKGROUND_COLOR: #F0EDEB;
   --TEXT_COLOR_H1: #46454A;
-  --BUTTON_COLOR_H1: #605F85;
+  --BUTTON_COLOR_H1: #628991;
 }
 
 body {
@@ -48,26 +47,33 @@ body {
 
 .header-buttons {
   display: flex;
-  justify-content: center;
+  justify-content: flex-start; /* Align buttons to the left */
   padding: 20px;
   gap: 10px;
-  background-color:var(--BACKGROUND_COLOR);
+  background-color: var(--BACKGROUND_COLOR);
   border-radius: 8px;
 }
 
+.header-buttons button {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  white-space: nowrap; /* Prevent text from wrapping */
+  width: auto; /* Ensure buttons are not stretched */
+}
 
 .post-grid {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
   row-gap: 15px; /* Vertical spacing between rows */
   column-gap: 10px; /* Horizontal spacing between columns */
-  width: 100%; /* Ensure the grid takes up the full width of the container */
+  width: calc(100% - 40px); /* Add padding to the sides */
   max-width: 1400px; /* Optional: limit the maximum width of the grid */
   justify-items: center; /* Center the grid items */
+  padding: 0 20px; /* Add padding to the sides */
 }
 
-
- /* each post in the grid*/
+/* each post in the grid */
 .post {
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
   background-color: white;
@@ -88,6 +94,7 @@ body {
   height: 150px;
   border-radius: 50%;
   margin-bottom: 10px;
+  object-fit: cover; /* Ensure the images maintain their aspect ratio */
 }
 
 .post h2 {
@@ -98,10 +105,13 @@ body {
 .post p {
   margin: 5px 0;
   font-size: 18px;
-
 }
 
-  button {
+button,
+.exit-filters,
+.new-post-form .post-button,
+.new-post-form .close-button,
+.more-info {
   display: block;
   padding: 10px 20px;
   background-color: var(--BUTTON_COLOR_H1);
@@ -110,10 +120,19 @@ body {
   border-radius: 5px;
   cursor: pointer;
   font-size: 16px;
+  transition: box-shadow 0.3s ease-in-out;
 }
 
-button:hover {
-  background-color: var(--BUTTON_COLOR_H1);
+button:hover,
+.new-post-form .post-button:hover,
+.more-info:hover {
+  box-shadow: 0px 8px 20px rgba(0, 0, 0, 0.5); /* Stronger shadow effect */
+}
+
+.exit-filters:hover,
+.new-post-form .close-button:hover {
+  background: none; /* Remove background on hover */
+  box-shadow: none; /* Remove shadow on hover */
 }
 
 .filter-container {
@@ -135,46 +154,24 @@ button:hover {
 }
 
 .filter-options input, .filter-options select {
-  width: 300px;
+  width: 100%;
   padding: 8px;
   margin-top: 5px;
   border: 1px solid #ccc;
   border-radius: 4px;
 }
 
-
 .exit-filters {
   position: absolute;
   top: 10px;
   right: 10px;
-  padding: 8px 12px;
-  background-color: var(--BUTTON_COLOR_H1);
-  color: white;
+  padding: 5px; /* Make the button smaller */
+  color: black; /* Change color to black */
   border: none;
-  border-radius: 5px;
+  background: none; /* Remove background */
   cursor: pointer;
-}
-
-.clear {
-  position: absolute;
-  top: 10px;
-  left: 10px;
-  margin-top: auto;
-  padding: 7px 15px;
-  background-color: var(--BUTTON_COLOR_H1);
-  color: white;
-  border-radius: 10px;
-  cursor: pointer;
-  font-size: 14px;
-  display: flex;
-  justify-content: center;
-}
-
-/*delete if decide not to do hover*/
-.clear:hover {
-  box-shadow: 0 0 10px var(--BUTTON_COLOR_H1);
-  background-color: var(--BUTTON_COLOR_H1); /* Darker blue on hover */
-  color:white;
+  font-size: 20px; /* Increase font size */
+  width: auto; /* Ensure button is not stretched */
 }
 
 .new-post-form {
@@ -183,7 +180,7 @@ button:hover {
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
   border-radius: 8px;
   width: 310px;
-  height: 275;
+  height: 275px; /* Fix height attribute */
   margin: 20px auto;
   position: relative;
 }
@@ -215,19 +212,20 @@ button:hover {
 }
 
 .new-post-form .post-button:hover {
-  background-color: #524A85;
+  box-shadow: 0px 8px 20px rgba(0, 0, 0, 0.5); /* Stronger shadow effect */
 }
 
 .new-post-form .close-button {
   position: absolute;
   top: 10px;
   right: 10px;
-  padding: 8px 12px;
-  background-color: var(--BUTTON_COLOR_H1);
-  color: white;
+  padding: 5px; /* Make the button smaller */
+  color: black; /* Change color to black */
   border: none;
-  border-radius: 5px;
+  background: none; /* Remove background */
   cursor: pointer;
+  font-size: 20px; /* Increase font size */
+  width: auto; /* Ensure button is not stretched */
 }
 
 .more-info {
@@ -242,9 +240,7 @@ button:hover {
   justify-content: center;
 }
 
-/*delete if decide not to do hover*/
 .more-info:hover {
-  box-shadow: 0 0 10px var(--BUTTON_COLOR_H1);
-  background-color: var(--BUTTON_COLOR_H1); /* Darker blue on hover */
-  color:white;
+  box-shadow: 0px 8px 20px rgba(0, 0, 0, 0.5); /* Stronger shadow effect */
 }
+

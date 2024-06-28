@@ -1,6 +1,6 @@
 body {
   background-color: #F0EDEB;
-  font-family: Arial, sans-serif;
+  font-family: Arial, 'Source Serif Pro', serif;
   margin: 0;
   padding: 0;
   color: #46454A;
@@ -30,15 +30,15 @@ body {
   left: 50%;
   transform: translate(-50%, -50%);
   color: white;
-  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+
 }
 
 .banner-text h1 {
+  font-family:'Source Serif Pro', serif;
   color: #4C7572;
   background-color: rgba(255, 255, 255, 0.7); /* Optional: add a semi-transparent background for better readability */
   padding: 20px 40px; /* Increase padding */
-  border-radius: 10px;
-  font-size: 3em; /* Increase font size */
+  font-size: 2em; /* Increase font size */
 }
 
 .about-section {

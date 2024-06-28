@@ -3,7 +3,7 @@ import styled from 'styled-components';
 import { Link } from 'react-router-dom';
 
 const NavbarContainer = styled.nav`
-  background-color: rgba(101, 145, 164, 1);
+  background-color: #96C3BB;
   padding: 1rem;
 `;
 

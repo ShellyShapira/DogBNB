@@ -3,8 +3,6 @@ body, html {
   padding: 0;
   font-family: Arial, sans-serif;
   height: 100vh;
-  display: flex;
-  align-items: stretch;
   overflow-x: hidden;
   width: 100%;
 }
@@ -15,7 +13,7 @@ body, html {
 }
 
 .center {
-  max-width: fit-content;
+  max-width: 100%;
   margin-left: auto;
   margin-right: auto;
 }

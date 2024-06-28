@@ -4,6 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import avatar1 from "../images/avatar1.jpg";
 import avatar2 from "../images/avatar2.jpg";
 import avatar3 from "../images/avatar3.jpg";
+import { FaWhatsapp } from 'react-icons/fa'; // Import WhatsApp icon
 
 const Card = styled.div`
   background-color: white;
@@ -23,6 +24,7 @@ const Title = styled.h2`
 const RequestItem = styled.div`
   display: flex;
   align-items: center;
+  align-text: left;
   margin-bottom: 15px;
 `;
 
@@ -47,12 +49,26 @@ const Date = styled.div`
 `;
 
 const PhoneButton = styled.a`
-  background-color: #605F85;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #25D366; /* WhatsApp green */
   color: white;
-  padding: 10px 15px;
-  border-radius: 20px;
+  padding: 5px;
+  border-radius: 50%;
   text-decoration: none;
   text-align: center;
+  transition: box-shadow 0.3s ease-in-out;
+  width: 40px;
+  height: 40px;
+
+  &:hover {
+    box-shadow: 0px 8px 20px rgba(0, 0, 0, 0.5);
+  }
+
+  svg {
+    font-size: 20px;
+  }
 `;
 
 const requests = [
@@ -97,7 +113,7 @@ const RequestDOS = () => {
             <Date>{request.date}</Date>
           </Info>
           <PhoneButton href={`https://wa.me/${request.phone}`} target="_blank">
-            {request.phone}
+            <FaWhatsapp />
           </PhoneButton>
         </RequestItem>
       ))}

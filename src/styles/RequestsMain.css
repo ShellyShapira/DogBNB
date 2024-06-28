@@ -38,6 +38,7 @@
 }
 
 h1 {
+  font-family:'Source Serif Pro', serif;
   font-size: 2em;
   color: rgba(76, 117, 114, 1);
   margin-bottom: 20px;

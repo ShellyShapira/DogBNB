@@ -49,12 +49,18 @@ const ActionButtons = styled.div`
 `;
 
 const Button = styled.button`
-  background-color: ${props => props.primary ? '#6B90C8' : '#B05D5D'};
+  background-color: ${props => props.primary ? '#8BBBAA' : '#B05D5D'};
   color: white;
   border: none;
   padding: 5px 10px;
   border-radius: 5px;
   cursor: pointer;
+  transition: box-shadow 0.3s ease-in-out;
+
+  &:hover {
+    box-shadow: 0px 8px 20px rgba(0, 0, 0, 0.5);
+    background-color: ${props => props.primary ? '#8BBBAA' : '#B05D5D'}; /* Keep original color */
+  }
 `;
 
 const RequestActions = ({ requests, onAccept, onDelete }) => {

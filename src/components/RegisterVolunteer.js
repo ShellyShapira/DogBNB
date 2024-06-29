@@ -1,17 +1,16 @@
 import React, { useState } from 'react';
 import styles from '../styles/RegisterVolunteer.module.css';
-import defaultProfile from '../images/profile.jpg'; // Import the profile image
+import defaultProfile from '../images/profile.jpg';
 import ImageSection from './ImageSection';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { DB, GetCurrentUser } from './Config';
 import { setDoc, doc } from "firebase/firestore";
-import { getStorage, ref, uploadBytes } from "firebase/storage";
-
-
+import { getStorage, ref, uploadBytes, getDownloadURL } from "firebase/storage";
 
 const RegisterVolunteer = () => {
     const [profilePic, setProfilePic] = useState('');
     const [name, setName] = useState(GetCurrentUser().displayName);
+    const navigate = useNavigate();
 
     const handleImageChange = (event) => {
         const file = event.target.files[0];
@@ -26,21 +25,27 @@ const RegisterVolunteer = () => {
 
     const handleSubmit = async (event) => {
         event.preventDefault();
-        const formData = Object.fromEntries(new FormData(event.target))
-
-        const {profilePic} = formData;
+        const formData = Object.fromEntries(new FormData(event.target));
+        
+        const { profilePic } = formData;
         const storage = getStorage();
-        const storageRef = ref(storage, GetCurrentUser().uid);
+        const storageRef = ref(storage, `${GetCurrentUser().uid}/profile.jpg`);
         
         await uploadBytes(storageRef, profilePic);
-
-        delete formData['profilePic'];
-        await setDoc(doc(DB(), "volunteers", GetCurrentUser().uid), formData);
+        const profilePicURL = await getDownloadURL(storageRef);
+        const userData = {
+            ...formData,
+            profilePic: profilePicURL,
+            registrationType: 'volunteer'  // Ensure registrationType is correctly set to 'volunteer'
+        };
+        
+        await setDoc(doc(DB(), "volunteers", GetCurrentUser().uid), userData);
+        navigate('/MyVolunteerProfiles');
     };
 
     const handleNameChanged = (event) => {
-        setName(event.target.value)
-    }
+        setName(event.target.value);
+    };
 
     return (
         <div className={styles.container}>

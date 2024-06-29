@@ -1,17 +1,14 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import dogProfile from '../images/dog_profile.png'; // Import the profile image
 import styles from '../styles/FormSection.module.css';
-import { Link } from 'react-router-dom';
 import { DB, GetCurrentUser } from './Config';
 import { setDoc, doc } from "firebase/firestore";
-import { getStorage, ref, uploadBytes } from "firebase/storage";
-
+import { getStorage, ref, uploadBytes, getDownloadURL } from "firebase/storage";
+import { Link } from 'react-router-dom'; // Import Link
 
 function FormSection() {
   const currentUser = GetCurrentUser();
-  
-  console.log(currentUser);
-
   const [profilePic, setProfilePic] = useState('');
   const [formData, setFormData] = useState({
     name: currentUser.displayName,
@@ -26,6 +23,8 @@ function FormSection() {
     suitableFor: [],
     dogDetails: ''
   });
+
+  const navigate = useNavigate();
 
   const handleInputChange = (event) => {
     const { name, value } = event.target;
@@ -56,15 +55,22 @@ function FormSection() {
 
   const handleSubmit = async (event) => {
     event.preventDefault();
-    const profilePic = new FormData(event.target).get('profilePic');
+    const profilePicFile = new FormData(event.target).get('profilePic');
     const storage = getStorage();
-    const storageRef = ref(storage, GetCurrentUser().uid);
-    
-    await uploadBytes(storageRef, profilePic);
-    
-    await setDoc(doc(DB(), "reserved", GetCurrentUser().uid), formData);
+    const storageRef = ref(storage, `profile_pics/${currentUser.uid}`);
 
-    // Redirect can be handled here using react-router-dom or similar libraries
+    await uploadBytes(storageRef, profilePicFile);
+    const profilePicURL = await getDownloadURL(storageRef);
+
+    const updatedFormData = {
+      ...formData,
+      profilePic: profilePicURL,
+      registrationType: 'reserved'
+    };
+
+    await setDoc(doc(DB(), "reserved", currentUser.uid), updatedFormData);
+
+    navigate('/mydogprofile'); // Redirect to the user's dog profiles after submission
   };
 
   return (

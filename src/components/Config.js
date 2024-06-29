@@ -4,13 +4,14 @@ import { getFirestore } from "firebase/firestore";
 
 
 const firebaseConfig = {
-    apiKey: "AIzaSyCX5rA38nQrKwAdkbZMh_Qsm-2q3BtwwzA",
-    authDomain: "dog-bnb-5372f.firebaseapp.com",
-    projectId: "dog-bnb-5372f",
-    storageBucket: "dog-bnb-5372f.appspot.com",
-    messagingSenderId: "628495076594",
-    appId: "1:628495076594:web:1d004e94fd50f9a165d46b"
-  };
+  apiKey: "AIzaSyBsNze9h4qw50zh2LON03mIOgw8nlmMQDU",
+  authDomain: "dogbnb-ccb7b.firebaseapp.com",
+  projectId: "dogbnb-ccb7b",
+  storageBucket: "dogbnb-ccb7b.appspot.com",
+  messagingSenderId: "803586230912",
+  appId: "1:803586230912:web:f415a4d750b1f17c7a3465",
+  measurementId: "G-MVQZ578XXW"
+};
 
   const initializeFirebase = () => {
     const app = initializeApp(firebaseConfig);

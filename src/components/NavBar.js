@@ -1,6 +1,7 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import styled from 'styled-components';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
+import { UserContext } from '../App';
 
 const NavbarContainer = styled.nav`
   background-color: #96C3BB;
@@ -28,17 +29,31 @@ const NavbarLink = styled(Link)`
   }
 `;
 
-const Navbar = () => {
+const Navbar = ({ handleLogOut }) => {
+  const { user } = useContext(UserContext);
+  const navigate = useNavigate();
+
+  const getProfileLink = () => {
+    if (user && user.registrationType === 'reserved') {
+      navigate('/mydogprofile');
+    } else if (user && user.registrationType === 'volunteer') {
+      navigate('/MyVolunteerProfiles');
+    } else {
+      return '/my-profile';
+    }
+  };
+
   return (
     <NavbarContainer>
       <NavbarList>
         <NavbarItem><NavbarLink to="/feed">Home</NavbarLink></NavbarItem>
         <NavbarItem><NavbarLink to="/about">About Us</NavbarLink></NavbarItem>
-        <NavbarItem><NavbarLink to="/my-profile">My Profile</NavbarLink></NavbarItem>
+        <NavbarItem><NavbarLink to={getProfileLink()}>My Profile</NavbarLink></NavbarItem>
         <NavbarItem><NavbarLink to="/requests">Requests</NavbarLink></NavbarItem>
+        
       </NavbarList>
     </NavbarContainer>
   );
-}
+};
 
 export default Navbar;

@@ -74,7 +74,7 @@ function App() {
                 <Route path="dog-profile/:id" element={<MainLayout><DogProfiles /></MainLayout>} />
                 <Route path="volunteer-profile/:id" element={<MainLayout><VolunteerProfiles /></MainLayout>} />
                 <Route path="MydogProfile" element={<MainLayout><MyDogProfiles /></MainLayout>} />
-                <Route path="volunteer" element={<MainLayout><RegisterVolunteer /></MainLayout>} />
+                <Route path="volunteer" exact element={<RegisterVolunteer />} />,
 
               </>
             )}

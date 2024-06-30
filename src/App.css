@@ -18,9 +18,9 @@ body, html {
   margin-right: auto;
 }
 
-body h1 {
+/* body h1 {
   font-family: 'Source Serif Pro', serif !important;
   color: #4C7572 !important;
   margin-left: 20px; /* Adjust the margin as needed */
-  text-align: left; /* Align text to the left */
-}
+  /* text-align: left; Align text to the left */
+/* } */ 

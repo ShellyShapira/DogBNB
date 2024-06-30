@@ -77,7 +77,7 @@ const SubTitle = styled.h2`
 `;
 
 const Text = styled.p`
-  font-family: var(--TEXT_FONT);
+  font-family: var (--TEXT_FONT);
   font-size: 1rem;
   margin: 5px 0;
   color: var(--TEXT_COLOR_H1);
@@ -182,9 +182,9 @@ const DogProfileCard = ({ profile, onSave }) => {
       <Header>
         <BasicInfo>
           <SubTitle>{formData.name}</SubTitle>
+          <Text>{formData.dogName}</Text>
           <Text>{formData.dogType}, {formData.dogAge}, {formData.dogSize}</Text>
           <Text>{formData.address}</Text>
-          <Text>Dates for BBsitting: {formData.datesForBBsitting}</Text>
         </BasicInfo>
         <ProfileImage src={formData.profilePic} alt={`${profile.name}`} />
       </Header>
@@ -194,6 +194,10 @@ const DogProfileCard = ({ profile, onSave }) => {
           {isEditing ? (
             <>
               <DetailRow>
+                <DetailLabel><strong>Name:</strong></DetailLabel>
+                <input className="detail-value" name="dogName" value={formData.dogName} onChange={handleChange} />
+              </DetailRow>
+              <DetailRow>
                 <DetailLabel><strong>Breed:</strong></DetailLabel>
                 <input className="detail-value" name="dogType" value={formData.dogType} onChange={handleChange} />
               </DetailRow>
@@ -202,7 +206,7 @@ const DogProfileCard = ({ profile, onSave }) => {
                 <input className="detail-value" name="dogAge" value={formData.dogAge} onChange={handleChange} />
               </DetailRow>
               <DetailRow>
-                <DetailLabel><strong>Gender:</strong></DetailLabel>
+                <DetailLabel><strong>Gender (Male/Female):</strong></DetailLabel>
                 <input className="detail-value" name="dogGender" value={formData.dogGender} onChange={handleChange} />
               </DetailRow>
               <DetailRow>
@@ -210,11 +214,11 @@ const DogProfileCard = ({ profile, onSave }) => {
                 <input className="detail-value" name="dogSize" value={formData.dogSize} onChange={handleChange} />
               </DetailRow>
               <DetailRow>
-                <DetailLabel><strong>Immune:</strong></DetailLabel>
+                <DetailLabel><strong>Immune (Y/N):</strong></DetailLabel>
                 <input className="detail-value" name="dogImmune" value={formData.dogImmune} onChange={handleChange} />
               </DetailRow>
               <DetailRow>
-                <DetailLabel><strong>Neutered:</strong></DetailLabel>
+                <DetailLabel><strong>Neutered (Y/N):</strong></DetailLabel>
                 <input className="detail-value" name="dogNeutered" value={formData.dogNeutered} onChange={handleChange} />
               </DetailRow>
               <DetailRow>
@@ -222,12 +226,16 @@ const DogProfileCard = ({ profile, onSave }) => {
                 <input className="detail-value" name="suitableFor" value={formData.suitableFor} onChange={handleChange} />
               </DetailRow>
               <DetailRow>
-                <DetailLabel><strong>Friendly with children:</strong></DetailLabel>
+                <DetailLabel><strong>Friendly with children(Y/N):</strong></DetailLabel>
                 <input className="detail-value" name="friendlyWithChildren" value={formData.friendlyWithChildren} onChange={handleChange} />
               </DetailRow>
             </>
           ) : (
             <>
+            <DetailRow>
+                <DetailLabel><strong>Name:</strong></DetailLabel>
+                <DetailValue>{profile.dogName}</DetailValue>
+              </DetailRow>
               <DetailRow>
                 <DetailLabel><strong>Breed:</strong></DetailLabel>
                 <DetailValue>{profile.dogType}</DetailValue>
@@ -237,7 +245,7 @@ const DogProfileCard = ({ profile, onSave }) => {
                 <DetailValue>{profile.dogAge}</DetailValue>
               </DetailRow>
               <DetailRow>
-                <DetailLabel><strong>Gender:</strong></DetailLabel>
+                <DetailLabel><strong>Gender (Male/Female)</strong></DetailLabel>
                 <DetailValue>{profile.dogGender}</DetailValue>
               </DetailRow>
               <DetailRow>
@@ -245,19 +253,19 @@ const DogProfileCard = ({ profile, onSave }) => {
                 <DetailValue>{profile.dogSize}</DetailValue>
               </DetailRow>
               <DetailRow>
-                <DetailLabel><strong>Immune:</strong></DetailLabel>
+                <DetailLabel><strong>Immune (Y/N):</strong></DetailLabel>
                 <DetailValue>{profile.dogImmune}</DetailValue>
               </DetailRow>
               <DetailRow>
-                <DetailLabel><strong>Neutered:</strong></DetailLabel>
+                <DetailLabel><strong>Neutered (Y/N):</strong></DetailLabel>
                 <DetailValue>{profile.dogNeutered}</DetailValue>
               </DetailRow>
               <DetailRow>
                 <DetailLabel><strong>Suitable For:</strong></DetailLabel>
-                <DetailValue>{profile.suitableFor.join(', ')}</DetailValue>
+                <DetailValue>{profile.suitableFor ? profile.suitableFor.join(', ') : 'N/A'}</DetailValue>
               </DetailRow>
               <DetailRow>
-                <DetailLabel><strong>Friendly with children:</strong></DetailLabel>
+                <DetailLabel><strong>Friendly with children (Y/N):</strong></DetailLabel>
                 <DetailValue>{profile.friendlyWithChildren}</DetailValue>
               </DetailRow>
             </>
@@ -348,7 +356,12 @@ const MyProfile = () => {
         const docRef = doc(DB(), 'reserved', user.uid); // Fetching from 'reserved' collection
         const docSnap = await getDoc(docRef);
         if (docSnap.exists()) {
-          setProfileData(docSnap.data());
+          const data = docSnap.data();
+          // Ensure suitableFor is always an array
+          if (!data.suitableFor) {
+            data.suitableFor = [];
+          }
+          setProfileData(data);
         } else {
           console.log('No such document!');
         }

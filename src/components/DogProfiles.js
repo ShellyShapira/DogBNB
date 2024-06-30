@@ -269,7 +269,7 @@ const DogProfileCard = ({ profile }) => {
           </DetailRow>
           <DetailRow>
             <DetailLabel><strong>Suitable For:</strong></DetailLabel>
-            <DetailValue>{profile.suitableFor}</DetailValue>
+            <DetailValue>{profile.suitableFor ? profile.suitableFor.join(', ') : 'N/A'}</DetailValue>
           </DetailRow>
           <DetailRow>
             <DetailLabel><strong>Friendly with children:</strong></DetailLabel>
@@ -310,6 +310,10 @@ const DogProfileCard = ({ profile }) => {
 
 const DogProfiles = () => {
   const firstProfile = dogProfiles[0];
+  // Ensure suitableFor is always an array
+  if (!firstProfile.suitableFor) {
+    firstProfile.suitableFor = [];
+  }
   return (
     <div>
       <DogProfileCard profile={firstProfile} />

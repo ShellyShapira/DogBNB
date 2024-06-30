@@ -178,7 +178,7 @@ const VolProfileCard = ({ profile, onSave }) => {
   return (
     <Container>
       <GlobalStyle />
-      <Title>My Profile</Title>
+      {/* <Title>My Profile</Title> */}
       <Header>
         <BasicInfo>
           <SubTitle>{formData.name}</SubTitle>

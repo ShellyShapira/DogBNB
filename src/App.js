@@ -29,6 +29,7 @@ InitializeFirebase();
 function App() {
   const [isLoading, setIsLoading] = useState(true);
   const [user, setUser] = useState(null);
+  const [registrationType, setRegistrationType] = useState('reserve'); // Default registration type
 
   useEffect(() => {
     const auth = getAuth();
@@ -38,8 +39,17 @@ function App() {
         return;
       }
       setUser({ firebaseUser, isNewUser: false });
+
+      // Example: Determine registration type based on user data or context
+      // Here, assuming some logic to determine registration type
+      if (user='volunteer') {
+        setRegistrationType('volunteer');
+      } else {
+        setRegistrationType('reserve');
+      }
     });
   }, []);
+
 
   if (isLoading) {
     return (
@@ -61,7 +71,8 @@ function App() {
                 <Route path="feed" element={<MainLayout><Feed /></MainLayout>} />
                 <Route path="about" element={<MainLayout><About /></MainLayout>} />
                 <Route path="my-profile" element={<MainLayout><MyDogProfiles /></MainLayout>} />
-                <Route path="requests" element={<MainLayout><RequestsMain /></MainLayout>} />
+                <Route path="requests" element={<MainLayout><Requestdos /></MainLayout>} />
+                <Route path="requests-2" element={<MainLayout><RequestsMain /></MainLayout>} />
                 <Route path="reserved" exact element={<RegisterReserved />} />,
                 <Route path="DogProfiles" element={<MainLayout><DogProfiles /></MainLayout>} />
                 <Route path="DogSitters" element={<MainLayout><DogSitters /></MainLayout>} />
@@ -71,10 +82,11 @@ function App() {
                 <Route path="Requestdos" element={<MainLayout><Requestdos /></MainLayout>} />
                 <Route path="Requestsvs" element={<MainLayout><Requestsvs /></MainLayout>} />
                 <Route path="VolFormSection" element={<MainLayout><Volform /></MainLayout>} />
+
                 <Route path="dog-profile/:id" element={<MainLayout><DogProfiles /></MainLayout>} />
                 <Route path="volunteer-profile/:id" element={<MainLayout><VolunteerProfiles /></MainLayout>} />
                 <Route path="MydogProfile" element={<MainLayout><MyDogProfiles /></MainLayout>} />
-                <Route path="volunteer" exact element={<RegisterVolunteer />} />,
+                <Route path="volunteer" exact element={<RegisterVolunteer />} />
 
               </>
             )}

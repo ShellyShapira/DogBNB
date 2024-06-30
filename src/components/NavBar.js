@@ -7,6 +7,7 @@ import VolFormSection from './Volform';
 import { registrationType } from './FormSection';
 import { registrationType2 } from './Volform';
 
+
 const NavbarContainer = styled.nav`
   background-color: #96C3BB;
   padding: 1rem;
@@ -44,7 +45,7 @@ const Navbar = ({ handleLogOut }) => {
     } else if (registrationType2 === 'volunteer') {
       return'/VolProfile';
     } else {
-      return '/mydogprofile';
+      return '/VolProfile';
     }
   };
 
@@ -54,7 +55,8 @@ const Navbar = ({ handleLogOut }) => {
         <NavbarItem><NavbarLink to="/feed">Home</NavbarLink></NavbarItem>
         <NavbarItem><NavbarLink to="/about">About Us</NavbarLink></NavbarItem>
         <NavbarItem><NavbarLink to={getProfileLink()}>My Profile</NavbarLink></NavbarItem>
-        <NavbarItem><NavbarLink to="/requests">Requests</NavbarLink></NavbarItem>
+        <NavbarItem><NavbarLink to="/requests">Request-volunteer</NavbarLink></NavbarItem>
+        <NavbarItem><NavbarLink to="/requests-2">Requests-reserve</NavbarLink></NavbarItem>
       </NavbarList>
     </NavbarContainer>
   );

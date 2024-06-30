@@ -7,6 +7,7 @@ import person1 from "../images/person1.jpg";
 import person2 from "../images/person2.jpg";
 import person3 from "../images/person3.jpg";
 
+
 const initialRequests = [
   {
     id: 1,
@@ -54,9 +55,6 @@ function RequestsMain() {
   return (
     <div className="requestsMain">
       <div className="content">
-        <h1>It's time to contact your dog's family!</h1>
-        <RequestDOS />
-        <h1>Review and Manage Requests</h1>
         <RequestActions 
           requests={requests} 
           onAccept={handleAccept} 

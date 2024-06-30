@@ -32,7 +32,7 @@ const GlobalStyle = createGlobalStyle`
 `;
 
 const Container = styled.div`
-  width: 30%;
+  width: 30%; /* Set width to 50% for centering content */
   max-width: 1200px;
   margin: 20px auto;
   text-align: left;
@@ -140,11 +140,11 @@ const CollapsibleTrigger = styled.div`
   border-radius: 5px;
   transition: background-color 0.3s ease;
   display: flex;
-  width: 100px;
   justify-content: space-between;
-  align-items: left;
+  align-items: center;
 
   &::after {
+    content: '▼';
     font-size: 1rem;
     margin-left: 10px;
   }

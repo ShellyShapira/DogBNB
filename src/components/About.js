@@ -7,17 +7,14 @@ import itay from '../images/itay.png';
 import trusted from '../images/trusted-community.png';
 import seamless from '../images/seamless-coordination.png';
 import personalized from '../images/personalized-care.png';
- 
 
 function main_about() {
   return (
     <div className="main_about">
+      <h1>About DogBNB</h1> {/* Moved H1 out of banner */}
       <div className="about-section">
         <div className="banner-container">
           <img src={dogBanner} alt="Dog BNB" className="banner-image" />
-          <div className="banner-text">
-            <h1>About DogBNB</h1>
-          </div>
         </div>
         <div className="about-content">
           <p>

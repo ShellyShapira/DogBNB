@@ -1,13 +1,20 @@
 import React from 'react';
 import '../styles/about.css';
 import CustomRating from './CustomRating';
+import dogBanner from '../images/dog-banner.png';
+import dor from '../images/dor.png';
+import itay from '../images/itay.png';
+import trusted from '../images/trusted-community.png';
+import seamless from '../images/seamless-coordination.png';
+import personalized from '../images/personalized-care.png';
+ 
 
 function main_about() {
   return (
     <div className="main_about">
       <div className="about-section">
         <div className="banner-container">
-          <img src="dog-banner.png" alt="Dog BNB" className="banner-image" />
+          <img src={dogBanner} alt="Dog BNB" className="banner-image" />
           <div className="banner-text">
             <h1>About DogBNB</h1>
           </div>
@@ -27,7 +34,7 @@ function main_about() {
       </div>
       <div className="reviews-section">
         <div className="review">
-          <img src="images/dor.png" alt="Dor, Golani unit" className="review-image" />
+          <img src={dor} alt="Dor, Golani unit" className="review-image" />
           <h3>Dor, Golani unit</h3>
           <p>
             “I recently had to go on miluim and was worried about my dog, Max. Thankfully, I found DogBNB, and connected with Shira.
@@ -36,7 +43,7 @@ function main_about() {
           </p>
         </div>
         <div className="review">
-          <img src="images/itay.png" alt="Itay, Palsar and Nastya, volunteer" className="review-image" />
+          <img src={itay} alt="Itay, Palsar and Nastya, volunteer" className="review-image" />
           <h3>Itay, Palsar Givati</h3>
           <p>
             “As a Palsar's soldeir in miluim, I was concerned about leaving my dog, Timothiy. I found DogBNB and connected with Nastya.
@@ -52,17 +59,17 @@ function main_about() {
         <h2>Why it works</h2>
         <div className="how-it-works">
           <div className="feature">
-            <img src="images/trusted-community.png" alt="Trusted Community" className="feature-image" />
+            <img src={trusted} alt="Trusted Community" className="feature-image" />
             <h3>Trusted Community</h3>
             <p>Our platform connects soldiers with verified volunteers who are passionate about helping and have undergone thorough vetting processes.</p>
           </div>
           <div className="feature">
-            <img src="images/seamless-coordination.png" alt="Seamless Coordination" className="feature-image" />
+            <img src={seamless} alt="Seamless Coordination" className="feature-image" />
             <h3>Seamless Coordination</h3>
             <p>We provide an easy-to-use platform for scheduling and communication between soldiers and volunteers, ensuring smooth coordination.</p>
           </div>
           <div className="feature">
-            <img src="images/personalized-care.png" alt="Personalized Care" className="feature-image" />
+            <img src={personalized} alt="Personalized Care" className="feature-image" />
             <h3>Personalized Care</h3>
             <p>Volunteers offer personalized care tailored to the needs of each pet, providing peace of mind to soldiers while they serve.</p>
           </div>

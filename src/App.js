@@ -61,8 +61,8 @@ function App() {
                 <Route path="about" element={<MainLayout><About /></MainLayout>} />
                 <Route path="my-profile" element={<MainLayout><MyDogProfiles /></MainLayout>} />
                 <Route path="requests" element={<MainLayout><RequestsMain /></MainLayout>} />
-                <Route path="reserved" element={<MainLayout><RegisterReserved /></MainLayout>} />
-                <Route path="volunteer" element={<MainLayout><RegisterVolunteer /></MainLayout>} />
+                <Route path="reserved" exact element={<RegisterReserved />} />,
+                <Route path="volunteer" exact element={<RegisterVolunteer />} />,
                 <Route path="DogProfiles" element={<MainLayout><DogProfiles /></MainLayout>} />
                 <Route path="DogSitters" element={<MainLayout><DogSitters /></MainLayout>} />
                 <Route path="FormSection" element={<MainLayout><FormSection /></MainLayout>} />

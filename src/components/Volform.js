@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import dogProfile from '../images/dog_profile.png'; // Import the profile image
+import profile from '../images/profile.jpg'; // Import the profile image
 import styles from '../styles/FormSection.module.css';
 import { DB, GetCurrentUser } from './Config';
 import { setDoc, doc } from "firebase/firestore";
@@ -63,7 +63,7 @@ function VolFormSection() {
       <form id="signup-form" onSubmit={handleSubmit}>
         <div className={styles["profile-picture"]}>
           <label htmlFor="profilePic" className={styles["profile-pic-label"]}>
-            <img src={profilePic || dogProfile} alt="Form section illustration" id="profilePicPreview" />
+            <img src={profilePic || profile} alt="Form section illustration" id="profilePicPreview" />
           </label>
           <input type="file" id="profilePic" name="profilePic" accept="image/*" style={{ display: 'none' }} onChange={previewImage} />
         </div>

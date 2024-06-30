@@ -73,7 +73,7 @@ const Feed = () => {
             const newPost = {
                 id: posts.length + 1,
                 image: profile.profilePic || 'images/default_dog.jpg', // Use a default image if not provided
-                name: profile.name || 'Your Dog',
+                name: profile.dogName || 'Your Dog',
                 city: profile.address || 'Your City',
                 description: profile.dogDetails || 'Your Description', // Ensure this matches your profile field
                 startDate: reformatDate(e.target.elements.startDate.value),

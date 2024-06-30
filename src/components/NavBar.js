@@ -44,7 +44,7 @@ const Navbar = ({ handleLogOut }) => {
     } else if (registrationType2 === 'volunteer') {
       return'/VolProfile';
     } else {
-      return '/VolProfile';
+      return '/mydogprofile';
     }
   };
 

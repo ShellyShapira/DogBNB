@@ -67,7 +67,7 @@ function App() {
                 <Route path="DogSitters" element={<MainLayout><DogSitters /></MainLayout>} />
                 <Route path="FormSection" element={<MainLayout><FormSection /></MainLayout>} />
                 <Route path="ImageSection" element={<MainLayout><ImageSection /></MainLayout>} />
-                <Route path="Volunteerprof" element={<MainLayout><Volunteerprof /></MainLayout>} />
+                <Route path="VolProfile" element={<MainLayout><Volunteerprof /></MainLayout>} />
                 <Route path="Requestdos" element={<MainLayout><Requestdos /></MainLayout>} />
                 <Route path="Requestsvs" element={<MainLayout><Requestsvs /></MainLayout>} />
                 <Route path="VolFormSection" element={<MainLayout><Volform /></MainLayout>} />

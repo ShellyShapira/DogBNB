@@ -52,7 +52,7 @@ function VolFormSection() {
 
     // Ensure the document reference has an even number of segments (e.g., 'users/{uid}')
     await setDoc(doc(DB(), "volunteer", currentUser.uid), updatedFormData);
-    navigate('/Volunteerprof'); // Redirect to the user's profile after submission
+    navigate('/VolProfile'); // Redirect to the user's profile after submission
   };
 
   return (

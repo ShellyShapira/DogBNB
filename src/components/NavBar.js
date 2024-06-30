@@ -3,6 +3,7 @@ import styled from 'styled-components';
 import { Link, useNavigate } from 'react-router-dom';
 import { UserContext } from '../App';
 import FormSection from './FormSection';
+import VolFormSection from './Volform';
 
 const NavbarContainer = styled.nav`
   background-color: #96C3BB;
@@ -37,10 +38,10 @@ const Navbar = ({ handleLogOut }) => {
   const getProfileLink = () => {
     if (FormSection.registrationType === 'reserved') {
       return '/mydogprofile';
-    } else if (FormData.registrationType === 'volunteer') {
-      return'/Volunteerprof';
+    } else if (VolFormSection.registrationType === 'volunteer') {
+      return'/VolProfile';
     } else {
-      return '/my-profile';
+      return '/VolProfile';
     }
   };
 

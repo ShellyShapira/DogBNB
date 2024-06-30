@@ -21,7 +21,8 @@ function FormSection() {
     dogImmune: '',
     dogNeutered: '',
     suitableFor: [],
-    dogDetails: ''
+    dogDetails: '',
+    registrationType: "reserve"
   });
 
   const navigate = useNavigate();
@@ -64,12 +65,10 @@ function FormSection() {
 
     const updatedFormData = {
       ...formData,
-      profilePic: profilePicURL,
-      registrationType: 'reserved'
+      profilePic: profilePicURL
     };
 
     await setDoc(doc(DB(), "reserved", currentUser.uid), updatedFormData);
-
     navigate('/mydogprofile'); // Redirect to the user's dog profiles after submission
   };
 
@@ -117,6 +116,7 @@ function FormSection() {
           <label htmlFor="suitableAllergens"><input type="checkbox" id="suitableAllergens" name="suitableFor" value="allergens" onChange={handleCheckboxChange} /> Allergens</label>
         </div>
         <input type="text" name="dogDetails" placeholder="Enter details that are important to know about your dog" required onChange={handleInputChange} />
+        <input type="hidden" name="registrationType" value="reserve" />
         <button type="submit">Sign up</button>
       </form>
 

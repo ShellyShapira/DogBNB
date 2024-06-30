@@ -1,7 +1,8 @@
-import React, { useContext } from 'react';
+import React, { Profiler, useContext } from 'react';
 import styled from 'styled-components';
 import { Link, useNavigate } from 'react-router-dom';
 import { UserContext } from '../App';
+import FormSection from './FormSection';
 
 const NavbarContainer = styled.nav`
   background-color: #96C3BB;
@@ -34,10 +35,10 @@ const Navbar = ({ handleLogOut }) => {
   const navigate = useNavigate();
 
   const getProfileLink = () => {
-    if (user && user.registrationType === 'reserved') {
-      navigate('/mydogprofile');
-    } else if (user && user.registrationType === 'volunteer') {
-      navigate('/MyVolunteerProfiles');
+    if (FormSection.registrationType === 'reserved') {
+      return '/mydogprofile';
+    } else if (FormData.registrationType === 'volunteer') {
+      return'/Volunteerprof';
     } else {
       return '/my-profile';
     }
@@ -50,7 +51,6 @@ const Navbar = ({ handleLogOut }) => {
         <NavbarItem><NavbarLink to="/about">About Us</NavbarLink></NavbarItem>
         <NavbarItem><NavbarLink to={getProfileLink()}>My Profile</NavbarLink></NavbarItem>
         <NavbarItem><NavbarLink to="/requests">Requests</NavbarLink></NavbarItem>
-        
       </NavbarList>
     </NavbarContainer>
   );

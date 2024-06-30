@@ -4,13 +4,11 @@ import React, { useEffect, useState, createContext } from 'react';
 import './App.css';
 import Home from './components/Home';
 import RegisterReserved from './components/RegisterReserved';
-import RegisterVolunteer from './components/RegisterVolunteer';
 import About from './components/About';
 import DogProfiles from './components/DogProfiles';
 import DogSitters from './components/DogSitters';
 import ImageSection from './components/ImageSection';
 import MyDogProfiles from './components/MyDogProfiles';
-import MyVolunteerProfile from './components/MyVolunteerProfile';
 import Requestdos from './components/Requestdos';
 import RequestsMain from './components/RequestsMain';
 import Requestsvs from './components/Requestsvs';
@@ -20,6 +18,9 @@ import { getAuth } from "firebase/auth";
 import Feed from './components/Feed';
 import MainLayout from './layouts/MainLayout';
 import { InitializeFirebase } from './components/Config';
+import Volform from './components/Volform';
+import Volunteerprof from './components/Volunteerprof';
+import RegisterVolunteer from './components/Volregister';
 
 export const UserContext = createContext(null);
 
@@ -62,18 +63,19 @@ function App() {
                 <Route path="my-profile" element={<MainLayout><MyDogProfiles /></MainLayout>} />
                 <Route path="requests" element={<MainLayout><RequestsMain /></MainLayout>} />
                 <Route path="reserved" exact element={<RegisterReserved />} />,
-                <Route path="volunteer" exact element={<RegisterVolunteer />} />,
                 <Route path="DogProfiles" element={<MainLayout><DogProfiles /></MainLayout>} />
                 <Route path="DogSitters" element={<MainLayout><DogSitters /></MainLayout>} />
                 <Route path="FormSection" element={<MainLayout><FormSection /></MainLayout>} />
                 <Route path="ImageSection" element={<MainLayout><ImageSection /></MainLayout>} />
-                <Route path="MyVolunteerProfiles" element={<MainLayout><MyVolunteerProfile /></MainLayout>} />
+                <Route path="Volunteerprof" element={<MainLayout><Volunteerprof /></MainLayout>} />
                 <Route path="Requestdos" element={<MainLayout><Requestdos /></MainLayout>} />
                 <Route path="Requestsvs" element={<MainLayout><Requestsvs /></MainLayout>} />
-                <Route path="VolunteerProfiles" element={<MainLayout><VolunteerProfiles /></MainLayout>} />
+                <Route path="VolFormSection" element={<MainLayout><Volform /></MainLayout>} />
                 <Route path="dog-profile/:id" element={<MainLayout><DogProfiles /></MainLayout>} />
                 <Route path="volunteer-profile/:id" element={<MainLayout><VolunteerProfiles /></MainLayout>} />
                 <Route path="MydogProfile" element={<MainLayout><MyDogProfiles /></MainLayout>} />
+                <Route path="volunteer" element={<MainLayout><RegisterVolunteer /></MainLayout>} />
+
               </>
             )}
             <Route path="*" element={<Navigate replace to="/" />} />

@@ -4,6 +4,8 @@ import { Link, useNavigate } from 'react-router-dom';
 import { UserContext } from '../App';
 import FormSection from './FormSection';
 import VolFormSection from './Volform';
+import { registrationType } from './FormSection';
+import { registrationType2 } from './Volform';
 
 const NavbarContainer = styled.nav`
   background-color: #96C3BB;
@@ -35,10 +37,11 @@ const Navbar = ({ handleLogOut }) => {
   const { user } = useContext(UserContext);
   const navigate = useNavigate();
 
+
   const getProfileLink = () => {
-    if (FormSection.registrationType === 'reserved') {
+    if (registrationType === 'reserved') {
       return '/mydogprofile';
-    } else if (VolFormSection.registrationType === 'volunteer') {
+    } else if (registrationType2 === 'volunteer') {
       return'/VolProfile';
     } else {
       return '/VolProfile';

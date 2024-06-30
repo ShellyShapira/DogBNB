@@ -7,6 +7,7 @@ import { setDoc, doc } from "firebase/firestore";
 import { getStorage, ref, uploadBytes, getDownloadURL } from "firebase/storage";
 import { Link } from 'react-router-dom';
 
+let registrationType = "reserve"
 function FormSection() {
   const currentUser = GetCurrentUser();
   const [profilePic, setProfilePic] = useState('');
@@ -14,7 +15,8 @@ function FormSection() {
     name: currentUser.displayName,
     dogName: '',
     mobile: '',
-    registrationType: "reserve"
+    address: '',
+    registrationType: registrationType
   });
 
   const navigate = useNavigate();
@@ -67,6 +69,7 @@ function FormSection() {
         <input type="text" name="name" value={formData.name} placeholder="Enter your full name" required onChange={handleInputChange} />
         <input type="text" name="mobile" placeholder="Enter your phone number" required onChange={handleInputChange} />
         <input type="text" name="dogName" placeholder="Enter your dog name" required onChange={handleInputChange} />
+        <input type="text" name="address" placeholder="Enter your city address" required onChange={handleInputChange} />
         <input type="hidden" name="registrationType" value="reserve" />
         <button type="submit">Sign up</button>
       </form>
@@ -75,5 +78,5 @@ function FormSection() {
     </div>
   );
 }
-
+export {registrationType};
 export default FormSection;

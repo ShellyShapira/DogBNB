@@ -7,6 +7,7 @@ import { setDoc, doc } from "firebase/firestore";
 import { getStorage, ref, uploadBytes, getDownloadURL } from "firebase/storage";
 import { Link } from 'react-router-dom'; // Import Link
 
+let registrationType2 = "volunteer"
 function VolFormSection() {
   const currentUser = GetCurrentUser();
   const [profilePic, setProfilePic] = useState('');
@@ -14,7 +15,7 @@ function VolFormSection() {
     name: currentUser.displayName,
     mobile: '',
     address: '',
-    registrationType: "volunteer"
+    registrationType: registrationType2
   });
 
   const navigate = useNavigate();
@@ -73,9 +74,9 @@ function VolFormSection() {
         <button type="submit">Sign up</button>
       </form>
 
-      <Link to='/volunteer'>Are you a volunteer? click here to sign up!</Link>
+      <Link to='/reserved'>Are you a reserved? click here to sign up!</Link>
     </div>
   );
 }
-
+export {registrationType2};
 export default VolFormSection;

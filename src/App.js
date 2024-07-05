@@ -19,8 +19,13 @@ import Feed from './components/Feed';
 import MainLayout from './layouts/MainLayout';
 import { InitializeFirebase } from './components/Config';
 import Volform from './components/Volform';
-import Volunteerprof from './components/Volunteerprof';
 import RegisterVolunteer from './components/Volregister';
+import VolProfile from './components/Volunteerprof';
+import { getDoc, setDoc, doc } from "firebase/firestore";
+import { getApp } from "firebase/app";
+
+import { DB } from './components/Config';
+
 
 export const UserContext = createContext(null);
 
@@ -29,24 +34,40 @@ InitializeFirebase();
 function App() {
   const [isLoading, setIsLoading] = useState(true);
   const [user, setUser] = useState(null);
-  const [registrationType, setRegistrationType] = useState('reserve'); // Default registration type
+
+  const updateUserDetails = async (details) => {
+    console.log(details);
+    const currentUser = getAuth(getApp()).currentUser;
+    await setDoc(doc(DB(), "users", currentUser.uid), details);
+
+    setUser((prev) => { return {...prev, details}});
+  }
 
   useEffect(() => {
     const auth = getAuth();
     auth.onAuthStateChanged((firebaseUser) => {
-      setIsLoading(false);
       if (!firebaseUser) {
+        setIsLoading(false);
         return;
       }
-      setUser({ firebaseUser, isNewUser: false });
 
-      // Example: Determine registration type based on user data or context
-      // Here, assuming some logic to determine registration type
-      if (user='volunteer') {
-        setRegistrationType('volunteer');
-      } else {
-        setRegistrationType('reserve');
+      const GetCurrentUserDetails = async () => {
+        const currentUser = getAuth(getApp()).currentUser;
+      
+        const docRef = doc(DB(), 'users', currentUser.uid);
+        const docSnap = await getDoc(docRef);
+        if (docSnap.exists()) {
+          const data = docSnap.data();
+          return data;
+        }
+      
+        return null;
       }
+
+      GetCurrentUserDetails().then((details) => {
+        setUser({ firebaseUser, isNewUser: false, details });
+        setIsLoading(false);
+      })
     });
   }, []);
 
@@ -63,7 +84,7 @@ function App() {
 
   return (
     <div className="App">
-      <UserContext.Provider value={{ user: user, setUser: setUser }}>
+      <UserContext.Provider value={{ user, setUser, updateUserDetails }}>
           <Routes>
             <Route path="/" element={<Home />} />
             {isLoggedIn && (
@@ -78,7 +99,7 @@ function App() {
                 <Route path="DogSitters" element={<MainLayout><DogSitters /></MainLayout>} />
                 <Route path="FormSection" element={<MainLayout><FormSection /></MainLayout>} />
                 <Route path="ImageSection" element={<MainLayout><ImageSection /></MainLayout>} />
-                <Route path="VolProfile" element={<MainLayout><Volunteerprof /></MainLayout>} />
+                <Route path="VolProfile" element={<MainLayout><VolProfile /></MainLayout>} />
                 <Route path="Requestdos" element={<MainLayout><Requestdos /></MainLayout>} />
                 <Route path="Requestsvs" element={<MainLayout><Requestsvs /></MainLayout>} />
                 <Route path="VolFormSection" element={<MainLayout><Volform /></MainLayout>} />

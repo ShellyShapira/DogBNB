@@ -1,18 +1,17 @@
-import React, { useState } from 'react';
+import React, { useContext, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import profile from '../images/profile.jpg'; // Import the profile image
 import styles from '../styles/FormSection.module.css';
-import { DB, GetCurrentUser } from './Config';
-import { setDoc, doc } from "firebase/firestore";
 import { getStorage, ref, uploadBytes, getDownloadURL } from "firebase/storage";
 import { Link } from 'react-router-dom'; // Import Link
+import { UserContext } from '../App';
 
 let registrationType2 = "volunteer"
 function VolFormSection() {
-  const currentUser = GetCurrentUser();
+  const {user, updateUserDetails} = useContext(UserContext);
   const [profilePic, setProfilePic] = useState('');
   const [formData, setFormData] = useState({
-    name: currentUser.displayName,
+    name: user.firebaseUser.displayName,
     mobile: '',
     address: '',
     registrationType: registrationType2
@@ -41,7 +40,7 @@ function VolFormSection() {
     event.preventDefault();
     const profilePicFile = new FormData(event.target).get('profilePic');
     const storage = getStorage();
-    const storageRef = ref(storage, `profile_pics/${currentUser.uid}`);
+    const storageRef = ref(storage, `profile_pics/${user.firebaseUser.uid}`);
 
     await uploadBytes(storageRef, profilePicFile);
     const profilePicURL = await getDownloadURL(storageRef);
@@ -52,7 +51,7 @@ function VolFormSection() {
     };
 
     // Ensure the document reference has an even number of segments (e.g., 'users/{uid}')
-    await setDoc(doc(DB(), "volunteer", currentUser.uid), updatedFormData);
+    await updateUserDetails(updatedFormData);
     navigate('/VolProfile'); // Redirect to the user's profile after submission
   };
 

@@ -1,15 +1,17 @@
-import React, { useState } from 'react';
+import React, { useContext, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import dogProfile from '../images/dog_profile.png';
 import styles from '../styles/FormSection.module.css';
-import { DB, GetCurrentUser } from './Config';
+import { DB } from './Config';
 import { setDoc, doc } from "firebase/firestore";
 import { getStorage, ref, uploadBytes, getDownloadURL } from "firebase/storage";
 import { Link } from 'react-router-dom';
+import { UserContext } from '../App';
 
 let registrationType = "reserve"
 function FormSection() {
-  const currentUser = GetCurrentUser();
+  const { user, updateUserDetails } = useContext(UserContext);
+  const currentUser = user.firebaseUser;
   const [profilePic, setProfilePic] = useState('');
   const [formData, setFormData] = useState({
     name: currentUser.displayName,
@@ -51,7 +53,7 @@ function FormSection() {
       profilePic: profilePicURL
     };
 
-    await setDoc(doc(DB(), "reserved", currentUser.uid), updatedFormData);
+    await updateUserDetails(updatedFormData);
     navigate('/mydogprofile'); // Redirect to the user's dog profiles after submission
   };
 

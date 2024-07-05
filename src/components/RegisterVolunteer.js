@@ -1,17 +1,19 @@
-import React, { useState } from 'react';
+import React, { useContext, useState } from 'react';
 import styles from '../styles/RegisterVolunteer.module.css';
 import defaultProfile from '../images/profile.jpg'; // Import the profile image
 import ImageSection from './ImageSection';
 import { Link } from 'react-router-dom';
-import { DB, GetCurrentUser } from './Config';
+import { DB } from './Config';
 import { setDoc, doc } from "firebase/firestore";
 import { getStorage, ref, uploadBytes } from "firebase/storage";
+import { UserContext } from '../App';
 
 
 
 const RegisterVolunteer = () => {
+    const { user } = useContext(UserContext);
     const [profilePic, setProfilePic] = useState('');
-    const [name, setName] = useState(GetCurrentUser().displayName);
+    const [name, setName] = useState(user.firebaseUser.displayName);
 
     const handleImageChange = (event) => {
         const file = event.target.files[0];
@@ -30,12 +32,12 @@ const RegisterVolunteer = () => {
 
         const {profilePic} = formData;
         const storage = getStorage();
-        const storageRef = ref(storage, GetCurrentUser().uid);
+        const storageRef = ref(storage, user.firebaseUser.uid);
         
         await uploadBytes(storageRef, profilePic);
 
         delete formData['profilePic'];
-        await setDoc(doc(DB(), "volunteers", GetCurrentUser().uid), formData);
+        await setDoc(doc(DB(), "users", user.firebaseUser.uid), {...formData, 'type': 'volunteer'});
     };
 
     const handleNameChanged = (event) => {

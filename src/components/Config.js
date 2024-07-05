@@ -1,6 +1,6 @@
 import { getApp, initializeApp } from "firebase/app";
 import { getAuth } from "firebase/auth";
-import { getFirestore } from "firebase/firestore";
+import { getFirestore, getDoc, doc } from "firebase/firestore";
 
 
 const firebaseConfig = {
@@ -23,5 +23,4 @@ const firebaseConfig = {
 
 export const DB = () => getFirestore(getApp());
 export const InitializeFirebase = initializeFirebase;
-export const GetCurrentUser = () => getAuth(getApp()).currentUser;
 export const LogOut = logOut;

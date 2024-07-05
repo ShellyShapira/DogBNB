@@ -2,10 +2,6 @@ import React, { Profiler, useContext } from 'react';
 import styled from 'styled-components';
 import { Link, useNavigate } from 'react-router-dom';
 import { UserContext } from '../App';
-import FormSection from './FormSection';
-import VolFormSection from './Volform';
-import { registrationType } from './FormSection';
-import { registrationType2 } from './Volform';
 
 
 const NavbarContainer = styled.nav`
@@ -38,11 +34,15 @@ const Navbar = ({ handleLogOut }) => {
   const { user } = useContext(UserContext);
   const navigate = useNavigate();
 
+  const getProfileLink = () => { 
+    if (user.details == null)
+    {
+      return '/VolProfile';
+    }
 
-  const getProfileLink = () => {
-    if (registrationType === 'reserved') {
-      return '/mydogprofile';
-    } else if (registrationType2 === 'volunteer') {
+    if (user.details.registrationType === 'reserve') {
+      return '/MydogProfile';
+    } else if (user.details.registrationType === 'volunteer') {
       return'/VolProfile';
     } else {
       return '/VolProfile';

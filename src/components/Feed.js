@@ -1,11 +1,14 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
 import '../styles/Feed.css';
 import { FaFilter, FaPlus } from 'react-icons/fa';
 import { doc, getDoc } from "firebase/firestore";
-import { DB, GetCurrentUser } from './Config';
+import { DB } from './Config';
+import { UserContext } from '../App';
 
 const Feed = () => {
+    const { user } = useContext(UserContext);
+
     const [showFilter, setShowFilter] = useState(false);
     const [showAddPost, setShowAddPost] = useState(false);
     const [posts, setPosts] = useState([
@@ -49,26 +52,9 @@ const Feed = () => {
         return `${day}/${month}/${year.substring(2)}`;
     };
 
-    const fetchDogProfile = async () => {
-        const user = GetCurrentUser();
-        if (user) {
-            const docRef = doc(DB(), 'reserved', user.uid); // Adjust collection name as needed
-            const docSnap = await getDoc(docRef);
-            if (docSnap.exists()) {
-                return docSnap.data();
-            } else {
-                console.log('No such document!');
-                return null;
-            }
-        } else {
-            console.log('No user logged in!');
-            return null;
-        }
-    };
-
     const addPost = async (e) => {
         e.preventDefault();
-        const profile = await fetchDogProfile();
+        const profile = user.details;
         if (profile) {
             const newPost = {
                 id: posts.length + 1,

@@ -1,8 +1,7 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useContext } from 'react';
 import Collapsible from 'react-collapsible';
 import styled, { createGlobalStyle } from 'styled-components';
-import { DB, GetCurrentUser } from './Config';
-import { doc, getDoc } from "firebase/firestore";
+import { UserContext } from '../App';
 
 const GlobalStyle = createGlobalStyle`
   :root {
@@ -162,9 +161,9 @@ const DogProfileCard = ({ profile, onSave }) => {
     setIsEditing(true);
   };
 
-  const handleSaveClick = () => {
+  const handleSaveClick = async () => {
     setIsEditing(false);
-    onSave(formData); // Save the updated profile data
+    await onSave(formData); // Save the updated profile data
   };
 
   const handleChange = (e) => {
@@ -347,41 +346,11 @@ const DogProfileCard = ({ profile, onSave }) => {
 };
 
 const MyProfile = () => {
-  const [profileData, setProfileData] = useState(null);
-
-  useEffect(() => {
-    const fetchProfileData = async () => {
-      const user = GetCurrentUser();
-      if (user) {
-        const docRef = doc(DB(), 'reserved', user.uid); // Fetching from 'reserved' collection
-        const docSnap = await getDoc(docRef);
-        if (docSnap.exists()) {
-          const data = docSnap.data();
-          // Ensure suitableFor is always an array
-          if (!data.suitableFor) {
-            data.suitableFor = [];
-          }
-          setProfileData(data);
-        } else {
-          console.log('No such document!');
-        }
-      }
-    };
-
-    fetchProfileData();
-  }, []);
-
-  const handleSaveProfile = (updatedProfile) => {
-    setProfileData(updatedProfile);
-  };
-
-  if (!profileData) {
-    return <div>Loading...</div>;
-  }
+  const {user, updateUserDetails} = useContext(UserContext);
 
   return (
     <div>
-      <DogProfileCard profile={profileData} onSave={handleSaveProfile} />
+      <DogProfileCard profile={user.details} onSave={updateUserDetails} />
     </div>
   );
 };

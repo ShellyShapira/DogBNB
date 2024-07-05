@@ -1,8 +1,7 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useContext } from 'react';
 import Collapsible from 'react-collapsible';
 import styled, { createGlobalStyle } from 'styled-components';
-import { DB, GetCurrentUser } from './Config';
-import { doc, getDoc } from "firebase/firestore";
+import { UserContext } from '../App';
 
 const GlobalStyle = createGlobalStyle`
   :root {
@@ -162,9 +161,9 @@ const VolProfileCard = ({ profile, onSave }) => {
     setIsEditing(true);
   };
 
-  const handleSaveClick = () => {
+  const handleSaveClick = async () => {
     setIsEditing(false);
-    onSave(formData); // Save the updated profile data
+    await onSave(formData); // Save the updated profile data
   };
 
   const handleChange = (e) => {
@@ -346,36 +345,12 @@ const VolProfileCard = ({ profile, onSave }) => {
 };
 
 const VolProfile = () => {
-  const [profileData, setProfileData] = useState(null);
+  const {user, updateUserDetails} = useContext(UserContext);
 
-  useEffect(() => {
-    const fetchProfileData = async () => {
-      const user = GetCurrentUser();
-      if (user) {
-        const docRef = doc(DB(), 'volunteer', user.uid); // Fetching from 'volunteer' collection
-        const docSnap = await getDoc(docRef);
-        if (docSnap.exists()) {
-          setProfileData(docSnap.data());
-        } else {
-          console.log('No such document!');
-        }
-      }
-    };
-
-    fetchProfileData();
-  }, []);
-
-  const handleSaveProfile = (updatedProfile) => {
-    setProfileData(updatedProfile);
-  };
-
-  if (!profileData) {
-    return <div>Loading...</div>;
-  }
-
+  console.log(user.details)
   return (
     <div>
-      <VolProfileCard profile={profileData} onSave={handleSaveProfile} />
+      <VolProfileCard profile={user.details} onSave={updateUserDetails} />
     </div>
   );
 };

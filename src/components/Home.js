@@ -24,7 +24,8 @@ function Home() {
             const user = result.user;            
             const additionalInfo = getAdditionalUserInfo(result);
             
-            setUser({ user, isNewUser: additionalInfo.isNewUser });
+            console.log({ user, isNewUser: additionalInfo.isNewUser })
+            setUser({ user, isNewUser: additionalInfo.isNewUser, details: null });
             // ...
         }).catch((error) => {
             // Handle Errors here.
@@ -38,8 +39,10 @@ function Home() {
         });
     }
 
+    console.log(user)
     useEffect(() => {
-        if (user && !user.isNewUser) {
+        if (user && user.isNewUser !== true && user.details !== null) {
+            console.log('not new user!!');
             navigate('/feed');
         }
     }, [user, navigate]);
@@ -56,7 +59,7 @@ function Home() {
         );
     }
 
-    if (user.isNewUser === true) {
+    if (user.isNewUser === true || user.details === null) {
         return (
         <div style={{ backgroundColor: '#d3d3d3', minHeight: '100vh', textAlign: 'center', padding: '20px' }}>
             <img src={logo} alt="Company Logo" style={{ width: '150px', marginBottom: '30px' }} />

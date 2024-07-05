@@ -269,7 +269,7 @@ const DogProfileCard = ({ profile }) => {
           </DetailRow>
           <DetailRow>
             <DetailLabel><strong>Suitable For:</strong></DetailLabel>
-            <DetailValue>{profile.suitableFor ? profile.suitableFor.join(', ') : 'N/A'}</DetailValue>
+            <DetailValue>{profile.suitableFor && typeof profile.suitableFor == typeof [] ? profile.suitableFor.join(', ') : 'N/A'}</DetailValue>
           </DetailRow>
           <DetailRow>
             <DetailLabel><strong>Friendly with children:</strong></DetailLabel>

@@ -37,7 +37,7 @@ const Navbar = ({ handleLogOut }) => {
   const getProfileLink = () => { 
     if (user.details == null)
     {
-      return '/VolProfile';
+      return '/';
     }
 
     if (user.details.registrationType === 'reserve') {

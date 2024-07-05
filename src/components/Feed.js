@@ -2,7 +2,7 @@ import React, { useState, useEffect, useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
 import '../styles/Feed.css';
 import { FaFilter, FaPlus } from 'react-icons/fa';
-import { doc, getDoc } from "firebase/firestore";
+import { addDoc, collection, doc, getDoc, onSnapshot } from "firebase/firestore";
 import { DB } from './Config';
 import { UserContext } from '../App';
 
@@ -11,17 +11,7 @@ const Feed = () => {
 
     const [showFilter, setShowFilter] = useState(false);
     const [showAddPost, setShowAddPost] = useState(false);
-    const [posts, setPosts] = useState([
-        { id: 1, image: 'images/dog1.jpg', name: 'Bulu', city: 'Segula', description: 'A friendly dog', startDate: '09/09/24', endDate: '19/09/24', gender: 'female', needsGarden: 'no' },
-        { id: 2, image: 'images/dog2.jpg', name: 'Max', city: 'Jerusalem', description: 'Loves to play', startDate: '10/08/24', endDate: '24/08/24', gender: 'male', needsGarden: 'Yes' },
-        { id: 3, image: 'images/dog3.jpg', name: 'Bella', city: 'Raanana', description: 'Very cuddly', startDate: '10/06/24', endDate: '13/06/24', gender: 'female', needsGarden: 'no' },
-        { id: 4, image: 'images/dog4.jpg', name: 'Charlie', city: 'Yeruham', description: 'Enjoys long walks', startDate: '10/06/24', endDate: '10/09/24', gender: 'male', needsGarden: 'Yes' },
-        { id: 5, image: 'images/dog5.jpg', name: 'Lucy', city: 'Tel-Aviv', description: 'Great with kids', startDate: '07/06/24', endDate: '07/07/24', gender: 'female', needsGarden: 'Yes' },
-        { id: 6, image: 'images/dog6.jpg', name: 'Daisy', city: 'Haifa', description: 'Loves treats', startDate: '12/06/24', endDate: '22/10/24', gender: 'female', needsGarden: 'no' },
-        { id: 7, image: 'images/dog7.jpg', name: 'Rocky', city: 'Kiryat-Gat', description: 'Very energetic', startDate: '12/06/24', endDate: '23/10/24', gender: 'male', needsGarden: 'Yes' },
-        { id: 8, image: 'images/dog8.jpg', name: 'Molly', city: 'Zefat', description: 'Super friendly', startDate: '15/08/24', endDate: '27/08/24', gender: 'female', needsGarden: 'Yes' },
-        { id: 9, image: 'images/dog9.jpg', name: 'Duke', city: 'Michmoret', description: 'Great guard dog', startDate: '03/06/24', endDate: '26/03/24', gender: 'male', needsGarden: 'Yes' },
-    ]);
+    const [posts, setPosts] = useState([]);
 
     const navigate = useNavigate();
 
@@ -29,6 +19,34 @@ const Feed = () => {
     const [filterDuration, setFilterDuration] = useState('');
     const [filterGender, setFilterGender] = useState('');
     const [filterNeedsGarden, setFilterNeedsGarden] = useState('');
+
+    const uploadPost = async (post) => {
+        await addDoc(collection(DB(), "posts"), post);
+    }
+
+    const fillOwnerDetails = async (post) => {
+        const postData = post.data();
+        const postOwnerDetails = (await getDoc(doc(DB(), "users", postData.postOwnerUid))).data();
+
+        return {
+                id: post.id,
+                image: postOwnerDetails.profilePic,
+                name: postOwnerDetails.dogName,
+                city: postOwnerDetails.address,
+                description: postOwnerDetails.dogDetails,
+                startDate: postData.startDate,
+                endDate: postData.endDate
+            }
+    }
+
+
+    useEffect(() => {
+        onSnapshot(collection(DB(), "posts"), async (snapshot) => {
+            const updatedPosts = await Promise.all(snapshot.docs.map(async (post) =>await fillOwnerDetails(post)));
+            
+            setPosts(updatedPosts);
+        });
+    }, []);
 
     const clearFilters = () => {
         setFilterCity('');
@@ -55,19 +73,23 @@ const Feed = () => {
     const addPost = async (e) => {
         e.preventDefault();
         const profile = user.details;
-        if (profile) {
-            const newPost = {
-                id: posts.length + 1,
-                image: profile.profilePic || 'images/default_dog.jpg', // Use a default image if not provided
-                name: profile.dogName || 'Your Dog',
-                city: profile.address || 'Your City',
-                description: profile.dogDetails || 'a cute and loving dog', // Ensure this matches your profile field
-                startDate: reformatDate(e.target.elements.startDate.value),
-                endDate: reformatDate(e.target.elements.endDate.value),
-            };
-            setPosts([newPost, ...posts]);
-            setShowAddPost(false);
+        if (!profile) {
+            return;
         }
+
+        const newPost = {
+            postOwnerUid: user.firebaseUser.uid,
+            // id: posts.length + 1,
+            // image: profile.profilePic || 'images/default_dog.jpg', // Use a default image if not provided
+            // name: profile.dogName || 'Your Dog',
+            // city: profile.address || 'Your City',
+            // description: profile.dogDetails || 'a cute and loving dog', // Ensure this matches your profile field
+            startDate: reformatDate(e.target.elements.startDate.value),
+            endDate: reformatDate(e.target.elements.endDate.value),
+        };
+        await uploadPost(newPost);
+        //setPosts([newPost, ...posts]);
+        setShowAddPost(false);
     };
 
     const calculateDurationInDays = (startDate, endDate) => {
@@ -96,7 +118,8 @@ const Feed = () => {
         <div className="container">
             <div className="header-buttons">
                 <button onClick={toggleFilter}><FaFilter /> Filter</button>
-                <button onClick={toggleAddPost}><FaPlus /> Add Post</button>
+                {user.details.registrationType !== "volunteer" &&
+                 <button onClick={toggleAddPost}><FaPlus /> Add Post</button>}
             </div>
 
             {showFilter && (

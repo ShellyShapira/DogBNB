@@ -57,8 +57,10 @@ function VolFormSection() {
 
   return (
     <div className={styles["form-section"]}>
-      <h1>Thank you for your service,<br />some details about you:</h1>
-      <p className={styles["intro"]}>Let's get started</p>
+      {/* <h1>Thank you for joining DogBNB,<br />some details about you:</h1> */}
+      <p className={styles["intro"]} style={{ fontSize: '40px', fontStyle: 'italic', fontFamily: 'Caveat, cursive' }}>
+      Thank you for joining DogBNB! Let's get started
+      </p>
       <form id="signup-form" onSubmit={handleSubmit}>
         <div className={styles["profile-picture"]}>
           <label htmlFor="profilePic" className={styles["profile-pic-label"]}>

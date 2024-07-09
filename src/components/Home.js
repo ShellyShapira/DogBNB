@@ -4,9 +4,15 @@ import { GoogleAuthProvider, getAdditionalUserInfo } from "firebase/auth";
 import { getAuth, signInWithPopup } from "firebase/auth";
 import { UserContext } from "../App";
 import { LogOut } from "./Config";
+import { useSpring, animated } from "@react-spring/web";
+import { ReactSVG } from 'react-svg'; // ייבוא הספרייה
 import logo from '../images/logo.png'; 
 
+
+
 const provider = new GoogleAuthProvider();
+
+
 
 function Home() {
     const { user, setUser } = useContext(UserContext);
@@ -81,6 +87,7 @@ function Home() {
             <button onClick={handleLogOut} style={{ padding: '10px 20px', fontSize: '16px', cursor: 'pointer', width: '200px', display: 'block', margin: '10px auto' }}>
               Log out
             </button>
+
         </div>
         );
     }

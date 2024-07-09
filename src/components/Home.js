@@ -4,8 +4,8 @@ import { GoogleAuthProvider, getAdditionalUserInfo } from "firebase/auth";
 import { getAuth, signInWithPopup } from "firebase/auth";
 import { UserContext } from "../App";
 import { LogOut } from "./Config";
-import { useSpring, animated } from "@react-spring/web";
-import { ReactSVG } from 'react-svg'; // ייבוא הספרייה
+//import { useSpring, animated } from "@react-spring/web";
+//import { ReactSVG } from 'react-svg'; // ייבוא הספרייה
 import logo from '../images/logo.png'; 
 
 
@@ -57,7 +57,7 @@ function Home() {
         return (
             <div style={{ backgroundColor: '#d3d3d3', minHeight: '100vh', textAlign: 'center', padding: '20px' }}>
                 <img src={logo} alt="Company Logo" style={{ width: '150px' }} />
-                <p style={{ fontSize: '26px' , textDecoration: 'underline'}}>Welcome to Dog BNB!</p>
+                <p style={{ fontSize: '40px', fontStyle: 'italic', fontFamily: 'Caveat, cursive' }}>Welcome to Dogbnb!</p>
                 <p>On our website you can find a solution for your dog while you are in reserve</p>
                 <p>And amazing dog-loving volunteers who will take care of your dog</p>
                 <button onClick={onSignIn} style={{ padding: '10px 20px', fontSize: '16px', cursor: 'pointer', width: '200px' }}>Sign in with Google</button> 

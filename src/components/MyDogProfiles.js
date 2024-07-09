@@ -58,7 +58,7 @@ const ProfileHeader = styled.div`
   align-items: center;
   margin-bottom: 20px;
   padding: 20px;
-  background-color: #CDD8D2;
+  background-color: #DCE2E4;
   border-radius: 10px;
 `;
 
@@ -206,7 +206,7 @@ const Button = styled.button`
 `;
 
 const TitleSection = styled.div`
-  background-color: #CDD8D2;
+  background-color: #DCE2E4;
   padding: 10px;
   border-radius: 10px 10px 0 0;
   margin: -20px -20px 20px -20px; /* Adjust based on the card's padding */

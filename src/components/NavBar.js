@@ -55,8 +55,8 @@ const Navbar = ({ handleLogOut }) => {
         <NavbarItem><NavbarLink to="/feed">Home</NavbarLink></NavbarItem>
         <NavbarItem><NavbarLink to="/about">About Us</NavbarLink></NavbarItem>
         <NavbarItem><NavbarLink to={getProfileLink()}>My Profile</NavbarLink></NavbarItem>
-        <NavbarItem><NavbarLink to="/requests">Request-volunteer</NavbarLink></NavbarItem>
-        <NavbarItem><NavbarLink to="/requests-2">Requests-reserve</NavbarLink></NavbarItem>
+        {/* <NavbarItem><NavbarLink to="/requests">Request-volunteer</NavbarLink></NavbarItem>
+        <NavbarItem><NavbarLink to="/requests-2">Requests-reserve</NavbarLink></NavbarItem> */}
       </NavbarList>
     </NavbarContainer>
   );

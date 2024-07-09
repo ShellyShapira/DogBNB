@@ -63,13 +63,28 @@ function Home() {
         return (
         <div style={{ backgroundColor: '#d3d3d3', minHeight: '100vh', textAlign: 'center', padding: '20px' }}>
             <img src={logo} alt="Company Logo" style={{ width: '150px', marginBottom: '30px' }} />
-            <Link to='reserved' style={{ display: 'block', margin: '10px 0' }}>reserved</Link>
-            <div />
-            <Link to='volunteer' style={{ display: 'block', margin: '10px 0' }}>volunteer</Link>
-            <button onClick={handleLogOut} style={{ padding: '10px 20px', fontSize: '16px', cursor: 'pointer', width: '200px' }}>Log out</button>
+            
+            <p style={{ fontSize: '40px', fontStyle: 'italic', fontFamily: 'Caveat, cursive' }}>Paws and duty – we've got both covered!</p>
+
+            <Link to='reserved' style={{ textDecoration: 'none' }}>
+              <button style={{ display: 'block', margin: '10px auto', padding: '10px 20px', fontSize: '16px', cursor: 'pointer', width: '200px', backgroundColor: "#8BBBAA" }}>
+                Reserved
+              </button>
+            </Link>
+            
+            <Link to='volunteer' style={{ textDecoration: 'none' }}>
+              <button style={{ display: 'block', margin: '10px auto', padding: '10px 20px', fontSize: '16px', cursor: 'pointer', width: '200px', backgroundColor: "#8BBBAA" }}>
+                Volunteer
+              </button>
+            </Link>
+            
+            <button onClick={handleLogOut} style={{ padding: '10px 20px', fontSize: '16px', cursor: 'pointer', width: '200px', display: 'block', margin: '10px auto' }}>
+              Log out
+            </button>
         </div>
         );
     }
+    
 
     return (
         <div>

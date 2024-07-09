@@ -44,6 +44,7 @@ const Container = styled.div`
 const ProfileSection = styled.div`
   flex: 1;
   margin-right: 20px;
+  margin-top: 20px; /* Adjust this value to align with the right section */
 `;
 
 const ActionsSection = styled.div`
@@ -51,14 +52,14 @@ const ActionsSection = styled.div`
   margin-left: 20px;
 `;
 
-const Header = styled.div`
+const ProfileHeader = styled.div`
   width: 100%;
   display: flex;
   align-items: center;
   margin-bottom: 20px;
   padding: 20px;
-  background: none;
-  box-shadow: none;
+  background-color: #CDD8D2;
+  border-radius: 10px;
 `;
 
 const ProfileImage = styled.img`
@@ -190,7 +191,7 @@ const ActionButtons = styled.div`
 `;
 
 const Button = styled.button`
-  background-color: ${props => props.primary ? '#8BBBAA' : '#B05D5D'};
+  background-color: ${props => props.primary ? '#91B6A2' : '#B05D5D'};
   color: white;
   border: none;
   padding: 5px 10px;
@@ -210,7 +211,6 @@ const TitleSection = styled.div`
   border-radius: 10px 10px 0 0;
   margin: -20px -20px 20px -20px; /* Adjust based on the card's padding */
 `;
-
 
 const RequestActions = ({ requests, onAccept, onDelete }) => {
   const navigate = useNavigate();
@@ -284,19 +284,22 @@ const DogProfileCard = ({ profile, onSave, requests, sitters, onRequestAccept, o
     });
   };
 
+  // Removing extra commas from the address
+  const formattedAddress = formData.address.replace(/,+/g, ',').replace(/^,|,$/g, '').trim();
+
   return (
     <Container>
       <GlobalStyle />
       <ProfileSection>
-        <Header>
+        <ProfileHeader>
           <BasicInfo>
             <SubTitle>{formData.name}</SubTitle>
             <Text>{formData.dogName}</Text>
             <Text>{formData.dogType}, {formData.dogAge}, {formData.dogSize}</Text>
-            <Text>{formData.address}</Text>
+            <Text>{formattedAddress}</Text>
           </BasicInfo>
           <ProfileImage src={formData.profilePic} alt={`${profile.name}`} />
-        </Header>
+        </ProfileHeader>
 
         <Collapsible trigger={<CollapsibleTrigger>Dog I.D</CollapsibleTrigger>}>
           <Card>
@@ -343,39 +346,39 @@ const DogProfileCard = ({ profile, onSave, requests, sitters, onRequestAccept, o
               <>
                 <DetailRow>
                   <DetailLabel><strong>Name:</strong></DetailLabel>
-                  <DetailValue>{profile.dogName}</DetailValue>
+                  <DetailValue>{formData.dogName}</DetailValue>
                 </DetailRow>
                 <DetailRow>
                   <DetailLabel><strong>Breed:</strong></DetailLabel>
-                  <DetailValue>{profile.dogType}</DetailValue>
+                  <DetailValue>{formData.dogType}</DetailValue>
                 </DetailRow>
                 <DetailRow>
                   <DetailLabel><strong>Age:</strong></DetailLabel>
-                  <DetailValue>{profile.dogAge}</DetailValue>
+                  <DetailValue>{formData.dogAge}</DetailValue>
                 </DetailRow>
                 <DetailRow>
                   <DetailLabel><strong>Gender (Male/Female):</strong></DetailLabel>
-                  <DetailValue>{profile.dogGender}</DetailValue>
+                  <DetailValue>{formData.dogGender}</DetailValue>
                 </DetailRow>
                 <DetailRow>
                   <DetailLabel><strong>Size:</strong></DetailLabel>
-                  <DetailValue>{profile.dogSize}</DetailValue>
+                  <DetailValue>{formData.dogSize}</DetailValue>
                 </DetailRow>
                 <DetailRow>
                   <DetailLabel><strong>Immune (Y/N):</strong></DetailLabel>
-                  <DetailValue>{profile.dogImmune}</DetailValue>
+                  <DetailValue>{formData.dogImmune}</DetailValue>
                 </DetailRow>
                 <DetailRow>
                   <DetailLabel><strong>Neutered (Y/N):</strong></DetailLabel>
-                  <DetailValue>{profile.dogNeutered}</DetailValue>
+                  <DetailValue>{formData.dogNeutered}</DetailValue>
                 </DetailRow>
                 <DetailRow>
                   <DetailLabel><strong>Suitable For:</strong></DetailLabel>
-                  <DetailValue>{profile.suitableFor ? profile.suitableFor.join(', ') : 'N/A'}</DetailValue>
+                  <DetailValue>{formData.suitableFor ? formData.suitableFor.join(', ') : 'N/A'}</DetailValue>
                 </DetailRow>
                 <DetailRow>
                   <DetailLabel><strong>Friendly with children (Y/N):</strong></DetailLabel>
-                  <DetailValue>{profile.friendlyWithChildren}</DetailValue>
+                  <DetailValue>{formData.friendlyWithChildren}</DetailValue>
                 </DetailRow>
               </>
             )}
@@ -399,11 +402,11 @@ const DogProfileCard = ({ profile, onSave, requests, sitters, onRequestAccept, o
               <>
                 <DetailRow>
                   <DetailLabel><strong>Name:</strong></DetailLabel>
-                  <DetailValue>{profile.name}</DetailValue>
+                  <DetailValue>{formData.name}</DetailValue>
                 </DetailRow>
                 <DetailRow>
                   <DetailLabel><strong>Address:</strong></DetailLabel>
-                  <DetailValue>{profile.address}</DetailValue>
+                  <DetailValue>{formattedAddress}</DetailValue>
                 </DetailRow>
               </>
             )}
@@ -423,7 +426,7 @@ const DogProfileCard = ({ profile, onSave, requests, sitters, onRequestAccept, o
                 />
               </>
             ) : (
-              <Text>{profile.dogDetails}</Text>
+              <Text>{formData.dogDetails}</Text>
             )}
           </Card>
         </Collapsible>
@@ -441,7 +444,7 @@ const DogProfileCard = ({ profile, onSave, requests, sitters, onRequestAccept, o
                 />
               </>
             ) : (
-              <Text>{profile.careInstructions}</Text>
+              <Text>{formData.careInstructions}</Text>
             )}
           </Card>
         </Collapsible>

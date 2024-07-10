@@ -296,20 +296,28 @@ const PersonalDetails = ({ profile, isEditing, formData, handleChange }) => (
           <DetailLabel><strong>Address:</strong></DetailLabel>
           <input className="detail-value" name="address" value={formData.address} onChange={handleChange} />
         </DetailRow>
+        <DetailRow>
+          <DetailLabel><strong>Email:</strong></DetailLabel>
+          <input className="detail-value" name="email" value={formData.email} onChange={handleChange} />
+        </DetailRow>
       </>
     ) : (
       <>
         <DetailRow>
-          <DetailLabel><strong>Name:</strong></DetailLabel>
-          <DetailValue>{profile.name}</DetailValue>
-        </DetailRow>
-        <DetailRow>
-          <DetailLabel><strong>Address:</strong></DetailLabel>
-          <DetailValue>{profile.address}</DetailValue>
-        </DetailRow>
-      </>
-    )}
-  </Card>
+        <DetailLabel><strong>Name:</strong></DetailLabel>
+        <DetailValue>{profile.name}</DetailValue>
+      </DetailRow>
+      <DetailRow>
+        <DetailLabel><strong>Address:</strong></DetailLabel>
+        <DetailValue>{profile.address}</DetailValue>
+      </DetailRow>
+      <DetailRow>
+        <DetailLabel><strong>Email:</strong></DetailLabel>
+        <DetailValue>{profile.email}</DetailValue>
+      </DetailRow>
+    </>
+  )}
+</Card>
 );
 
 const DogProfileCard = ({ profile, onSave, requests, sitters, onRequestAccept, onRequestDelete, onSitterDelete }) => {
@@ -326,14 +334,20 @@ const DogProfileCard = ({ profile, onSave, requests, sitters, onRequestAccept, o
   };
 
   const handleChange = (e) => {
-    const { name, value } = e.target;
-    setFormData({
-      ...formData,
-      [name]: value,
-    });
+    const { name, value, type, checked } = e.target;
+    if (type === "checkbox") {
+      setFormData({
+        ...formData,
+        [name]: checked ? [...(formData[name] || []), value] : (formData[name] || []).filter(item => item !== value)
+      });
+    } else {
+      setFormData({
+        ...formData,
+        [name]: value,
+      });
+    }
   };
 
-  // Removing extra commas from the address
   const formattedAddress = formData.address.replace(/,+/g, ',').replace(/^,|,$/g, '').trim();
 
   return (
@@ -343,23 +357,14 @@ const DogProfileCard = ({ profile, onSave, requests, sitters, onRequestAccept, o
         <BasicInfo>
           <VolunteerName>{formData.name}</VolunteerName>
           <Text>{formData.dogName}</Text>
-          <Text>{formData.dogType}, {formData.dogAge}, {formData.dogSize}</Text>
+          <Text>{[formData.dogType, formData.dogAge, formData.dogSize].filter(Boolean).join(', ')}</Text>
           <Text>{formattedAddress}</Text>
         </BasicInfo>
         <ProfileImage src={formData.profilePic} alt={`${profile.name}`} />
-        <PawPrint src={pawPrint} style={{ top: '25%', left: '82%', width: '35px', height: '35px' }} rotate={-40} /> 
-        <PawPrint src={pawPrint} style={{ top: '10%', left: '78%', width: '35px', height: '35px' }} rotate={15} /> 
+        <PawPrint src={pawPrint} style={{ top: '25%', left: '82%', width: '35px', height: '35px' }} rotate={-40} />
+        <PawPrint src={pawPrint} style={{ top: '10%', left: '78%', width: '35px', height: '35px' }} rotate={15} />
         <PawPrint src={pawPrint} style={{ top: '65%', left: '80%', width: '35px', height: '35px' }} rotate={25} />
         <PawPrint src={pawPrint} style={{ top: '80%', left: '84%', width: '35px', height: '35px' }} rotate={-20} />
-        {/* <PawPrint src={pawPrint} style={{ top: '55%', left: '50%', width: '35px', height: '35px' }} rotate={-40} /> 
-        <PawPrint src={pawPrint} style={{ top: '65%', left: '45%', width: '35px', height: '35px' }} rotate={-85} /> 
-        <PawPrint src={pawPrint} style={{ top: '65%', left: '55%', width: '35px', height: '35px' }} rotate={-35} />
-        <PawPrint src={pawPrint} style={{ top: '75%', left: '60%', width: '35px', height: '35px' }} rotate={-45} />
-        <PawPrint src={pawPrint} style={{ top: '55%', left: '30%', width: '35px', height: '35px' }} rotate={-40} /> 
-        <PawPrint src={pawPrint} style={{ top: '65%', left: '65%', width: '35px', height: '35px' }} rotate={-85} /> 
-        <PawPrint src={pawPrint} style={{ top: '65%', left: '35%', width: '35px', height: '35px' }} rotate={-35} />
-        <PawPrint src={pawPrint} style={{ top: '75%', left: '40%', width: '35px', height: '35px' }} rotate={-45} />
-        <PawPrint src={pawPrint} style={{ top: '45%', left: '25%', width: '35px', height: '35px' }} rotate={-15} /> */}
       </Header>
       <ProfileSectionWrapper>
         <Section>
@@ -381,28 +386,67 @@ const DogProfileCard = ({ profile, onSave, requests, sitters, onRequestAccept, o
                     <input className="detail-value" name="dogAge" value={formData.dogAge} onChange={handleChange} />
                   </DetailRow>
                   <DetailRow>
-                    <DetailLabel><strong>Gender (Male/Female):</strong></DetailLabel>
-                    <input className="detail-value" name="dogGender" value={formData.dogGender} onChange={handleChange} />
+                    <DetailLabel><strong>Gender:</strong></DetailLabel>
+                    <label>
+                      <input type="radio" name="dogGender" value="Male" checked={formData.dogGender === 'Male'} onChange={handleChange} />
+                      Male
+                    </label>
+                    <label>
+                      <input type="radio" name="dogGender" value="Female" checked={formData.dogGender === 'Female'} onChange={handleChange} />
+                      Female
+                    </label>
                   </DetailRow>
                   <DetailRow>
                     <DetailLabel><strong>Size:</strong></DetailLabel>
-                    <input className="detail-value" name="dogSize" value={formData.dogSize} onChange={handleChange} />
+                    <label>
+                      <input type="radio" name="dogSize" value="Small" checked={formData.dogSize === 'Small'} onChange={handleChange} />
+                      Small
+                    </label>
+                    <label>
+                      <input type="radio" name="dogSize" value="Medium" checked={formData.dogSize === 'Medium'} onChange={handleChange} />
+                      Medium
+                    </label>
+                    <label>
+                      <input type="radio" name="dogSize" value="Large" checked={formData.dogSize === 'Large'} onChange={handleChange} />
+                      Large
+                    </label>
                   </DetailRow>
                   <DetailRow>
-                    <DetailLabel><strong>Immune (Y/N):</strong></DetailLabel>
-                    <input className="detail-value" name="dogImmune" value={formData.dogImmune} onChange={handleChange} />
+                    <DetailLabel><strong>Immune:</strong></DetailLabel>
+                    <label>
+                      <input type="radio" name="dogImmune" value="Yes" checked={formData.dogImmune === 'Yes'} onChange={handleChange} />
+                      Yes
+                    </label>
+                    <label>
+                      <input type="radio" name="dogImmune" value="No" checked={formData.dogImmune === 'No'} onChange={handleChange} />
+                      No
+                    </label>
                   </DetailRow>
                   <DetailRow>
-                    <DetailLabel><strong>Neutered (Y/N):</strong></DetailLabel>
-                    <input className="detail-value" name="dogNeutered" value={formData.dogNeutered} onChange={handleChange} />
+                    <DetailLabel><strong>Neutered:</strong></DetailLabel>
+                    <label>
+                      <input type="radio" name="dogNeutered" value="Yes" checked={formData.dogNeutered === 'Yes'} onChange={handleChange} />
+                      Yes
+                    </label>
+                    <label>
+                      <input type="radio" name="dogNeutered" value="No" checked={formData.dogNeutered === 'No'} onChange={handleChange} />
+                      No
+                    </label>
                   </DetailRow>
                   <DetailRow>
                     <DetailLabel><strong>Suitable For:</strong></DetailLabel>
-                    <input className="detail-value" name="suitableFor" value={formData.suitableFor} onChange={handleChange} />
-                  </DetailRow>
-                  <DetailRow>
-                    <DetailLabel><strong>Friendly with children(Y/N):</strong></DetailLabel>
-                    <input className="detail-value" name="friendlyWithChildren" value={formData.friendlyWithChildren} onChange={handleChange} />
+                    <label>
+                      <input type="checkbox" name="suitableFor" value="children" checked={formData.suitableFor?.includes('children')} onChange={handleChange} />
+                      Children
+                    </label>
+                    <label>
+                      <input type="checkbox" name="suitableFor" value="apartment" checked={formData.suitableFor?.includes('apartment')} onChange={handleChange} />
+                      Apartment
+                    </label>
+                    <label>
+                      <input type="checkbox" name="suitableFor" value="house with a yard" checked={formData.suitableFor?.includes('house with a yard')} onChange={handleChange} />
+                      House with a yard
+                    </label>
                   </DetailRow>
                 </>
               ) : (
@@ -420,7 +464,7 @@ const DogProfileCard = ({ profile, onSave, requests, sitters, onRequestAccept, o
                     <DetailValue>{formData.dogAge}</DetailValue>
                   </DetailRow>
                   <DetailRow>
-                    <DetailLabel><strong>Gender (Male/Female):</strong></DetailLabel>
+                    <DetailLabel><strong>Gender:</strong></DetailLabel>
                     <DetailValue>{formData.dogGender}</DetailValue>
                   </DetailRow>
                   <DetailRow>
@@ -428,20 +472,16 @@ const DogProfileCard = ({ profile, onSave, requests, sitters, onRequestAccept, o
                     <DetailValue>{formData.dogSize}</DetailValue>
                   </DetailRow>
                   <DetailRow>
-                    <DetailLabel><strong>Immune (Y/N):</strong></DetailLabel>
+                    <DetailLabel><strong>Immune:</strong></DetailLabel>
                     <DetailValue>{formData.dogImmune}</DetailValue>
                   </DetailRow>
                   <DetailRow>
-                    <DetailLabel><strong>Neutered (Y/N):</strong></DetailLabel>
+                    <DetailLabel><strong>Neutered:</strong></DetailLabel>
                     <DetailValue>{formData.dogNeutered}</DetailValue>
                   </DetailRow>
                   <DetailRow>
                     <DetailLabel><strong>Suitable For:</strong></DetailLabel>
                     <DetailValue>{formData.suitableFor ? formData.suitableFor.join(', ') : 'N/A'}</DetailValue>
-                  </DetailRow>
-                  <DetailRow>
-                    <DetailLabel><strong>Friendly with children (Y/N):</strong></DetailLabel>
-                    <DetailValue>{formData.friendlyWithChildren}</DetailValue>
                   </DetailRow>
                 </>
               )}
@@ -460,6 +500,10 @@ const DogProfileCard = ({ profile, onSave, requests, sitters, onRequestAccept, o
                     <DetailLabel><strong>Address:</strong></DetailLabel>
                     <input className="detail-value" name="address" value={formData.address} onChange={handleChange} />
                   </DetailRow>
+                  <DetailRow>
+                  <DetailLabel><strong>Email:</strong></DetailLabel>
+                    <input className="detail-value" name="email" value={formData.email} onChange={handleChange} />
+                  </DetailRow>
                 </>
               ) : (
                 <>
@@ -470,6 +514,10 @@ const DogProfileCard = ({ profile, onSave, requests, sitters, onRequestAccept, o
                   <DetailRow>
                     <DetailLabel><strong>Address:</strong></DetailLabel>
                     <DetailValue>{formattedAddress}</DetailValue>
+                  </DetailRow>
+                  <DetailRow>
+                    <DetailLabel><strong>Email:</strong></DetailLabel>
+                    <DetailValue>{formData.email}</DetailValue>
                   </DetailRow>
                 </>
               )}

@@ -149,6 +149,26 @@ const CollapsibleTrigger = styled.div`
   }
 `;
 
+const ModalBackground = styled.div`
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+`;
+
+const ModalContent = styled.div`
+  background: white;
+  padding: 20px;
+  border-radius: 5px;
+  text-align: center;
+`;
+
 const breeds = ['labrador', 'poodle', 'bulldog', 'beagle', 'pug', 'husky', 'goldenretriever', 'dachshund', 'rottweiler', 'chihuahua'];
 const locations = ['Jerusalem', 'Tel Aviv', 'Haifa', 'Eilat', 'Beer Sheva'];
 const firstNames = ['John', 'Jane', 'Alex', 'Emily', 'Daniel', 'Emma', 'Michael', 'Olivia', 'David', 'Sophia'];
@@ -212,6 +232,7 @@ const dogProfiles = generateDogProfiles();
 
 const DogProfileCard = ({ profile }) => {
   const [photoUrl, setPhotoUrl] = useState('');
+  const [showModal, setShowModal] = useState(false); // Add this line
 
   useEffect(() => {
     const fetchDogPhoto = async () => {
@@ -226,6 +247,11 @@ const DogProfileCard = ({ profile }) => {
 
     fetchDogPhoto();
   }, [profile.breed]);
+
+  const handleContactClick = () => {
+    setShowModal(true);
+    setTimeout(() => setShowModal(false), 3000); // Close the modal after 3 seconds
+  };
 
   return (
     <Container>
@@ -303,7 +329,15 @@ const DogProfileCard = ({ profile }) => {
         </Card>
       </Collapsible>
 
-      <ContactButton>Contact</ContactButton>
+      <ContactButton onClick={handleContactClick}>Contact</ContactButton>
+
+      {showModal && (
+        <ModalBackground>
+          <ModalContent>
+            <h3>BBsitting request sent!</h3>
+          </ModalContent>
+        </ModalBackground>
+      )}
     </Container>
   );
 };

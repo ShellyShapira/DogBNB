@@ -77,7 +77,7 @@ const BasicInfo = styled.div`
 
 const VolunteerName = styled.h2`
   font-family: arial;
-  font-size: 3rem; /* גודל כפול */
+  font-size: 3rem;
   margin: 5px 0;
   color: #555;
 `;
@@ -171,7 +171,21 @@ const TitleSection = styled.div`
   background-color: #DCE2E4;
   padding: 10px;
   border-radius: 10px 10px 0 0;
-  margin: -20px -20px 20px -20px; /* Adjust based on the card's padding */
+  margin: -20px -20px 20px -20px;
+`;
+
+const ReviewsContainer = styled.div`
+  max-height: 200px;
+  overflow-y: auto;
+  width: 100%;
+`;
+
+const ReviewCard = styled.div`
+  border: 1px solid #ddd;
+  padding: 10px;
+  margin-bottom: 10px;
+  border-radius: 5px;
+  width: 100%;
 `;
 
 const RequestItem = styled.div`
@@ -204,7 +218,7 @@ const PhoneButton = styled.a`
   display: flex;
   align-items: center;
   justify-content: center;
-  background-color: #25D366; /* WhatsApp green */
+  background-color: #25D366;
   color: white;
   padding: 5px;
   border-radius: 50%;
@@ -272,85 +286,114 @@ const PersonalDetails = ({ profile, isEditing, formData, handleChange }) => (
         </DetailRow>
         <DetailRow>
           <DetailLabel><strong>Gender:</strong></DetailLabel>
-          <input className="detail-value" name="gender" value={formData.gender} onChange={handleChange} />
+          <div>
+            <label>
+              <input type="radio" name="gender" value="Male" checked={formData.gender === 'Male'} onChange={handleChange} />
+              Male
+            </label>
+            <label>
+              <input type="radio" name="gender" value="Female" checked={formData.gender === 'Female'} onChange={handleChange} />
+              Female
+            </label>
+          </div>
         </DetailRow>
         <DetailRow>
           <DetailLabel><strong>Number of Adoptions:</strong></DetailLabel>
           <input className="detail-value" name="numberOfAdoptions" value={formData.numberOfAdoptions} onChange={handleChange} />
         </DetailRow>
         <DetailRow>
-          <DetailLabel><strong>Animal Experience (Y/M):</strong></DetailLabel>
-          <input className="detail-value" name="animalExperience" value={formData.animalExperience} onChange={handleChange} />
-        </DetailRow>
-        <DetailRow>
-          <DetailLabel><strong>Additional Animals At Home:</strong></DetailLabel>
-          <input className="detail-value" name="additionalAnimalsAtHome" value={formData.additionalAnimals} onChange={handleChange} />
-        </DetailRow>
-        <DetailRow>
-          <DetailLabel><strong>A House with a Yard: (Y/M):</strong></DetailLabel>
-          <input className="detail-value" name="yard" value={formData.yard} onChange={handleChange} />
-        </DetailRow>
-        <DetailRow>
-          <DetailLabel><strong>Children at Home (Y/M):</strong></DetailLabel>
-          <input className="detail-value" name="childrenAtHome" value={formData.childrenAtHome} onChange={handleChange} />
-        </DetailRow>
-        <DetailRow>
-          <DetailLabel><strong>Available Dates:</strong></DetailLabel>
-          <input className="detail-value" name="availableDates" value={formData.availableDates} onChange={handleChange} />
-        </DetailRow>
-        <DetailRow>
-          <DetailLabel><strong>Description:</strong></DetailLabel>
-          <textarea className="detail-value" name="description" value={formData.description} onChange={handleChange} rows="4" />
-        </DetailRow>
-      </>
-    ) : (
-      <>
-        <DetailRow>
-          <DetailLabel><strong>Name:</strong></DetailLabel>
-          <DetailValue>{profile.name}</DetailValue>
-        </DetailRow>
-        <DetailRow>
-          <DetailLabel><strong>Address:</strong></DetailLabel>
-          <DetailValue>{profile.address}</DetailValue>
-        </DetailRow>
-        <DetailRow>
-          <DetailLabel><strong>Age:</strong></DetailLabel>
-          <DetailValue>{profile.age}</DetailValue>
-        </DetailRow>
-        <DetailRow>
-          <DetailLabel><strong>Gender:</strong></DetailLabel>
-          <DetailValue>{profile.gender}</DetailValue>
-        </DetailRow>
-        <DetailRow>
-          <DetailLabel><strong>Number of Adoptions:</strong></DetailLabel>
-          <DetailValue>{profile.numberOfAdoptions}</DetailValue>
-        </DetailRow>
-        <DetailRow>
-          <DetailLabel><strong>Animal Experience (Y/M):</strong></DetailLabel>
-          <DetailValue>{profile.animalExperience}</DetailValue>
-        </DetailRow>
-        <DetailRow>
-          <DetailLabel><strong>Additional Animals At Home:</strong></DetailLabel>
-          <DetailValue>{profile.additionalAnimalsAtHome}</DetailValue>
-        </DetailRow>
-        <DetailRow>
-          <DetailLabel><strong>A House with a Yard: (Y/M):</strong></DetailLabel>
-          <DetailValue>{profile.yard}</DetailValue>
-        </DetailRow>
-        <DetailRow>
-          <DetailLabel><strong>Children at Home (Y/M):</strong></DetailLabel>
-          <DetailValue>{profile.childrenAtHome}</DetailValue>
-        </DetailRow>
-        <DetailRow>
-          <DetailLabel><strong>Available Dates:</strong></DetailLabel>
-          <DetailValue>{profile.availableDates}</DetailValue>
-        </DetailRow>
-        <DetailRow>
-          <DetailLabel><strong>Description:</strong></DetailLabel>
-          <DetailValue>{profile.description}</DetailValue>
-        </DetailRow>
-      </>
-    )}
+          <DetailLabel><strong>Animal Experience:</strong></DetailLabel>
+          <div>
+            <label>
+              <input type="radio" name="animalExperience" value="Yes" checked={formData.animalExperience === 'Yes'} onChange={handleChange} />
+              Yes
+            </label>
+            <label>
+                <input type="radio" name="animalExperience" value="No" checked={formData.animalExperience === 'No'} onChange={handleChange} />
+                No
+              </label>
+            </div>
+          </DetailRow>
+          <DetailRow>
+            <DetailLabel><strong>Additional Animals At Home:</strong></DetailLabel>
+            <div>
+              <label>
+                <input type="radio" name="additionalAnimalsAtHome" value="Yes" checked={formData.additionalAnimalsAtHome === 'Yes'} onChange={handleChange} />
+                Yes
+              </label>
+              <label>
+                <input type="radio" name="additionalAnimalsAtHome" value="No" checked={formData.additionalAnimalsAtHome === 'No'} onChange={handleChange} />
+                No
+              </label>
+            </div>
+          </DetailRow>
+          <DetailRow>
+            <DetailLabel><strong>A House with a Yard:</strong></DetailLabel>
+            <div>
+              <label>
+                <input type="radio" name="yard" value="Yes" checked={formData.yard === 'Yes'} onChange={handleChange} />
+                Yes
+              </label>
+              <label>
+                <input type="radio" name="yard" value="No" checked={formData.yard === 'No'} onChange={handleChange} />
+                No
+              </label>
+            </div>
+          </DetailRow>
+          <DetailRow>
+            <DetailLabel><strong>Children at Home:</strong></DetailLabel>
+            <div>
+              <label>
+                <input type="radio" name="childrenAtHome" value="Yes" checked={formData.childrenAtHome === 'Yes'} onChange={handleChange} />
+                Yes
+              </label>
+              <label>
+                <input type="radio" name="childrenAtHome" value="No" checked={formData.childrenAtHome === 'No'} onChange={handleChange} />
+                No
+              </label>
+            </div>
+          </DetailRow>
+        </>
+      ) : (
+        <>
+          <DetailRow>
+            <DetailLabel><strong>Name:</strong></DetailLabel>
+            <DetailValue>{profile.name}</DetailValue>
+          </DetailRow>
+          <DetailRow>
+            <DetailLabel><strong>Address:</strong></DetailLabel>
+            <DetailValue>{profile.address}</DetailValue>
+          </DetailRow>
+          <DetailRow>
+            <DetailLabel><strong>Age:</strong></DetailLabel>
+            <DetailValue>{profile.age}</DetailValue>
+          </DetailRow>
+          <DetailRow>
+            <DetailLabel><strong>Gender:</strong></DetailLabel>
+            <DetailValue>{profile.gender}</DetailValue>
+          </DetailRow>
+          <DetailRow>
+            <DetailLabel><strong>Number of Adoptions:</strong></DetailLabel>
+            <DetailValue>{profile.numberOfAdoptions}</DetailValue>
+          </DetailRow>
+          <DetailRow>
+            <DetailLabel><strong>Animal Experience:</strong></DetailLabel>
+            <DetailValue>{profile.animalExperience}</DetailValue>
+          </DetailRow>
+          <DetailRow>
+            <DetailLabel><strong>Additional Animals At Home:</strong></DetailLabel>
+            <DetailValue>{profile.additionalAnimalsAtHome}</DetailValue>
+          </DetailRow>
+          <DetailRow>
+            <DetailLabel><strong>A House with a Yard:</strong></DetailLabel>
+            <DetailValue>{profile.yard}</DetailValue>
+          </DetailRow>
+          <DetailRow>
+            <DetailLabel><strong>Children at Home:</strong></DetailLabel>
+            <DetailValue>{profile.childrenAtHome}</DetailValue>
+          </DetailRow>
+        </>
+      )}
   </Card>
 );
 
@@ -407,31 +450,19 @@ const VolProfileCard = ({ profile, onSave, requests }) => {
           </Collapsible>
           <Collapsible trigger={<CollapsibleTrigger>Reviews</CollapsibleTrigger>}>
             <Card>
-              {isEditing ? (
-                <>
-                  <DetailRow>
-                    <DetailLabel><strong>Review 1:</strong></DetailLabel>
-                    <textarea className="detail-value" name="review1" value={formData.review1} onChange={handleChange} rows="4" />
-                  </DetailRow>
-                  <DetailRow>
-                    <DetailLabel><strong>Review 2:</strong></DetailLabel>
-                    <textarea className="detail-value" name="review2" value={formData.review2} onChange={handleChange} rows="4" />
-                  </DetailRow>
-                  {/* Add more reviews as needed */}
-                </>
-              ) : (
-                <>
-                  <DetailRow>
-                    <DetailLabel><strong>Review 1:</strong></DetailLabel>
-                    <DetailValue>{profile.review1}</DetailValue>
-                  </DetailRow>
-                  <DetailRow>
-                    <DetailLabel><strong>Review 2:</strong></DetailLabel>
-                    <DetailValue>{profile.review2}</DetailValue>
-                  </DetailRow>
-                  {/* Display more reviews as needed */}
-                </>
-              )}
+              <ReviewsContainer>
+                {profile.reviews && profile.reviews.length > 0 ? (
+                  profile.reviews.map((review, index) => (
+                    <ReviewCard key={index}>
+                      <DetailLabel><strong>{review.reviewer}:</strong></DetailLabel>
+                      <DetailValue>{review.date}, {review.location}</DetailValue>
+                      <Text>{review.text}</Text>
+                    </ReviewCard>
+                  ))
+                ) : (
+                  <Text>No reviews available</Text>
+                )}
+              </ReviewsContainer>
             </Card>
           </Collapsible>
           {isEditing ? (
@@ -456,10 +487,35 @@ const VolProfile = () => {
     { id: 3, name: 'Miki Shapira', date: '12/03/24 - 11/04/2024', phone: '0555555555', avatar: '../images/dog3.jpg' },
   ]);
 
+  // הוספת ביקורות דמה לפרופיל
+  const dummyProfile = {
+    ...user.details,
+    reviews: [
+      {
+        reviewer: 'Alice',
+        date: '2023-01-01',
+        location: 'New York',
+        text: 'Great volunteer! Very reliable and kind.'
+      },
+      {
+        reviewer: 'Bob',
+        date: '2023-02-15',
+        location: 'Los Angeles',
+        text: 'Took excellent care of the animals.'
+      },
+      {
+        reviewer: 'Charlie',
+        date: '2023-03-10',
+        location: 'Chicago',
+        text: 'Would definitely recommend!'
+      }
+    ]
+  };
+
   return (
     <div>
       <VolProfileCard
-        profile={user.details}
+        profile={dummyProfile}
         onSave={updateUserDetails}
         requests={requests}
       />

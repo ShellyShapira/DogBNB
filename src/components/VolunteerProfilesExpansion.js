@@ -1,145 +1,291 @@
-import React, { useState, useEffect } from 'react';
-import '../styles/VolunteerProfiles.css';
+import React, { useEffect, useState } from 'react';
+import Collapsible from 'react-collapsible';
+import styled, { createGlobalStyle } from 'styled-components';
 
-const profiles = [
-  {
-    id: 1,
-    name: 'Sarah Cohen',
-    age: 30,
-    gender: 'Female',
-    address: 'Herzliya',
-    adoptions: 5,
-    animalExperience: 'Yes',
-    additionalAnimals: 'Yes',
-    yard: 'Yes',
-    children: 'No',
-    availableDates: '15-30/09/2024',
-    description: 'A professional with a flexible schedule. Loves all kinds of animals. Eager to volunteer and make a difference!',
-    photo: 'https://images.unsplash.com/photo-1524504388940-b1c1722653e1',
-    reviews: [
-      { reviewer: 'Dave', date: 'April 2023', location: 'Herzliya', text: 'Sarah is very professional and caring. My dog loved her!' },
-      { reviewer: 'Eve', date: 'March 2023', location: 'Tel Aviv', text: 'Sarah has a big heart for animals. Highly recommended!' },
-      { reviewer: 'Frank', date: 'February 2023', location: 'Jerusalem', text: 'Great experience. Sarah is wonderful with pets.' },
-      { reviewer: 'Grace', date: 'January 2023', location: 'Herzliya', text: 'Sarah was very attentive and loving towards my pets.' },
-      { reviewer: 'Hank', date: 'December 2022', location: 'Tel Aviv', text: 'Excellent care by Sarah. Will definitely ask her again!' }
-    ]
-  },
-  {
-    id: 2,
-    name: 'Michael Johnson',
-    age: 35,
-    gender: 'Male',
-    address: 'Tel Aviv',
-    adoptions: 3,
-    animalExperience: 'Yes',
-    additionalAnimals: 'No',
-    yard: 'No',
-    children: 'Yes',
-    availableDates: '01-15/10/2024',
-    description: 'An experienced volunteer with a love for dogs. Available for short-term fostering.',
-    photo: 'https://images.unsplash.com/photo-1522075469751-3a6694fb2f61',
-    reviews: [
-      { reviewer: 'Alice', date: 'May 2023', location: 'Tel Aviv', text: 'Michael was fantastic! Highly recommend him.' },
-      { reviewer: 'Bob', date: 'June 2023', location: 'Haifa', text: 'Great with pets and very reliable.' },
-      { reviewer: 'Charlie', date: 'July 2023', location: 'Tel Aviv', text: 'My dog loved Michael. Will definitely contact him again.' }
-    ]
+// ייבוא תמונות
+import person1 from '../images/person1.jpg';
+import person2 from '../images/person2.jpg';
+
+const GlobalStyle = createGlobalStyle`
+  :root {
+    --TITLE_FONT: 'Source Serif Pro', serif;
+    --TEXT_FONT: Arial, sans-serif;
+    --TITLE_COLOR_H1: #4C7572;
+    --BACKGROUND_COLOR: #F0EDEB;
+    --TEXT_COLOR_H1: #46454A;
+    --BUTTON_COLOR_H1: #628991;
   }
-];
 
-const getRandomProfile = () => profiles[Math.floor(Math.random() * profiles.length)];
+  body {
+    font-family: var(--TEXT_FONT);
+    direction: ltr;
+    margin: 0;
+    padding: 0;
+    background-color: var(--BACKGROUND_COLOR);
+    color: var(--TEXT_COLOR_H1);
+    height: 100vh;
+    width: 100%;
+    box-sizing: border-box;
+  }
 
-const ProfileCard = ({ profile }) => {
-  const defaultFemalePhoto = 'https://images.unsplash.com/photo-1524504388940-b1c1722653e1';
-  const defaultMalePhoto = 'https://images.unsplash.com/photo-1522075469751-3a6694fb2f61';
-  const photo = profile.gender === 'Female' ? (profile.photo || defaultFemalePhoto) : (profile.photo || defaultMalePhoto);
+  *, *::before, *::after {
+    box-sizing: inherit;
+  }
+`;
 
+const Container = styled.div`
+  width: 30%;
+  max-width: 1200px;
+  margin: 20px auto;
+  text-align: left;
+  background: var(--BACKGROUND_COLOR);
+`;
+
+const Header = styled.div`
+  width: 100%;
+  display: flex;
+  align-items: center;
+  margin-bottom: 20px;
+  padding: 20px;
+  background: none;
+  box-shadow: none;
+`;
+
+const ProfileImage = styled.div`
+  width: 150px;
+  height: 150px;
+  border-radius: 50%;
+  background-color: #e0e0e0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-left: 20px;
+
+  img {
+    border-radius: 50%;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+`;
+
+const BasicInfo = styled.div`
+  text-align: left;
+  flex-grow: 1;
+`;
+
+const Title = styled.h1`
+  font-family: var(--TITLE_FONT);
+  font-size: 2rem;
+  margin-bottom: 20px;
+  color: var(--TITLE_COLOR_H1);
+`;
+
+const SubTitle = styled.h2`
+  font-family: var(--TEXT_FONT);
+  font-size: 1.5rem;
+  margin: 5px 0;
+  color: #555;
+`;
+
+const Text = styled.p`
+  font-family: var(--TEXT_FONT);
+  font-size: 1rem;
+  margin: 5px 0;
+  color: var(--TEXT_COLOR_H1);
+`;
+
+const Card = styled.div`
+  width: 100%;
+  background-color: transparent;
+  border-radius: 0;
+  padding: 15px;
+  margin: 10px 0;
+  box-shadow: none;
+  text-align: left;
+`;
+
+const DetailRow = styled.div`
+  text-align: left;
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 5px;
+`;
+
+const DetailLabel = styled.label`
+  font-weight: bold;
+  color: #333;
+`;
+
+const DetailValue = styled.span`
+  align: left;
+  display: flex;
+  color: #666;
+`;
+
+const CollapsibleTrigger = styled.div`
+  font-size: 1.2rem;
+  font-weight: bold;
+  cursor: pointer;
+  color: #333;
+  padding: 10px;
+  background-color: #e0e0e0;
+  border-radius: 5px;
+  transition: background-color 0.3s ease;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+
+  &::after {
+    content: '▼';
+    font-size: 1rem;
+    margin-left: 10px;
+  }
+
+  &:hover {
+    background-color: #d5d5d5;
+  }
+`;
+
+const ReviewsContainer = styled.div`
+  max-height: 200px;
+  overflow-y: auto;
+  width: 100%;
+`;
+
+const ReviewCard = styled.div`
+  border: 1px solid #ddd;
+  padding: 10px;
+  margin-bottom: 10px;
+  border-radius: 5px;
+  width: 100%;
+`;
+
+const VolProfileCard = ({ profile }) => {
   return (
-    <div className="container">
-      <div className="header">
-        <div className="profile-image">
-          <img src={photo} alt="Volunteer profile picture" />
-        </div>
-        <div className="basic-info">
-          <h1>Meet {profile.name.split(' ')[0]}</h1>
-          <p>{profile.address}</p>
-          <p>Age: {profile.age}</p>
-        </div>
-      </div>
-      <div id={`details-${profile.id}`}>
-        <div className="profile-info">
-          <div className="column">
-            <h2 className="center-text">Personal Details</h2>
-            <div className="detail-row">
-              <span className="detail-label"><strong>Name:</strong></span>
-              <span className="detail-value">{profile.name}</span>
-            </div>
-            <div className="detail-row">
-              <span className="detail-label"><strong>Gender:</strong></span>
-              <span className="detail-value">{profile.gender}</span>
-            </div>
-            <div className="detail-row">
-              <span className="detail-label"><strong>Address:</strong></span>
-              <span className="detail-value">{profile.address}</span>
-            </div>
-            <div className="detail-row">
-              <span className="detail-label"><strong>Animal Experience:</strong></span>
-              <span className="detail-value">{profile.animalExperience}</span>
-            </div>
-            <div className="detail-row">
-              <span className="detail-label"><strong>Additional Animals at Home:</strong></span>
-              <span className="detail-value">{profile.additionalAnimals}</span>
-            </div>
-            <div className="detail-row">
-              <span className="detail-label"><strong>A House with a Yard:</strong></span>
-              <span className="detail-value">{profile.yard}</span>
-            </div>
-            <div className="detail-row">
-              <span className="detail-label"><strong>Children at Home:</strong></span>
-              <span className="detail-value">{profile.children}</span>
-            </div>
-            <div className="detail-row">
-              <span className="detail-label"><strong>Dog Adoption Number:</strong></span>
-              <span className="detail-value">{profile.adoptions}</span>
-            </div>
-          </div>
-          <div className="column">
-            <div className="description">
-              <h2 className="center-text">A Little About Me</h2>
-              <p>{profile.description}</p>
-            </div>
-          </div>
-        </div>
-        <div className="reviews">
-          <h2 className="center-text">Reviews</h2>
-          <div className="reviews-container">
-            <div className="reviews-row">
-              {profile.reviews.map((review, index) => (
-                <div key={index} className="review">
-                  <strong>{review.reviewer}</strong>
-                  <span className="date-location">{review.date}, {review.location}</span>
-                  <p>{review.text}</p>
-                </div>
-              ))}
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
+    <Container>
+      <GlobalStyle />
+      <Header>
+        <BasicInfo>
+          <SubTitle>{profile.name}</SubTitle>
+          <Text>{profile.address}</Text>
+        </BasicInfo>
+        <ProfileImage>
+          {profile.photo ? (
+            <img src={profile.photo} alt={`${profile.name}`} />
+          ) : (
+            <div className="empty-image"></div>
+          )}
+        </ProfileImage>
+      </Header>
+
+      <Collapsible trigger={<CollapsibleTrigger>Volunteer I.D</CollapsibleTrigger>}>
+        <Card>
+          <DetailRow>
+            <DetailLabel><strong>Name:</strong></DetailLabel>
+            <DetailValue>{profile.name}</DetailValue>
+          </DetailRow>
+          <DetailRow>
+            <DetailLabel><strong>Address:</strong></DetailLabel>
+            <DetailValue>{profile.address}</DetailValue>
+          </DetailRow>
+          <DetailRow>
+            <DetailLabel><strong>Age:</strong></DetailLabel>
+            <DetailValue>{profile.age}</DetailValue>
+          </DetailRow>
+          <DetailRow>
+            <DetailLabel><strong>Gender:</strong></DetailLabel>
+            <DetailValue>{profile.gender}</DetailValue>
+          </DetailRow>
+          <DetailRow>
+            <DetailLabel><strong>Number of Adoptions:</strong></DetailLabel>
+            <DetailValue>{profile.adoptions}</DetailValue>
+          </DetailRow>
+          <DetailRow>
+            <DetailLabel><strong>Animal Experience:</strong></DetailLabel>
+            <DetailValue>{profile.animalExperience}</DetailValue>
+          </DetailRow>
+          <DetailRow>
+            <DetailLabel><strong>Additional Animals At Home:</strong></DetailLabel>
+            <DetailValue>{profile.additionalAnimals}</DetailValue>
+          </DetailRow>
+          <DetailRow>
+            <DetailLabel><strong>A House with a Yard:</strong></DetailLabel>
+            <DetailValue>{profile.yard}</DetailValue>
+          </DetailRow>
+          <DetailRow>
+            <DetailLabel><strong>Children at Home:</strong></DetailLabel>
+            <DetailValue>{profile.children}</DetailValue>
+          </DetailRow>
+        </Card>
+      </Collapsible>
+
+      <Collapsible trigger={<CollapsibleTrigger>A Little About Me</CollapsibleTrigger>}>
+        <Card>
+          <Text>{profile.description}</Text>
+        </Card>
+      </Collapsible>
+
+      <Collapsible trigger={<CollapsibleTrigger>Reviews</CollapsibleTrigger>}>
+        <Card>
+          <ReviewsContainer>
+            {profile.reviews.map((review, index) => (
+              <ReviewCard key={index}>
+                <DetailLabel><strong>{review.reviewer}:</strong></DetailLabel>
+                <DetailValue>{review.date}, {review.location}</DetailValue>
+                <Text>{review.text}</Text>
+              </ReviewCard>
+            ))}
+          </ReviewsContainer>
+        </Card>
+      </Collapsible>
+    </Container>
   );
 };
 
-const VolunteerProfiles = () => {
+const VolProfile = () => {
   const [profile, setProfile] = useState(null);
 
   useEffect(() => {
-    setProfile(getRandomProfile());
+    // Load the first profile as an example
+    const exampleProfile = {
+      name: "John Doe",
+      address: "123 Main St, Anytown, USA",
+      age: 30,
+      gender: "Male",
+      adoptions: 5,
+      animalExperience: "no",
+      additionalAnimals: "yes",
+      yard: "Yes",
+      children: "Yes",
+      reviews: [
+        {
+          reviewer: "Jane Smith",
+          date: "2023-06-01",
+          location: "Anytown, USA",
+          text: "John was fantastic! He took great care of our dog."
+        },
+        {
+          reviewer: "Emily Johnson",
+          date: "2023-07-15",
+          location: "Anytown, USA",
+          text: "Very reliable and good with animals."
+        }
+      ],
+      photo: person1 // שימוש בתמונה מייבוא
+    };
+    setProfile(exampleProfile);
   }, []);
+
+  if (!profile) {
+    return <div>Loading...</div>;
+  }
 
   return (
     <div>
-      {profile && <ProfileCard profile={profile} />}
+      <VolProfileCard profile={profile} />
     </div>
   );
 };
 
-export default VolunteerProfiles;
+export default VolProfile;

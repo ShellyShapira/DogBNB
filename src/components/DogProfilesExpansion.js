@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from 'react';
-import axios from 'axios';
 import styled, { createGlobalStyle } from 'styled-components';
 import Collapsible from 'react-collapsible';
+import dog1 from '../images/dog1.jpg';
+import dog2 from '../images/dog2.jpg';
 
 const GlobalStyle = createGlobalStyle`
   :root {
@@ -59,13 +60,6 @@ const ProfileImage = styled.img`
 const BasicInfo = styled.div`
   text-align: left;
   flex-grow: 1;
-`;
-
-const Title = styled.h1`
-  font-family: var(--TITLE_FONT);
-  font-size: 2rem;
-  margin-bottom: 20px;
-  color: var(--TITLE_COLOR_H1);
 `;
 
 const SubTitle = styled.h2`
@@ -169,84 +163,16 @@ const ModalContent = styled.div`
   text-align: center;
 `;
 
-const breeds = ['labrador', 'poodle', 'bulldog', 'beagle', 'pug', 'husky', 'goldenretriever', 'dachshund', 'rottweiler', 'chihuahua'];
-const locations = ['Jerusalem', 'Tel Aviv', 'Haifa', 'Eilat', 'Beer Sheva'];
-const firstNames = ['John', 'Jane', 'Alex', 'Emily', 'Daniel', 'Emma', 'Michael', 'Olivia', 'David', 'Sophia'];
-const lastNames = ['Smith', 'Johnson', 'Brown', 'Taylor', 'Anderson', 'Thomas', 'Jackson', 'White', 'Harris', 'Martin'];
-const careInstructions = [
-  'Feed twice a day with high-quality dog food. Provide clean, fresh water at all times. Ensure the dog has a comfortable place to sleep.',
-  'Take for a walk at least once a day. Make sure the dog gets plenty of exercise and playtime. Regular grooming is necessary.',
-  'Brush coat weekly to prevent matting. Check ears regularly for signs of infection. Trim nails monthly to avoid overgrowth.',
-  'Regular vet check-ups every 6 months. Keep vaccinations up to date. Monitor for any signs of health issues and address them promptly.',
-  'Ensure plenty of fresh water is available at all times. Provide a balanced diet. Avoid giving the dog human food, especially anything toxic.',
-];
-
-const suitableForOptions = [
-  'apartment',
-  'house with a yard',
-];
-
-const getRandomElement = (arr) => arr[Math.floor(Math.random() * arr.length)];
-
-const generateDescription = (friendlyWithChildren, dogName) => {
-  if (friendlyWithChildren === 'Yes') {
-    return `${dogName} is a friendly dog that loves to play and enjoys spending time with family. ${dogName} is very loyal and makes a great companion.`;
-  } else {
-    return `${dogName} prefers a quieter environment and may not be suitable for homes with children. ${dogName} is very loyal and makes a great companion for adults.`;
-  }
-};
-
-const generateDogProfiles = () => {
-  return breeds.map((breed, index) => {
-    const location = getRandomElement(locations);
-    const firstName = getRandomElement(firstNames);
-    const lastName = getRandomElement(lastNames);
-    const dogName = getRandomElement(firstNames);
-    const suitableFor = getRandomElement(suitableForOptions);
-    const friendlyWithChildren = Math.random() > 0.5 ? 'Yes' : 'No';
-    const description = generateDescription(friendlyWithChildren, dogName);
-    return {
-      id: index + 1,
-      name: dogName,
-      breed,
-      age: `${Math.floor(Math.random() * 10) + 1} years`,
-      gender: Math.random() > 0.5 ? 'male' : 'female',
-      size: getRandomElement(['small', 'medium', 'large']),
-      immune: Math.random() > 0.5 ? 'Yes' : 'No',
-      neutered: Math.random() > 0.5 ? 'Yes' : 'No',
-      suitableFor,
-      friendlyWithChildren,
-      location,
-      datesForBBsitting: `0${Math.floor(Math.random() * 9) + 1}/07-25/08/2024`,
-      ownerName: `${firstName} ${lastName}`,
-      mobile: `052-${Math.floor(Math.random() * 9000000) + 1000000}`,
-      address: location,
-      availability: 'only Whatsapp',
-      description,
-      careInstructions: getRandomElement(careInstructions),
-    };
-  });
-};
-
-const dogProfiles = generateDogProfiles();
-
 const DogProfileCard = ({ profile }) => {
   const [photoUrl, setPhotoUrl] = useState('');
-  const [showModal, setShowModal] = useState(false); // Add this line
 
   useEffect(() => {
-    const fetchDogPhoto = async () => {
-      try {
-        const response = await axios.get(`https://dog.ceo/api/breed/${profile.breed}/images/random`);
-        setPhotoUrl(response.data.message);
-      } catch (error) {
-        console.error('Error fetching dog photo:', error);
-        setPhotoUrl('https://default-photo-url-here.jpg'); 
-      }
-    };
+    const photos = [dog1, dog2]; // Add more dog images here as needed
+    const photoIndex = (profile.id - 1) % photos.length; // Use modulo to cycle through images
+    setPhotoUrl(photos[photoIndex]);
+  }, [profile.id]);
 
-    fetchDogPhoto();
-  }, [profile.breed]);
+  const [showModal, setShowModal] = useState(false);
 
   const handleContactClick = () => {
     setShowModal(true);
@@ -256,7 +182,6 @@ const DogProfileCard = ({ profile }) => {
   return (
     <Container>
       <GlobalStyle />
-      <Title>Dog's Profile</Title>
       <Header>
         <BasicInfo>
           <SubTitle>{profile.name}</SubTitle>
@@ -267,8 +192,29 @@ const DogProfileCard = ({ profile }) => {
         <ProfileImage src={photoUrl} alt={`${profile.name}`} />
       </Header>
 
+      <Collapsible trigger={<CollapsibleTrigger>Owner I.D</CollapsibleTrigger>}>
+        <Card>
+          <DetailRow>
+            <DetailLabel><strong>Name:</strong></DetailLabel>
+            <DetailValue>{profile.ownerName}</DetailValue>
+          </DetailRow>
+          <DetailRow>
+            <DetailLabel><strong>Address:</strong></DetailLabel>
+            <DetailValue>{profile.address}</DetailValue>
+          </DetailRow>
+          <DetailRow>
+            <DetailLabel><strong>Email:</strong></DetailLabel>
+            <DetailValue>{profile.email}</DetailValue>
+          </DetailRow>
+        </Card>
+      </Collapsible>
+
       <Collapsible trigger={<CollapsibleTrigger>Dog I.D</CollapsibleTrigger>}>
         <Card>
+          <DetailRow>
+            <DetailLabel><strong>Name:</strong></DetailLabel>
+            <DetailValue>{profile.name}</DetailValue>
+          </DetailRow>
           <DetailRow>
             <DetailLabel><strong>Breed:</strong></DetailLabel>
             <DetailValue>{profile.breed}</DetailValue>
@@ -296,23 +242,6 @@ const DogProfileCard = ({ profile }) => {
           <DetailRow>
             <DetailLabel><strong>Suitable For:</strong></DetailLabel>
             <DetailValue>{profile.suitableFor && typeof profile.suitableFor == typeof [] ? profile.suitableFor.join(', ') : 'N/A'}</DetailValue>
-          </DetailRow>
-          <DetailRow>
-            <DetailLabel><strong>Friendly with children:</strong></DetailLabel>
-            <DetailValue>{profile.friendlyWithChildren}</DetailValue>
-          </DetailRow>
-        </Card>
-      </Collapsible>
-
-      <Collapsible trigger={<CollapsibleTrigger>Owner I.D</CollapsibleTrigger>}>
-        <Card>
-          <DetailRow>
-            <DetailLabel><strong>Name:</strong></DetailLabel>
-            <DetailValue>{profile.ownerName}</DetailValue>
-          </DetailRow>
-          <DetailRow>
-            <DetailLabel><strong>Address:</strong></DetailLabel>
-            <DetailValue>{profile.address}</DetailValue>
           </DetailRow>
         </Card>
       </Collapsible>
@@ -343,14 +272,32 @@ const DogProfileCard = ({ profile }) => {
 };
 
 const DogProfiles = () => {
-  const firstProfile = dogProfiles[0];
+  const profile = {
+    id: 1,
+    name: 'Buddy',
+    breed: 'Labrador',
+    age: '3 years',
+    gender: 'Male',
+    size: 'Large',
+    immune: 'Yes',
+    neutered: 'Yes',
+    suitableFor: ['children', 'apartment'],
+    address: 'Tel Aviv',
+    datesForBBsitting: '01/07-25/08/2024',
+    ownerName: 'John Doe',
+    email: 'shaked.ds@gmail.com',
+    careInstructions: 'Feed twice a day with high-quality dog food. Provide clean, fresh water at all times. Ensure the dog has a comfortable place to sleep.',
+    description: 'Buddy is a friendly dog that loves to play and enjoys spending time with family. Buddy is very loyal and makes a great companion.',
+  };
+
   // Ensure suitableFor is always an array
-  if (!firstProfile.suitableFor) {
-    firstProfile.suitableFor = [];
+  if (!profile.suitableFor) {
+    profile.suitableFor = [];
   }
+
   return (
     <div>
-      <DogProfileCard profile={firstProfile} />
+      <DogProfileCard profile={profile} />
     </div>
   );
 };

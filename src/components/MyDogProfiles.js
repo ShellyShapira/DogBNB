@@ -79,7 +79,7 @@ const BasicInfo = styled.div`
 
 const VolunteerName = styled.h2`
   font-family: arial;
-  font-size: 4rem; /* גודל כפול */
+  font-size: 4rem;
   margin: 5px 0;
   color: #555;
 `;
@@ -173,7 +173,7 @@ const TitleSection = styled.div`
   background-color: #DCE2E4;
   padding: 10px;
   border-radius: 10px 10px 0 0;
-  margin: -20px -20px 20px -20px; /* Adjust based on the card's padding */
+  margin: -20px -20px 20px -20px;
 `;
 
 const RequestItem = styled.div`
@@ -223,7 +223,7 @@ const Button = styled.button`
 `;
 
 const PawPrint = styled.img`
-  width: 60px; /* גודל מותאם */
+  width: 60px;
   height: 60px;
   position: absolute;
   z-index: 2;
@@ -281,43 +281,42 @@ const DogSitters = ({ sitters, onDelete }) => {
   );
 };
 
-const PersonalDetails = ({ profile, isEditing, formData, handleChange }) => (
-  <Card>
-    <TitleSection>
-      <SubTitle>Personal Details</SubTitle>
-    </TitleSection>
-    {isEditing ? (
-      <>
-        <DetailRow>
-          <DetailLabel><strong>Name:</strong></DetailLabel>
-          <input className="detail-value" name="name" value={formData.name} onChange={handleChange} />
-        </DetailRow>
-        <DetailRow>
-          <DetailLabel><strong>Address:</strong></DetailLabel>
-          <input className="detail-value" name="address" value={formData.address} onChange={handleChange} />
-        </DetailRow>
-        <DetailRow>
-          <DetailLabel><strong>Email:</strong></DetailLabel>
-          <input className="detail-value" name="email" value={formData.email} onChange={handleChange} />
-        </DetailRow>
-      </>
-    ) : (
-      <>
-        <DetailRow>
-        <DetailLabel><strong>Name:</strong></DetailLabel>
-        <DetailValue>{profile.name}</DetailValue>
-      </DetailRow>
-      <DetailRow>
-        <DetailLabel><strong>Address:</strong></DetailLabel>
-        <DetailValue>{profile.address}</DetailValue>
-      </DetailRow>
-      <DetailRow>
-        <DetailLabel><strong>Email:</strong></DetailLabel>
-        <DetailValue>{profile.email}</DetailValue>
-      </DetailRow>
-    </>
-  )}
-</Card>
+const OwnerDetails = ({ profile, isEditing, formData, handleChange }) => (
+  <Collapsible trigger={<CollapsibleTrigger>Owner I.D</CollapsibleTrigger>}>
+    <Card>
+      {isEditing ? (
+        <>
+          <DetailRow>
+            <DetailLabel><strong>Name:</strong></DetailLabel>
+            <input className="detail-value" name="name" value={formData.name} onChange={handleChange} />
+          </DetailRow>
+          <DetailRow>
+            <DetailLabel><strong>Address:</strong></DetailLabel>
+            <input className="detail-value" name="address" value={formData.address} onChange={handleChange} />
+          </DetailRow>
+          <DetailRow>
+            <DetailLabel><strong>Email:</strong></DetailLabel>
+            <input className="detail-value" name="email" value={formData.email} onChange={handleChange} />
+          </DetailRow>
+        </>
+      ) : (
+        <>
+          <DetailRow>
+            <DetailLabel><strong>Name:</strong></DetailLabel>
+            <DetailValue>{profile.name}</DetailValue>
+            </DetailRow>
+          <DetailRow>
+            <DetailLabel><strong>Address:</strong></DetailLabel>
+            <DetailValue>{profile.address}</DetailValue>
+          </DetailRow>
+          <DetailRow>
+            <DetailLabel><strong>Email:</strong></DetailLabel>
+            <DetailValue>{profile.email}</DetailValue>
+          </DetailRow>
+        </>
+      )}
+    </Card>
+  </Collapsible>
 );
 
 const DogProfileCard = ({ profile, onSave, requests, sitters, onRequestAccept, onRequestDelete, onSitterDelete }) => {
@@ -350,6 +349,9 @@ const DogProfileCard = ({ profile, onSave, requests, sitters, onRequestAccept, o
 
   const formattedAddress = formData.address.replace(/,+/g, ',').replace(/^,|,$/g, '').trim();
 
+  // Creating a formatted string for dog details
+  const dogDetails = [formData.dogType, formData.dogAge, formData.dogSize].filter(Boolean).join(', ');
+
   return (
     <Container>
       <GlobalStyle />
@@ -357,7 +359,7 @@ const DogProfileCard = ({ profile, onSave, requests, sitters, onRequestAccept, o
         <BasicInfo>
           <VolunteerName>{formData.name}</VolunteerName>
           <Text>{formData.dogName}</Text>
-          <Text>{[formData.dogType, formData.dogAge, formData.dogSize].filter(Boolean).join(', ')}</Text>
+          <Text>{dogDetails}</Text>
           <Text>{formattedAddress}</Text>
         </BasicInfo>
         <ProfileImage src={formData.profilePic} alt={`${profile.name}`} />
@@ -368,7 +370,7 @@ const DogProfileCard = ({ profile, onSave, requests, sitters, onRequestAccept, o
       </Header>
       <ProfileSectionWrapper>
         <Section>
-          <PersonalDetails profile={profile} isEditing={isEditing} formData={formData} handleChange={handleChange} />
+          <OwnerDetails profile={profile} isEditing={isEditing} formData={formData} handleChange={handleChange} />
           <Collapsible trigger={<CollapsibleTrigger>Dog I.D</CollapsibleTrigger>}>
             <Card>
               {isEditing ? (
@@ -488,42 +490,6 @@ const DogProfileCard = ({ profile, onSave, requests, sitters, onRequestAccept, o
             </Card>
           </Collapsible>
 
-          <Collapsible trigger={<CollapsibleTrigger>Owner I.D</CollapsibleTrigger>}>
-            <Card>
-              {isEditing ? (
-                <>
-                  <DetailRow>
-                    <DetailLabel><strong>Name:</strong></DetailLabel>
-                    <input className="detail-value" name="name" value={formData.name} onChange={handleChange} />
-                  </DetailRow>
-                  <DetailRow>
-                    <DetailLabel><strong>Address:</strong></DetailLabel>
-                    <input className="detail-value" name="address" value={formData.address} onChange={handleChange} />
-                  </DetailRow>
-                  <DetailRow>
-                  <DetailLabel><strong>Email:</strong></DetailLabel>
-                    <input className="detail-value" name="email" value={formData.email} onChange={handleChange} />
-                  </DetailRow>
-                </>
-              ) : (
-                <>
-                  <DetailRow>
-                    <DetailLabel><strong>Name:</strong></DetailLabel>
-                    <DetailValue>{formData.name}</DetailValue>
-                  </DetailRow>
-                  <DetailRow>
-                    <DetailLabel><strong>Address:</strong></DetailLabel>
-                    <DetailValue>{formattedAddress}</DetailValue>
-                  </DetailRow>
-                  <DetailRow>
-                    <DetailLabel><strong>Email:</strong></DetailLabel>
-                    <DetailValue>{formData.email}</DetailValue>
-                  </DetailRow>
-                </>
-              )}
-            </Card>
-          </Collapsible>
-
           <Collapsible trigger={<CollapsibleTrigger>A Little About Me</CollapsibleTrigger>}>
             <Card>
               {isEditing ? (
@@ -547,84 +513,84 @@ const DogProfileCard = ({ profile, onSave, requests, sitters, onRequestAccept, o
               {isEditing ? (
                 <>
                   <textarea
-                    className="detail-value"
-                    name="careInstructions"
-                    value={formData.careInstructions}
-                    onChange={handleChange}
-                    rows="4"
-                  />
-                </>
-              ) : (
-                <Text>{profile.careInstructions}</Text>
-              )}
-            </Card>
-          </Collapsible>
-
-          {isEditing ? (
-            <EditButton onClick={handleSaveClick}>Save Profile</EditButton>
-          ) : (
-            <EditButton onClick={handleEditClick}>Edit Profile</EditButton>
-          )}
-        </Section>
-        <Section>
-          <RequestActions
-            requests={requests}
-            onAccept={onRequestAccept}
-            onDelete={onRequestDelete}
-          />
-
-          <DogSitters
-            sitters={sitters}
-            onDelete={onSitterDelete}
-          />
-        </Section>
-      </ProfileSectionWrapper>
-    </Container>
-  );
-};
-
-const MyProfile = () => {
-  const { user, updateUserDetails } = useContext(UserContext);
-  const [requests, setRequests] = useState([
-    { id: 1, name: 'John Doe', date: '2023-07-07', avatar: '../images/person3.jpg' },
-    { id: 2, name: 'Jane Smith', date: '2023-07-06', avatar: '../images/person3.jpg' },
-  ]);
-
-  const [sitters, setSitters] = useState([
-    { id: 1, name: 'Emily Clark', date: '2023-07-05', avatar: '../images/person2.jpg' },
-    { id: 2, name: 'Michael Johnson', date: '2023-07-04', avatar: '../images/person1.jpg' },
-  ]);
-
-  const handleRequestAccept = (index) => {
-    const acceptedRequest = requests[index];
-    setSitters([...sitters, acceptedRequest]);
-    setRequests(requests.filter((_, i) => i !== index));
-    // TODO: Add backend code to notify the volunteer of acceptance
-  };
-
-  const handleRequestDelete = (index) => {
-    setRequests(requests.filter((_, i) => i !== index));
-    // TODO: Add backend code to delete the request
-  };
-
-  const handleSitterDelete = (index) => {
-    setSitters(sitters.filter((_, i) => i !== index));
-    // TODO: Add backend code to delete the sitter
-  };
-
-  return (
-    <div>
-      <DogProfileCard
-        profile={user.details}
-        onSave={updateUserDetails}
-        requests={requests}
-        sitters={sitters}
-        onRequestAccept={handleRequestAccept}
-        onRequestDelete={handleRequestDelete}
-        onSitterDelete={handleSitterDelete}
-      />
-    </div>
-  );
-};
-
-export default MyProfile;
+                                        className="detail-value"
+                                        name="careInstructions"
+                                        value={formData.careInstructions}
+                                        onChange={handleChange}
+                                        rows="4"
+                                      />
+                                    </>
+                                  ) : (
+                                    <Text>{profile.careInstructions}</Text>
+                                  )}
+                                </Card>
+                              </Collapsible>
+                    
+                              {isEditing ? (
+                                <EditButton onClick={handleSaveClick}>Save Profile</EditButton>
+                              ) : (
+                                <EditButton onClick={handleEditClick}>Edit Profile</EditButton>
+                              )}
+                            </Section>
+                            <Section>
+                              <RequestActions
+                                requests={requests}
+                                onAccept={onRequestAccept}
+                                onDelete={onRequestDelete}
+                              />
+                    
+                              <DogSitters
+                                sitters={sitters}
+                                onDelete={onSitterDelete}
+                              />
+                            </Section>
+                          </ProfileSectionWrapper>
+                        </Container>
+                      );
+                    };
+                    
+                    const MyProfile = () => {
+                      const { user, updateUserDetails } = useContext(UserContext);
+                      const [requests, setRequests] = useState([
+                        { id: 1, name: 'John Doe', date: '2023-07-07', avatar: '../images/person3.jpg' },
+                        { id: 2, name: 'Jane Smith', date: '2023-07-06', avatar: '../images/person3.jpg' },
+                      ]);
+                    
+                      const [sitters, setSitters] = useState([
+                        { id: 1, name: 'Emily Clark', date: '2023-07-05', avatar: '../images/person2.jpg' },
+                        { id: 2, name: 'Michael Johnson', date: '2023-07-04', avatar: '../images/person1.jpg' },
+                      ]);
+                    
+                      const handleRequestAccept = (index) => {
+                        const acceptedRequest = requests[index];
+                        setSitters([...sitters, acceptedRequest]);
+                        setRequests(requests.filter((_, i) => i !== index));
+                        // TODO: Add backend code to notify the volunteer of acceptance
+                      };
+                    
+                      const handleRequestDelete = (index) => {
+                        setRequests(requests.filter((_, i) => i !== index));
+                        // TODO: Add backend code to delete the request
+                      };
+                    
+                      const handleSitterDelete = (index) => {
+                        setSitters(sitters.filter((_, i) => i !== index));
+                        // TODO: Add backend code to delete the sitter
+                      };
+                    
+                      return (
+                        <div>
+                          <DogProfileCard
+                            profile={user.details}
+                            onSave={updateUserDetails}
+                            requests={requests}
+                            sitters={sitters}
+                            onRequestAccept={handleRequestAccept}
+                            onRequestDelete={handleRequestDelete}
+                            onSitterDelete={handleSitterDelete}
+                          />
+                        </div>
+                      );
+                    };
+                    
+                    export default MyProfile;

@@ -29,6 +29,7 @@ body {
   border-radius: 8px;
   margin-bottom: 20px;
   align-items: center;
+  position: relative; /* כדי לאפשר למרכיבים להיות ממוקמים בצורה יחסית */
 }
 
 .header {
@@ -135,25 +136,43 @@ button:hover,
   box-shadow: none; /* Remove shadow on hover */
 }
 
-.filter-container {
+.filter-overlay,
+.add-post-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.filter-container,
+.add-post-form {
   padding: 20px;
   background-color: #fff;
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
   border-radius: 8px;
   margin-bottom: 20px;
-  max-width: 400px;
-  margin-left: auto;
-  margin-right: auto;
+  max-width: 600px; /* Increase max-width */
+  width: 80%; /* Increase width */
   position: relative;
 }
 
-.filter-options label {
+.filter-options label,
+.add-post-options label {
   display: block;
   margin-top: 10px;
   margin-bottom: 5px;
 }
 
-.filter-options input, .filter-options select {
+.filter-options input,
+.filter-options select,
+.add-post-options input,
+.add-post-options select {
   width: 100%;
   padding: 8px;
   margin-top: 5px;
@@ -161,7 +180,8 @@ button:hover,
   border-radius: 4px;
 }
 
-.exit-filters {
+.exit-filters,
+.add-post-form .close-button {
   position: absolute;
   top: 10px;
   right: 10px;
@@ -179,8 +199,8 @@ button:hover,
   background-color: #fff;
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
   border-radius: 8px;
-  width: 310px;
-  height: 275px; /* Fix height attribute */
+  width: 80%; /* Increase width */
+  max-width: 600px; /* Increase max-width */
   margin: 20px auto;
   position: relative;
 }
@@ -243,4 +263,3 @@ button:hover,
 .more-info:hover {
   box-shadow: 0px 8px 20px rgba(0, 0, 0, 0.5); /* Stronger shadow effect */
 }
-

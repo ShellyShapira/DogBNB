@@ -19,6 +19,9 @@ const Feed = () => {
     const [filterDuration, setFilterDuration] = useState('');
     const [filterGender, setFilterGender] = useState('');
     const [filterNeedsGarden, setFilterNeedsGarden] = useState('');
+    const [filterImmune, setFilterImmune] = useState('');
+    const [filterNeutered, setFilterNeutered] = useState('');
+    const [filterFriendlyToChildren, setFilterFriendlyToChildren] = useState('');
 
     const uploadPost = async (post) => {
         await addDoc(collection(DB(), "posts"), post);
@@ -35,10 +38,14 @@ const Feed = () => {
                 city: postOwnerDetails.address,
                 description: postOwnerDetails.dogDetails,
                 startDate: postData.startDate,
-                endDate: postData.endDate
+                endDate: postData.endDate,
+                gender: postOwnerDetails.dogGender || '',
+                needsGarden: postOwnerDetails.suitableFor?.includes('house with a yard') ? 'yes' : postOwnerDetails.suitableFor?.includes('apartment') ? 'no' : '',
+                immune: postOwnerDetails.dogImmune || '',
+                neutered: postOwnerDetails.dogNeutered || '',
+                friendlyToChildren: postOwnerDetails.suitableFor?.includes('children') ? 'yes' : 'no'
             }
     }
-
 
     useEffect(() => {
         onSnapshot(collection(DB(), "posts"), async (snapshot) => {
@@ -53,6 +60,9 @@ const Feed = () => {
         setFilterDuration('');
         setFilterGender('');
         setFilterNeedsGarden('');
+        setFilterImmune('');
+        setFilterNeutered('');
+        setFilterFriendlyToChildren('');
     };
 
     const toggleFilter = () => {
@@ -79,16 +89,10 @@ const Feed = () => {
 
         const newPost = {
             postOwnerUid: user.firebaseUser.uid,
-            // id: posts.length + 1,
-            // image: profile.profilePic || 'images/default_dog.jpg', // Use a default image if not provided
-            // name: profile.dogName || 'Your Dog',
-            // city: profile.address || 'Your City',
-            // description: profile.dogDetails || 'a cute and loving dog', // Ensure this matches your profile field
             startDate: reformatDate(e.target.elements.startDate.value),
             endDate: reformatDate(e.target.elements.endDate.value),
         };
         await uploadPost(newPost);
-        //setPosts([newPost, ...posts]);
         setShowAddPost(false);
     };
 
@@ -110,8 +114,16 @@ const Feed = () => {
              (filterDuration === '7-14' && durationDays >= 7 && durationDays <= 14) ||
              (filterDuration === '14+' && durationDays > 14) ||
              (filterDuration === '')) &&
-            (filterGender === '' || post.gender.toLowerCase() === filterGender.toLowerCase()) &&
-            (filterNeedsGarden === '' || post.needsGarden.toLowerCase() === filterNeedsGarden.toLowerCase()))
+            (filterGender === '' || post.gender.toLowerCase() === filterGender.toLowerCase() || post.gender === '') &&
+            (filterNeedsGarden === '' || post.needsGarden.toLowerCase() === filterNeedsGarden.toLowerCase() || post.needsGarden === '') &&
+            (filterImmune === '' || post.immune.toLowerCase() === filterImmune.toLowerCase() || post.immune === '') &&
+            (filterNeutered === '' || post.neutered.toLowerCase() === filterNeutered.toLowerCase() || post.neutered === '') &&
+            (filterFriendlyToChildren === '' || post.friendlyToChildren.toLowerCase() === filterFriendlyToChildren.toLowerCase() || post.friendlyToChildren === '')
+        );
+    }).sort((a, b) => {
+        const aStartDate = new Date(a.startDate.split('/').reverse().join('-'));
+        const bStartDate = new Date(b.startDate.split('/').reverse().join('-'));
+        return aStartDate - bStartDate;
     });
 
     return (
@@ -123,62 +135,84 @@ const Feed = () => {
             </div>
 
             {showFilter && (
-                <div className="filter-container">
-                    <button className="exit-filters" onClick={toggleFilter}>X</button>
-                    <div className="filter-options">
-                        <label htmlFor="city">City</label>
-                        <input type="text" id="city" name="city" value={filterCity} onChange={(e) => setFilterCity(e.target.value)} />
-                        <label htmlFor="duration">Duration</label>
-                        <select id="duration" name="duration" value={filterDuration} onChange={(e) => setFilterDuration(e.target.value)}>
-                            <option value="">Any</option>
-                            <option value="1-6">1-6 days</option>
-                            <option value="7-14">7-14 days</option>
-                            <option value="14+">14+ days</option>
-                        </select>
-                        <label htmlFor="gender">Gender</label>
-                        <select id="gender" name="gender" value={filterGender} onChange={(e) => setFilterGender(e.target.value)}>
-                            <option value="">Any</option>
-                            <option value="male">Male</option>
-                            <option value="female">Female</option>
-                        </select>
-                        <label htmlFor="needsGarden">Needs Garden</label>
-                        <select id="needsGarden" name="needsGarden" value={filterNeedsGarden} onChange={(e) => setFilterNeedsGarden(e.target.value)}>
-                            <option value="">Any</option>
-                            <option value="yes">Yes</option>
-                            <option value="no">No</option>
-                        </select>
+                <div className="filter-overlay">
+                    <div className="filter-container">
+                        <button className="exit-filters" onClick={toggleFilter}>X</button>
+                        <div className="filter-options">
+                            <label htmlFor="city">City</label>
+                            <input type="text" id="city" name="city" value={filterCity} onChange={(e) => setFilterCity(e.target.value)} />
+                            <label htmlFor="duration">Duration</label>
+                            <select id="duration" name="duration" value={filterDuration} onChange={(e) => setFilterDuration(e.target.value)}>
+                                <option value="">Any</option>
+                                <option value="1-6">1-6 days</option>
+                                <option value="7-14">7-14 days</option>
+                                <option value="14+">14+ days</option>
+                            </select>
+                            <label htmlFor="gender">Gender</label>
+                            <select id="gender" name="gender" value={filterGender} onChange={(e) => setFilterGender(e.target.value)}>
+                                <option value="">Any</option>
+                                <option value="male">Male</option>
+                                <option value="female">Female</option>
+                            </select>
+                            <label htmlFor="needsGarden">Needs Garden</label>
+                            <select id="needsGarden" name="needsGarden" value={filterNeedsGarden} onChange={(e) => setFilterNeedsGarden(e.target.value)}>
+                                <option value="">Any</option>
+                                <option value="yes">Yes</option>
+                                <option value="no">No</option>
+                            </select>
+                            <label htmlFor="immune">Immune</label>
+                            <select id="immune" name="immune" value={filterImmune} onChange={(e) => setFilterImmune(e.target.value)}>
+                                <option value="">Any</option>
+                                <option value="yes">Yes</option>
+                                <option value="no">No</option>
+                            </select>
+                            <label htmlFor="neutered">Neutered</label>
+                            <select id="neutered" name="neutered" value={filterNeutered} onChange={(e) => setFilterNeutered(e.target.value)}>
+                                <option value="">Any</option>
+                                <option value="yes">Yes</option>
+                                <option value="no">No</option>
+                            </select>
+                            <label htmlFor="friendlyToChildren">Friendly to Children</label>
+                            <select id="friendlyToChildren" name="friendlyToChildren" value={filterFriendlyToChildren} onChange={(e) => setFilterFriendlyToChildren(e.target.value)}>
+                                <option value="">Any</option>
+                                <option value="yes">Yes</option>
+                                <option value="no">No</option>
+                            </select>
+                        </div>
                     </div>
                 </div>
             )}
 
-            {showAddPost && (
-                <div className="new-post-form">
-                    <button className="close-button" onClick={toggleAddPost}>X</button>
-                    <p>Make sure you complete all details about your dog in "My Profile" for the best outcomes to your post</p>
-                    <form onSubmit={addPost}>
-                        <label htmlFor="startDate">Start Date</label>
-                        <input type="date" id="startDate" name="startDate" required />
-                        <label htmlFor="endDate">End Date</label>
-                        <input type="date" id="endDate" name="endDate" required />
-                        <button type="submit" className="post-button">Post</button>
-                    </form>
-                </div>
-            )}
-
-            <div className="post-grid">
-                {filteredPosts.map(post => (
-                    <div key={post.id} className="post">
-                        <img src={post.image} alt={post.name} />
-                        <h2>{post.name}</h2>
-                        <p>{post.city}</p>
-                        <p>{post.startDate} - {post.endDate}</p>
-                        <p>{post.description}</p>
-                        <button type="button" className="more-info" onClick={() => navigate(`/dog-profile/${post.id}`)}>more info</button>
-                    </div>
-                ))}
-            </div>
+{showAddPost && (
+    <div className="add-post-overlay">
+        <div className="new-post-form">
+            <button className="close-button" onClick={toggleAddPost}>X</button>
+            <p>Make sure you complete all details about your dog in "My Profile" for the best outcomes to your post</p>
+            <form onSubmit={addPost}>
+                <label htmlFor="startDate">Start Date</label>
+                <input type="date" id="startDate" name="startDate" required />
+                <label htmlFor="endDate">End Date</label>
+                <input type="date" id="endDate" name="endDate" required />
+                <button type="submit" className="post-button">Post</button>
+            </form>
         </div>
-    );
+    </div>
+)}
+
+<div className="post-grid">
+    {filteredPosts.map(post => (
+        <div key={post.id} className="post">
+            <img src={post.image} alt={post.name} />
+            <h2>{post.name}</h2>
+            <p>{post.city}</p>
+            <p>{post.startDate} - {post.endDate}</p>
+            <p>{post.description}</p>
+            <button type="button" className="more-info" onClick={() => navigate(`/dog-profile/${post.id}`)}>more info</button>
+        </div>
+    ))}
+</div>
+</div>
+);
 };
 
 export default Feed;

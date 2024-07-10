@@ -6,12 +6,8 @@ import Home from './components/Home';
 import RegisterReserved from './components/RegisterReserved';
 import About from './components/About';
 import DogProfiles from './components/DogProfiles';
-import DogSitters from './components/DogSitters';
 import ImageSection from './components/ImageSection';
 import MyDogProfiles from './components/MyDogProfiles';
-import Requestdos from './components/Requestdos';
-import RequestsMain from './components/RequestsMain';
-import Requestsvs from './components/Requestsvs';
 import VolunteerProfiles from './components/VolunteerProfiles';
 import FormSection from './components/FormSection';
 import { getAuth } from "firebase/auth";
@@ -92,16 +88,11 @@ function App() {
                 <Route path="feed" element={<MainLayout><Feed /></MainLayout>} />
                 <Route path="about" element={<MainLayout><About /></MainLayout>} />
                 <Route path="my-profile" element={<MainLayout><MyDogProfiles /></MainLayout>} />
-                <Route path="requests" element={<MainLayout><Requestdos /></MainLayout>} />
-                <Route path="requests-2" element={<MainLayout><RequestsMain /></MainLayout>} />
                 <Route path="reserved" exact element={<RegisterReserved />} />,
                 <Route path="DogProfiles" element={<MainLayout><DogProfiles /></MainLayout>} />
-                <Route path="DogSitters" element={<MainLayout><DogSitters /></MainLayout>} />
                 <Route path="FormSection" element={<MainLayout><FormSection /></MainLayout>} />
                 <Route path="ImageSection" element={<MainLayout><ImageSection /></MainLayout>} />
                 <Route path="VolProfile" element={<MainLayout><VolProfile /></MainLayout>} />
-                <Route path="Requestdos" element={<MainLayout><Requestdos /></MainLayout>} />
-                <Route path="Requestsvs" element={<MainLayout><Requestsvs /></MainLayout>} />
                 <Route path="VolFormSection" element={<MainLayout><Volform /></MainLayout>} />
 
                 <Route path="dog-profile/:id" element={<MainLayout><DogProfiles /></MainLayout>} />

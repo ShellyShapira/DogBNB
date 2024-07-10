@@ -1,9 +1,9 @@
-import React, { useEffect, useState, useContext } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
+import { useNavigate } from 'react-router-dom';
 import Collapsible from 'react-collapsible';
 import styled, { createGlobalStyle } from 'styled-components';
-import { UserContext } from '../App';
 import { FaWhatsapp } from 'react-icons/fa';
-import { useNavigate } from 'react-router-dom';
+import { UserContext } from '../App';
 
 const GlobalStyle = createGlobalStyle`
   :root {
@@ -33,8 +33,6 @@ const GlobalStyle = createGlobalStyle`
 `;
 
 const Container = styled.div`
-  display: flex;
-  justify-content: space-between;
   width: 90%;
   max-width: 1200px;
   margin: 20px auto;
@@ -42,26 +40,26 @@ const Container = styled.div`
   background: var(--BACKGROUND_COLOR);
 `;
 
-const ProfileSection = styled.div`
-  flex: 1;
-  margin-right: 20px;
-  margin-top: 20px; /* Add margin to align with requests section */
+const ProfileSectionWrapper = styled.div`
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
 `;
 
-const ActionsSection = styled.div`
+const Section = styled.div`
   flex: 1;
-  margin-left: 20px;
+  margin: 20px;
 `;
 
 const Header = styled.div`
   width: 100%;
   display: flex;
   align-items: center;
-  margin-bottom: 20px;
   padding: 20px;
   background-color: #DCE2E4;
   box-shadow: none;
   border-radius: 10px;
+  margin-bottom: 20px;
 `;
 
 const ProfileImage = styled.img`
@@ -77,6 +75,13 @@ const BasicInfo = styled.div`
   flex-grow: 1;
 `;
 
+const VolunteerName = styled.h2`
+  font-family: arial;
+  font-size: 3rem; /* גודל כפול */
+  margin: 5px 0;
+  color: #555;
+`;
+
 const SubTitle = styled.h2`
   font-family: var(--TEXT_FONT);
   font-size: 1.5rem;
@@ -86,7 +91,7 @@ const SubTitle = styled.h2`
 
 const Text = styled.p`
   font-family: var(--TEXT_FONT);
-  font-size: 1rem;
+  font-size: 1.2rem;
   margin: 5px 0;
   color: var(--TEXT_COLOR_H1);
 `;
@@ -98,6 +103,7 @@ const Card = styled.div`
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
   margin: 20px 0;
   border: 1px solid #ddd;
+  width: 100%;
 `;
 
 const DetailRow = styled.div`
@@ -245,6 +251,109 @@ const RequestDOS = ({ requests }) => {
   );
 };
 
+const PersonalDetails = ({ profile, isEditing, formData, handleChange }) => (
+  <Card>
+    <TitleSection>
+      <SubTitle>Personal Details</SubTitle>
+    </TitleSection>
+    {isEditing ? (
+      <>
+        <DetailRow>
+          <DetailLabel><strong>Name:</strong></DetailLabel>
+          <input className="detail-value" name="name" value={formData.name} onChange={handleChange} />
+        </DetailRow>
+        <DetailRow>
+          <DetailLabel><strong>Address:</strong></DetailLabel>
+          <input className="detail-value" name="address" value={formData.address} onChange={handleChange} />
+        </DetailRow>
+        <DetailRow>
+          <DetailLabel><strong>Age:</strong></DetailLabel>
+          <input className="detail-value" name="age" value={formData.age} onChange={handleChange} />
+        </DetailRow>
+        <DetailRow>
+          <DetailLabel><strong>Gender:</strong></DetailLabel>
+          <input className="detail-value" name="gender" value={formData.gender} onChange={handleChange} />
+        </DetailRow>
+        <DetailRow>
+          <DetailLabel><strong>Number of Adoptions:</strong></DetailLabel>
+          <input className="detail-value" name="numberOfAdoptions" value={formData.numberOfAdoptions} onChange={handleChange} />
+        </DetailRow>
+        <DetailRow>
+          <DetailLabel><strong>Animal Experience (Y/M):</strong></DetailLabel>
+          <input className="detail-value" name="animalExperience" value={formData.animalExperience} onChange={handleChange} />
+        </DetailRow>
+        <DetailRow>
+          <DetailLabel><strong>Additional Animals At Home:</strong></DetailLabel>
+          <input className="detail-value" name="additionalAnimalsAtHome" value={formData.additionalAnimals} onChange={handleChange} />
+        </DetailRow>
+        <DetailRow>
+          <DetailLabel><strong>A House with a Yard: (Y/M):</strong></DetailLabel>
+          <input className="detail-value" name="yard" value={formData.yard} onChange={handleChange} />
+        </DetailRow>
+        <DetailRow>
+          <DetailLabel><strong>Children at Home (Y/M):</strong></DetailLabel>
+          <input className="detail-value" name="childrenAtHome" value={formData.childrenAtHome} onChange={handleChange} />
+        </DetailRow>
+        <DetailRow>
+          <DetailLabel><strong>Available Dates:</strong></DetailLabel>
+          <input className="detail-value" name="availableDates" value={formData.availableDates} onChange={handleChange} />
+        </DetailRow>
+        <DetailRow>
+          <DetailLabel><strong>Description:</strong></DetailLabel>
+          <textarea className="detail-value" name="description" value={formData.description} onChange={handleChange} rows="4" />
+        </DetailRow>
+      </>
+    ) : (
+      <>
+        <DetailRow>
+          <DetailLabel><strong>Name:</strong></DetailLabel>
+          <DetailValue>{profile.name}</DetailValue>
+        </DetailRow>
+        <DetailRow>
+          <DetailLabel><strong>Address:</strong></DetailLabel>
+          <DetailValue>{profile.address}</DetailValue>
+        </DetailRow>
+        <DetailRow>
+          <DetailLabel><strong>Age:</strong></DetailLabel>
+          <DetailValue>{profile.age}</DetailValue>
+        </DetailRow>
+        <DetailRow>
+          <DetailLabel><strong>Gender:</strong></DetailLabel>
+          <DetailValue>{profile.gender}</DetailValue>
+        </DetailRow>
+        <DetailRow>
+          <DetailLabel><strong>Number of Adoptions:</strong></DetailLabel>
+          <DetailValue>{profile.numberOfAdoptions}</DetailValue>
+        </DetailRow>
+        <DetailRow>
+          <DetailLabel><strong>Animal Experience (Y/M):</strong></DetailLabel>
+          <DetailValue>{profile.animalExperience}</DetailValue>
+        </DetailRow>
+        <DetailRow>
+          <DetailLabel><strong>Additional Animals At Home:</strong></DetailLabel>
+          <DetailValue>{profile.additionalAnimalsAtHome}</DetailValue>
+        </DetailRow>
+        <DetailRow>
+          <DetailLabel><strong>A House with a Yard: (Y/M):</strong></DetailLabel>
+          <DetailValue>{profile.yard}</DetailValue>
+        </DetailRow>
+        <DetailRow>
+          <DetailLabel><strong>Children at Home (Y/M):</strong></DetailLabel>
+          <DetailValue>{profile.childrenAtHome}</DetailValue>
+        </DetailRow>
+        <DetailRow>
+          <DetailLabel><strong>Available Dates:</strong></DetailLabel>
+          <DetailValue>{profile.availableDates}</DetailValue>
+        </DetailRow>
+        <DetailRow>
+          <DetailLabel><strong>Description:</strong></DetailLabel>
+          <DetailValue>{profile.description}</DetailValue>
+        </DetailRow>
+      </>
+    )}
+  </Card>
+);
+
 const VolProfileCard = ({ profile, onSave, requests }) => {
   const [isEditing, setIsEditing] = useState(false);
   const [formData, setFormData] = useState(profile);
@@ -269,173 +378,72 @@ const VolProfileCard = ({ profile, onSave, requests }) => {
   return (
     <Container>
       <GlobalStyle />
-      <ProfileSection>
-        <Header>
-          <BasicInfo>
-            <SubTitle>{formData.name}</SubTitle>
-            <Text>{formData.address}</Text>
-          </BasicInfo>
-          <ProfileImage src={formData.profilePic} alt={`${profile.name}`} />
-        </Header>
-
-        <Collapsible trigger={<CollapsibleTrigger>Volunteer I.D</CollapsibleTrigger>}>
-          <Card>
-            {isEditing ? (
-              <>
-                <DetailRow>
-                  <DetailLabel><strong>Name:</strong></DetailLabel>
-                  <input className="detail-value" name="name" value={formData.name} onChange={handleChange} />
-                </DetailRow>
-                <DetailRow>
-                  <DetailLabel><strong>Address:</strong></DetailLabel>
-                  <input className="detail-value" name="address" value={formData.address} onChange={handleChange} />
-                </DetailRow>
-                <DetailRow>
-                  <DetailLabel><strong>Age:</strong></DetailLabel>
-                  <input className="detail-value" name="age" value={formData.age} onChange={handleChange} />
-                </DetailRow>
-                <DetailRow>
-                  <DetailLabel><strong>Gender:</strong></DetailLabel>
-                  <input className="detail-value" name="gender" value={formData.gender} onChange={handleChange} />
-                </DetailRow>
-                <DetailRow>
-                  <DetailLabel><strong>Number of Adoptions:</strong></DetailLabel>
-                  <input className="detail-value" name="numberOfAdoptions" value={formData.numberOfAdoptions} onChange={handleChange} />
-                </DetailRow>
-                <DetailRow>
-                  <DetailLabel><strong>Animal Experience (Y/M):</strong></DetailLabel>
-                  <input className="detail-value" name="animalExperience" value={formData.animalExperience} onChange={handleChange} />
-                </DetailRow>
-                <DetailRow>
-                  <DetailLabel><strong>Additional Animals At Home:</strong></DetailLabel>
-                  <input className="detail-value" name="additionalAnimalsAtHome" value={formData.additionalAnimals} onChange={handleChange} />
-                </DetailRow>
-                <DetailRow>
-                  <DetailLabel><strong>A House with a Yard: (Y/M):</strong></DetailLabel>
-                  <input className="detail-value" name="yard" value={formData.yard} onChange={handleChange} />
-                </DetailRow>
-                <DetailRow>
-                  <DetailLabel><strong>Children at Home (Y/M):</strong></DetailLabel>
-                  <input className="detail-value" name="childrenAtHome" value={formData.childrenAtHome} onChange={handleChange} />
-                </DetailRow>
-                <DetailRow>
-                  <DetailLabel><strong>Available Dates:</strong></DetailLabel>
-                  <input className="detail-value" name="availableDates" value={formData.availableDates} onChange={handleChange} />
-                </DetailRow>
-                <DetailRow>
-                  <DetailLabel><strong>Description:</strong></DetailLabel>
-                  <textarea className="detail-value" name="description" value={formData.description} onChange={handleChange} rows="4" />
-                </DetailRow>
-              </>
-            ) : (
-              <>
-                <DetailRow>
-                  <DetailLabel><strong>Name:</strong></DetailLabel>
-                  <DetailValue>{profile.name}</DetailValue>
-                </DetailRow>
-                <DetailRow>
-                  <DetailLabel><strong>Address:</strong></DetailLabel>
-                  <DetailValue>{profile.address}</DetailValue>
-                </DetailRow>
-                <DetailRow>
-                  <DetailLabel><strong>Age:</strong></DetailLabel>
-                  <DetailValue>{profile.age}</DetailValue>
-                </DetailRow>
-                <DetailRow>
-                  <DetailLabel><strong>Gender:</strong></DetailLabel>
-                  <DetailValue>{profile.gender}</DetailValue>
-                </DetailRow>
-                <DetailRow>
-                  <DetailLabel><strong>Number of Adoptions:</strong></DetailLabel>
-                  <DetailValue>{profile.numberOfAdoptions}</DetailValue>
-                </DetailRow>
-                <DetailRow>
-                  <DetailLabel><strong>Animal Experience (Y/M):</strong></DetailLabel>
-                  <DetailValue>{profile.animalExperience}</DetailValue>
-                </DetailRow>
-                <DetailRow>
-                  <DetailLabel><strong>Additional Animals At Home:</strong></DetailLabel>
-                  <DetailValue>{profile.additionalAnimalsAtHome}</DetailValue>
-                </DetailRow>
-                <DetailRow>
-                  <DetailLabel><strong>A House with a Yard: (Y/M):</strong></DetailLabel>
-                  <DetailValue>{profile.yard}</DetailValue>
-                </DetailRow>
-                <DetailRow>
-                  <DetailLabel><strong>Children at Home (Y/M):</strong></DetailLabel>
-                  <DetailValue>{profile.childrenAtHome}</DetailValue>
-                </DetailRow>
-                <DetailRow>
-                  <DetailLabel><strong>Available Dates:</strong></DetailLabel>
-                  <DetailValue>{profile.availableDates}</DetailValue>
-                </DetailRow>
-                <DetailRow>
-                  <DetailLabel><strong>Description:</strong></DetailLabel>
-                  <DetailValue>{profile.description}</DetailValue>
-                </DetailRow>
-              </>
-            )}
-          </Card>
-        </Collapsible>
-
-        <Collapsible trigger={<CollapsibleTrigger>A Little About Me</CollapsibleTrigger>}>
-          <Card>
-            {isEditing ? (
-              <>
-                <textarea
-                  className="detail-value"
-                  name="dogDetails"
-                  value={formData.dogDetails}
-                  onChange={handleChange}
-                  rows="4"
-                />
-              </>
-            ) : (
-              <Text>{profile.dogDetails}</Text>
-            )}
-          </Card>
-        </Collapsible>
-
-        <Collapsible trigger={<CollapsibleTrigger>Reviews</CollapsibleTrigger>}>
-          <Card>
-            {isEditing ? (
-              <>
-                <DetailRow>
-                  <DetailLabel><strong>Review 1:</strong></DetailLabel>
-                  <textarea className="detail-value" name="review1" value={formData.review1} onChange={handleChange} rows="4" />
-                </DetailRow>
-                <DetailRow>
-                  <DetailLabel><strong>Review 2:</strong></DetailLabel>
-                  <textarea className="detail-value" name="review2" value={formData.review2} onChange={handleChange} rows="4" />
-                </DetailRow>
-                {/* Add more reviews as needed */}
-              </>
-            ) : (
-              <>
-                <DetailRow>
-                  <DetailLabel><strong>Review 1:</strong></DetailLabel>
-                  <DetailValue>{profile.review1}</DetailValue>
-                </DetailRow>
-                <DetailRow>
-                  <DetailLabel><strong>Review 2:</strong></DetailLabel>
-                  <DetailValue>{profile.review2}</DetailValue>
-                </DetailRow>
-                {/* Display more reviews as needed */}
-              </>
-            )}
-          </Card>
-        </Collapsible>
-
-        {isEditing ? (
-          <EditButton onClick={handleSaveClick}>Save Profile</EditButton>
-        ) : (
-          <EditButton onClick={handleEditClick}>Edit Profile</EditButton>
-        )}
-      </ProfileSection>
-
-      <ActionsSection>
-        <RequestDOS requests={requests} />
-      </ActionsSection>
+      <Header>
+        <BasicInfo>
+          <VolunteerName>{formData.name}</VolunteerName>
+          <Text>{formData.address}</Text>
+        </BasicInfo>
+        <ProfileImage src={formData.profilePic} alt={`${profile.name}`} />
+      </Header>
+      <ProfileSectionWrapper>
+        <Section>
+          <PersonalDetails profile={profile} isEditing={isEditing} formData={formData} handleChange={handleChange} />
+          <Collapsible trigger={<CollapsibleTrigger>A Little About Me</CollapsibleTrigger>}>
+            <Card>
+              {isEditing ? (
+                <>
+                  <textarea
+                    className="detail-value"
+                    name="dogDetails"
+                    value={formData.dogDetails}
+                    onChange={handleChange}
+                    rows="4"
+                  />
+                </>
+              ) : (
+                <Text>{profile.dogDetails}</Text>
+              )}
+            </Card>
+          </Collapsible>
+          <Collapsible trigger={<CollapsibleTrigger>Reviews</CollapsibleTrigger>}>
+            <Card>
+              {isEditing ? (
+                <>
+                  <DetailRow>
+                    <DetailLabel><strong>Review 1:</strong></DetailLabel>
+                    <textarea className="detail-value" name="review1" value={formData.review1} onChange={handleChange} rows="4" />
+                  </DetailRow>
+                  <DetailRow>
+                    <DetailLabel><strong>Review 2:</strong></DetailLabel>
+                    <textarea className="detail-value" name="review2" value={formData.review2} onChange={handleChange} rows="4" />
+                  </DetailRow>
+                  {/* Add more reviews as needed */}
+                </>
+              ) : (
+                <>
+                  <DetailRow>
+                    <DetailLabel><strong>Review 1:</strong></DetailLabel>
+                    <DetailValue>{profile.review1}</DetailValue>
+                  </DetailRow>
+                  <DetailRow>
+                    <DetailLabel><strong>Review 2:</strong></DetailLabel>
+                    <DetailValue>{profile.review2}</DetailValue>
+                  </DetailRow>
+                  {/* Display more reviews as needed */}
+                </>
+              )}
+            </Card>
+          </Collapsible>
+          {isEditing ? (
+            <EditButton onClick={handleSaveClick}>Save Profile</EditButton>
+          ) : (
+            <EditButton onClick={handleEditClick}>Edit Profile</EditButton>
+          )}
+        </Section>
+        <Section>
+          <RequestDOS requests={requests} />
+        </Section>
+      </ProfileSectionWrapper>
     </Container>
   );
 };

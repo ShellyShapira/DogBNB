@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import styled, { createGlobalStyle } from 'styled-components';
-import Collapsible from 'react-collapsible';
 import dog1 from '../images/dog1.jpg';
 import dog2 from '../images/dog2.jpg';
+import pawPrint from '../images/pawprint5.svg';
 
 const GlobalStyle = createGlobalStyle`
   :root {
@@ -32,21 +32,34 @@ const GlobalStyle = createGlobalStyle`
 `;
 
 const Container = styled.div`
-  width: 30%;
+  width: 90%;
   max-width: 1200px;
   margin: 20px auto;
   text-align: left;
   background: var(--BACKGROUND_COLOR);
 `;
 
+const ProfileSectionWrapper = styled.div`
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+`;
+
+const Section = styled.div`
+  flex: 1;
+  margin: 20px;
+`;
+
 const Header = styled.div`
   width: 100%;
   display: flex;
   align-items: center;
-  margin-bottom: 20px;
+  position: relative;
   padding: 20px;
-  background: none;
+  background-color: #CBD5D0;
   box-shadow: none;
+  border-radius: 10px;
+  margin-bottom: 20px;
 `;
 
 const ProfileImage = styled.img`
@@ -55,11 +68,19 @@ const ProfileImage = styled.img`
   height: 150px;
   object-fit: cover;
   margin-left: 20px;
+  z-index: 2;
 `;
 
 const BasicInfo = styled.div`
   text-align: left;
   flex-grow: 1;
+`;
+
+const VolunteerName = styled.h2`
+  font-family: arial;
+  font-size: 4rem;
+  margin: 5px 0;
+  color: #555;
 `;
 
 const SubTitle = styled.h2`
@@ -71,21 +92,23 @@ const SubTitle = styled.h2`
 
 const Text = styled.p`
   font-family: var(--TEXT_FONT);
-  font-size: 1rem;
+  font-size: 1.2rem;
   margin: 5px 0;
   color: var(--TEXT_COLOR_H1);
 `;
 
 const Card = styled.div`
-  background-color: transparent;
-  border-radius: 0;
-  padding: 15px;
-  margin: 10px 0;
-  box-shadow: none;
-  text-align: left;
+  background-color: white;
+  padding: 20px;
+  border-radius: 10px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  margin: 20px 0;
+  border: 1px solid #ddd;
+  width: 100%;
 `;
 
 const DetailRow = styled.div`
+  text-align: left;
   display: flex;
   justify-content: space-between;
   margin-bottom: 5px;
@@ -97,86 +120,183 @@ const DetailLabel = styled.label`
 `;
 
 const DetailValue = styled.span`
+  align: left;
+  display: flex;
   color: #666;
 `;
 
+const TitleSection = styled.div`
+  display: flex;
+  align-items: center;
+  background-color: #DCE2E4;
+  padding: 10px;
+  border-radius: 10px 10px 0 0;
+  margin: -20px -20px 20px -20px;
+`;
+
+const TitleWithIcon = styled.div`
+  display: flex;
+  align-items: center;
+
+  img {
+    margin-right: 10px;
+    width: 24px; /* גודל מתאים לאייקון */
+    height: 24px; /* גודל מתאים לאייקון */
+  }
+`;
+
+const GalleryCard = styled(Card)`
+  width: 100%;
+`;
+
 const ContactButton = styled.button`
-  background-color: #628991;
-  color: #ffffff;
+  background-color: var(--BUTTON_COLOR_H1);
+  color: white;
   border: none;
-  padding: 5px 10px;
+  padding: 10px 20px;
   border-radius: 5px;
   cursor: pointer;
   font-size: 1rem;
   margin-top: 20px;
   transition: box-shadow 0.3s ease-in-out;
-  display: inline-block;
-  width: auto;
 
   &:hover {
     box-shadow: 0px 8px 20px rgba(0, 0, 0, 0.5);
-    background-color: #628991;
   }
 `;
 
-const CollapsibleTrigger = styled.div`
-  font-size: 1.2rem;
-  font-weight: bold;
-  cursor: pointer;
-  color: #333;
-  padding: 10px;
-  background-color: #e0e0e0;
-  border-radius: 5px;
-  transition: background-color 0.3s ease;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-
-  &::after {
-    content: '▼';
-    font-size: 1rem;
-    margin-left: 10px;
-  }
-
-  &:hover {
-    background-color: #d5d5d5;
-  }
-`;
-
-const ModalBackground = styled.div`
+const PopupContainer = styled.div`
   position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: rgba(0, 0, 0, 0.5);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  z-index: 1000;
-`;
-
-const ModalContent = styled.div`
-  background: white;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background-color: white;
   padding: 20px;
-  border-radius: 5px;
+  border-radius: 10px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  width: 300px;
+  z-index: 1000;
   text-align: center;
 `;
 
-const DogProfileCard = ({ profile }) => {
+const CloseButton = styled.button`
+  background-color: #B05D5D;
+  color: white;
+  border: none;
+  padding: 5px 10px;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 1rem;
+  position: absolute;
+  top: 10px;
+  right: 10px;
+
+  &:hover {
+    background-color: #A04B4B;
+  }
+`;
+
+const Gallery = ({ images }) => (
+  <GalleryCard>
+    <TitleSection>
+      <TitleWithIcon>
+        <img src={pawPrint} alt="Paw Print" />
+        <SubTitle>Gallery</SubTitle>
+      </TitleWithIcon>
+    </TitleSection>
+    <div style={{ display: 'flex', flexWrap: 'wrap' }}>
+      {images.map((image, index) => (
+        <img key={index} src={image} alt={`gallery-${index}`} style={{ width: '150px', height: '150px', margin: '10px', borderRadius: '10px' }} />
+      ))}
+    </div>
+  </GalleryCard>
+);
+
+const PersonalDetails = ({ profile }) => (
+  <Card>
+    <TitleSection>
+      <TitleWithIcon>
+        <img src={pawPrint} alt="Paw Print" />
+        <SubTitle>Personal Details</SubTitle>
+      </TitleWithIcon>
+    </TitleSection>
+    <DetailRow>
+      <DetailLabel><strong>Name:</strong></DetailLabel>
+      <DetailValue>{profile.ownerName}</DetailValue>
+    </DetailRow>
+    <DetailRow>
+      <DetailLabel><strong>Address:</strong></DetailLabel>
+      <DetailValue>{profile.address}</DetailValue>
+    </DetailRow>
+    <Card>
+      <DetailRow>
+        <DetailLabel><strong>Name:</strong></DetailLabel>
+        <DetailValue>{profile.name}</DetailValue>
+      </DetailRow>
+      <DetailRow>
+        <DetailLabel><strong>Breed:</strong></DetailLabel>
+        <DetailValue>{profile.breed}</DetailValue>
+      </DetailRow>
+      <DetailRow>
+        <DetailLabel><strong>Age:</strong></DetailLabel>
+        <DetailValue>{profile.age}</DetailValue>
+      </DetailRow>
+      <DetailRow>
+        <DetailLabel><strong>Gender (Male/Female):</strong></DetailLabel>
+        <DetailValue>{profile.gender}</DetailValue>
+      </DetailRow>
+      <DetailRow>
+        <DetailLabel><strong>Size:</strong></DetailLabel>
+        <DetailValue>{profile.size}</DetailValue>
+      </DetailRow>
+      <DetailRow>
+        <DetailLabel><strong>Immune (Y/N):</strong></DetailLabel>
+        <DetailValue>{profile.immune}</DetailValue>
+      </DetailRow>
+      <DetailRow>
+        <DetailLabel><strong>Neutered (Y/N):</strong></DetailLabel>
+        <DetailValue>{profile.neutered}</DetailValue>
+      </DetailRow>
+      <DetailRow>
+        <DetailLabel><strong>Suitable For:</strong></DetailLabel>
+        <DetailValue>{profile.suitableFor}</DetailValue>
+      </DetailRow>
+      <DetailRow>
+        <DetailLabel><strong>Friendly with children(Y/N):</strong></DetailLabel>
+        <DetailValue>{profile.friendlyWithChildren}</DetailValue>
+      </DetailRow>
+    </Card>
+    <DetailRow>
+      <DetailLabel><strong>A Little About Me</strong></DetailLabel>
+    </DetailRow>
+    <Card>
+      <Text>{profile.dogDetails}</Text>
+    </Card>
+    <DetailRow>
+      <DetailLabel><strong>Care Instructions</strong></DetailLabel>
+    </DetailRow>
+    <Card>
+      <Text>{profile.careInstructions}</Text>
+    </Card>
+  </Card>
+);
+
+const DogProfileCard = ({ profile, galleryImages }) => {
   const [photoUrl, setPhotoUrl] = useState('');
+  const [isPopupOpen, setIsPopupOpen] = useState(false);
 
   useEffect(() => {
-    const photos = [dog1, dog2]; // Add more dog images here as needed
-    const photoIndex = (profile.id - 1) % photos.length; // Use modulo to cycle through images
+    const photos = [dog1, dog2];
+    const photoIndex = (profile.id - 1) % photos.length;
     setPhotoUrl(photos[photoIndex]);
   }, [profile.id]);
 
-  const [showModal, setShowModal] = useState(false);
-
   const handleContactClick = () => {
-    setShowModal(true);
-    setTimeout(() => setShowModal(false), 3000); // Close the modal after 3 seconds
+    setIsPopupOpen(true);
+  };
+
+  const handleClosePopup = () => {
+    setIsPopupOpen(false);
   };
 
   return (
@@ -184,88 +304,28 @@ const DogProfileCard = ({ profile }) => {
       <GlobalStyle />
       <Header>
         <BasicInfo>
-          <SubTitle>{profile.name}</SubTitle>
+          <VolunteerName>{profile.name}</VolunteerName>
           <Text>{profile.breed}, {profile.age}, {profile.size}</Text>
           <Text>{profile.address}</Text>
           <Text>Dates for BBsitting: {profile.datesForBBsitting}</Text>
+          <ContactButton onClick={handleContactClick}>Contact</ContactButton>
         </BasicInfo>
         <ProfileImage src={photoUrl} alt={`${profile.name}`} />
       </Header>
-
-      <Collapsible trigger={<CollapsibleTrigger>Owner I.D</CollapsibleTrigger>}>
-        <Card>
-          <DetailRow>
-            <DetailLabel><strong>Name:</strong></DetailLabel>
-            <DetailValue>{profile.ownerName}</DetailValue>
-          </DetailRow>
-          <DetailRow>
-            <DetailLabel><strong>Address:</strong></DetailLabel>
-            <DetailValue>{profile.address}</DetailValue>
-          </DetailRow>
-          <DetailRow>
-            <DetailLabel><strong>Email:</strong></DetailLabel>
-            <DetailValue>{profile.email}</DetailValue>
-          </DetailRow>
-        </Card>
-      </Collapsible>
-
-      <Collapsible trigger={<CollapsibleTrigger>Dog I.D</CollapsibleTrigger>}>
-        <Card>
-          <DetailRow>
-            <DetailLabel><strong>Name:</strong></DetailLabel>
-            <DetailValue>{profile.name}</DetailValue>
-          </DetailRow>
-          <DetailRow>
-            <DetailLabel><strong>Breed:</strong></DetailLabel>
-            <DetailValue>{profile.breed}</DetailValue>
-          </DetailRow>
-          <DetailRow>
-            <DetailLabel><strong>Age:</strong></DetailLabel>
-            <DetailValue>{profile.age}</DetailValue>
-          </DetailRow>
-          <DetailRow>
-            <DetailLabel><strong>Gender:</strong></DetailLabel>
-            <DetailValue>{profile.gender}</DetailValue>
-          </DetailRow>
-          <DetailRow>
-            <DetailLabel><strong>Size:</strong></DetailLabel>
-            <DetailValue>{profile.size}</DetailValue>
-          </DetailRow>
-          <DetailRow>
-            <DetailLabel><strong>Immune:</strong></DetailLabel>
-            <DetailValue>{profile.immune}</DetailValue>
-          </DetailRow>
-          <DetailRow>
-            <DetailLabel><strong>Neutered:</strong></DetailLabel>
-            <DetailValue>{profile.neutered}</DetailValue>
-          </DetailRow>
-          <DetailRow>
-            <DetailLabel><strong>Suitable For:</strong></DetailLabel>
-            <DetailValue>{profile.suitableFor && typeof profile.suitableFor == typeof [] ? profile.suitableFor.join(', ') : 'N/A'}</DetailValue>
-          </DetailRow>
-        </Card>
-      </Collapsible>
-
-      <Collapsible trigger={<CollapsibleTrigger>A Little About Me</CollapsibleTrigger>}>
-        <Card>
-          <Text>{profile.description}</Text>
-        </Card>
-      </Collapsible>
-
-      <Collapsible trigger={<CollapsibleTrigger>Care Instructions</CollapsibleTrigger>}>
-        <Card>
-          <Text>{profile.careInstructions}</Text>
-        </Card>
-      </Collapsible>
-
-      <ContactButton onClick={handleContactClick}>Contact</ContactButton>
-
-      {showModal && (
-        <ModalBackground>
-          <ModalContent>
-            <h3>BBsitting request sent!</h3>
-          </ModalContent>
-        </ModalBackground>
+      <ProfileSectionWrapper>
+        <Section>
+          <PersonalDetails profile={profile} />
+        </Section>
+        <Section>
+          <Gallery images={galleryImages} />
+        </Section>
+      </ProfileSectionWrapper>
+      {isPopupOpen && (
+        <PopupContainer>
+          <h2>Thank you!</h2>
+          <p>Your contact request has been sent to {profile.ownerName}.</p>
+          <CloseButton onClick={handleClosePopup}>X</CloseButton>
+        </PopupContainer>
       )}
     </Container>
   );
@@ -275,29 +335,28 @@ const DogProfiles = () => {
   const profile = {
     id: 1,
     name: 'Buddy',
-    breed: 'Labrador',
-    age: '3 years',
+    breed: 'Golden Retriever',
+    age: '5 years',
     gender: 'Male',
     size: 'Large',
     immune: 'Yes',
     neutered: 'Yes',
-    suitableFor: ['children', 'apartment'],
-    address: 'Tel Aviv',
-    datesForBBsitting: '01/07-25/08/2024',
+    suitableFor: 'Apartment',
+    friendlyWithChildren: 'Yes',
     ownerName: 'John Doe',
-    email: 'shaked.ds@gmail.com',
-    careInstructions: 'Feed twice a day with high-quality dog food. Provide clean, fresh water at all times. Ensure the dog has a comfortable place to sleep.',
-    description: 'Buddy is a friendly dog that loves to play and enjoys spending time with family. Buddy is very loyal and makes a great companion.',
+    address: '1234 Elm Street, Springfield',
+    email: 'johndoe@example.com',
+    phone: '123-456-7890',
+    datesForBBsitting: '12/07/2023 - 20/07/2023',
+    dogDetails: 'Buddy is a friendly dog that loves to play and enjoys spending time with family. Buddy is very loyal and makes a great companion.',
+    careInstructions: 'Feed twice a day. Walk twice a day. Make sure he has fresh water at all times.',
   };
 
-  // Ensure suitableFor is always an array
-  if (!profile.suitableFor) {
-    profile.suitableFor = [];
-  }
+  const galleryImages = [dog1, dog2];
 
   return (
     <div>
-      <DogProfileCard profile={profile} />
+      <DogProfileCard profile={profile} galleryImages={galleryImages} />
     </div>
   );
 };

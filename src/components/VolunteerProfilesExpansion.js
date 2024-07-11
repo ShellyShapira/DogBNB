@@ -1,10 +1,7 @@
 import React, { useEffect, useState } from 'react';
-import Collapsible from 'react-collapsible';
 import styled, { createGlobalStyle } from 'styled-components';
-
-// ייבוא תמונות
 import person1 from '../images/person1.jpg';
-import person2 from '../images/person2.jpg';
+import pawPrint from '../images/pawprint5.svg';
 
 const GlobalStyle = createGlobalStyle`
   :root {
@@ -34,39 +31,43 @@ const GlobalStyle = createGlobalStyle`
 `;
 
 const Container = styled.div`
-  width: 30%;
+  width: 90%;
   max-width: 1200px;
   margin: 20px auto;
   text-align: left;
   background: var(--BACKGROUND_COLOR);
 `;
 
+const ProfileSectionWrapper = styled.div`
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+`;
+
+const Section = styled.div`
+  flex: 1;
+  margin: 20px;
+`;
+
 const Header = styled.div`
   width: 100%;
   display: flex;
   align-items: center;
-  margin-bottom: 20px;
+  position: relative;
   padding: 20px;
-  background: none;
+  background-color: #CBD5D0;
   box-shadow: none;
+  border-radius: 10px;
+  margin-bottom: 20px;
 `;
 
-const ProfileImage = styled.div`
+const ProfileImage = styled.img`
+  border-radius: 50%;
   width: 150px;
   height: 150px;
-  border-radius: 50%;
-  background-color: #e0e0e0;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  object-fit: cover;
   margin-left: 20px;
-
-  img {
-    border-radius: 50%;
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-  }
+  z-index: 2;
 `;
 
 const BasicInfo = styled.div`
@@ -74,11 +75,11 @@ const BasicInfo = styled.div`
   flex-grow: 1;
 `;
 
-const Title = styled.h1`
-  font-family: var(--TITLE_FONT);
-  font-size: 2rem;
-  margin-bottom: 20px;
-  color: var(--TITLE_COLOR_H1);
+const VolunteerName = styled.h2`
+  font-family: arial;
+  font-size: 4rem; 
+  margin: 5px 0;
+  color: #555;
 `;
 
 const SubTitle = styled.h2`
@@ -90,19 +91,19 @@ const SubTitle = styled.h2`
 
 const Text = styled.p`
   font-family: var(--TEXT_FONT);
-  font-size: 1rem;
+  font-size: 1.2rem;
   margin: 5px 0;
   color: var(--TEXT_COLOR_H1);
 `;
 
 const Card = styled.div`
+  background-color: white;
+  padding: 20px;
+  border-radius: 10px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  margin: 20px 0;
+  border: 1px solid #ddd;
   width: 100%;
-  background-color: transparent;
-  border-radius: 0;
-  padding: 15px;
-  margin: 10px 0;
-  box-shadow: none;
-  text-align: left;
 `;
 
 const DetailRow = styled.div`
@@ -123,33 +124,16 @@ const DetailValue = styled.span`
   color: #666;
 `;
 
-const CollapsibleTrigger = styled.div`
-  font-size: 1.2rem;
-  font-weight: bold;
-  cursor: pointer;
-  color: #333;
-  padding: 10px;
-  background-color: #e0e0e0;
-  border-radius: 5px;
-  transition: background-color 0.3s ease;
+const TitleSection = styled.div`
   display: flex;
-  justify-content: space-between;
   align-items: center;
-
-  &::after {
-    content: '▼';
-    font-size: 1rem;
-    margin-left: 10px;
-  }
-
-  &:hover {
-    background-color: #d5d5d5;
-  }
+  background-color: #DCE2E4;
+  padding: 10px;
+  border-radius: 10px 10px 0 0;
+  margin: -20px -20px 20px -20px; 
 `;
 
-const ReviewsContainer = styled.div`
-  max-height: 200px;
-  overflow-y: auto;
+const ReviewsContainer = styled(Card)`
   width: 100%;
 `;
 
@@ -159,6 +143,13 @@ const ReviewCard = styled.div`
   margin-bottom: 10px;
   border-radius: 5px;
   width: 100%;
+  background-color: #EFEFEF;
+`;
+
+const PawPrint = styled.img`
+  width: 30px;
+  height: 30px;
+  margin-right: 10px; 
 `;
 
 const VolProfileCard = ({ profile }) => {
@@ -167,68 +158,69 @@ const VolProfileCard = ({ profile }) => {
       <GlobalStyle />
       <Header>
         <BasicInfo>
-          <SubTitle>{profile.name}</SubTitle>
+          <VolunteerName>{profile.name}</VolunteerName>
           <Text>{profile.address}</Text>
         </BasicInfo>
-        <ProfileImage>
-          {profile.photo ? (
-            <img src={profile.photo} alt={`${profile.name}`} />
-          ) : (
-            <div className="empty-image"></div>
-          )}
-        </ProfileImage>
+        <ProfileImage src={profile.photo || person1} alt={`${profile.name}`} />
       </Header>
-
-      <Collapsible trigger={<CollapsibleTrigger>Volunteer I.D</CollapsibleTrigger>}>
-        <Card>
-          <DetailRow>
-            <DetailLabel><strong>Name:</strong></DetailLabel>
-            <DetailValue>{profile.name}</DetailValue>
-          </DetailRow>
-          <DetailRow>
-            <DetailLabel><strong>Address:</strong></DetailLabel>
-            <DetailValue>{profile.address}</DetailValue>
-          </DetailRow>
-          <DetailRow>
-            <DetailLabel><strong>Age:</strong></DetailLabel>
-            <DetailValue>{profile.age}</DetailValue>
-          </DetailRow>
-          <DetailRow>
-            <DetailLabel><strong>Gender:</strong></DetailLabel>
-            <DetailValue>{profile.gender}</DetailValue>
-          </DetailRow>
-          <DetailRow>
-            <DetailLabel><strong>Number of Adoptions:</strong></DetailLabel>
-            <DetailValue>{profile.adoptions}</DetailValue>
-          </DetailRow>
-          <DetailRow>
-            <DetailLabel><strong>Animal Experience:</strong></DetailLabel>
-            <DetailValue>{profile.animalExperience}</DetailValue>
-          </DetailRow>
-          <DetailRow>
-            <DetailLabel><strong>Additional Animals At Home:</strong></DetailLabel>
-            <DetailValue>{profile.additionalAnimals}</DetailValue>
-          </DetailRow>
-          <DetailRow>
-            <DetailLabel><strong>A House with a Yard:</strong></DetailLabel>
-            <DetailValue>{profile.yard}</DetailValue>
-          </DetailRow>
-          <DetailRow>
-            <DetailLabel><strong>Children at Home:</strong></DetailLabel>
-            <DetailValue>{profile.children}</DetailValue>
-          </DetailRow>
-        </Card>
-      </Collapsible>
-
-      <Collapsible trigger={<CollapsibleTrigger>A Little About Me</CollapsibleTrigger>}>
-        <Card>
-          <Text>{profile.description}</Text>
-        </Card>
-      </Collapsible>
-
-      <Collapsible trigger={<CollapsibleTrigger>Reviews</CollapsibleTrigger>}>
-        <Card>
+      <ProfileSectionWrapper>
+        <Section>
+          <Card>
+            <TitleSection>
+              <PawPrint src={pawPrint} alt="Paw Print" />
+              <SubTitle>Volunteer I.D</SubTitle>
+            </TitleSection>
+            <DetailRow>
+              <DetailLabel><strong>Name:</strong></DetailLabel>
+              <DetailValue>{profile.name}</DetailValue>
+            </DetailRow>
+            <DetailRow>
+              <DetailLabel><strong>Address:</strong></DetailLabel>
+              <DetailValue>{profile.address}</DetailValue>
+            </DetailRow>
+            <DetailRow>
+              <DetailLabel><strong>Age:</strong></DetailLabel>
+              <DetailValue>{profile.age}</DetailValue>
+            </DetailRow>
+            <DetailRow>
+              <DetailLabel><strong>Gender:</strong></DetailLabel>
+              <DetailValue>{profile.gender}</DetailValue>
+            </DetailRow>
+            <DetailRow>
+              <DetailLabel><strong>Number of Adoptions:</strong></DetailLabel>
+              <DetailValue>{profile.adoptions}</DetailValue>
+            </DetailRow>
+            <DetailRow>
+              <DetailLabel><strong>Animal Experience:</strong></DetailLabel>
+              <DetailValue>{profile.animalExperience}</DetailValue>
+            </DetailRow>
+            <DetailRow>
+              <DetailLabel><strong>Additional Animals At Home:</strong></DetailLabel>
+              <DetailValue>{profile.additionalAnimals}</DetailValue>
+            </DetailRow>
+            <DetailRow>
+              <DetailLabel><strong>A House with a Yard:</strong></DetailLabel>
+              <DetailValue>{profile.yard}</DetailValue>
+            </DetailRow>
+            <DetailRow>
+              <DetailLabel><strong>Children at Home:</strong></DetailLabel>
+              <DetailValue>{profile.children}</DetailValue>
+            </DetailRow>
+          </Card>
+          <Card>
+            <TitleSection>
+              <PawPrint src={pawPrint} alt="Paw Print" />
+              <SubTitle>A Little About Me</SubTitle>
+            </TitleSection>
+            <Text>{profile.description}</Text>
+          </Card>
+        </Section>
+        <Section>
           <ReviewsContainer>
+            <TitleSection>
+              <PawPrint src={pawPrint} alt="Paw Print" />
+              <SubTitle>Reviews</SubTitle>
+            </TitleSection>
             {profile.reviews.map((review, index) => (
               <ReviewCard key={index}>
                 <DetailLabel><strong>{review.reviewer}:</strong></DetailLabel>
@@ -237,8 +229,8 @@ const VolProfileCard = ({ profile }) => {
               </ReviewCard>
             ))}
           </ReviewsContainer>
-        </Card>
-      </Collapsible>
+        </Section>
+      </ProfileSectionWrapper>
     </Container>
   );
 };
@@ -247,17 +239,17 @@ const VolProfile = () => {
   const [profile, setProfile] = useState(null);
 
   useEffect(() => {
-    // Load the first profile as an example
     const exampleProfile = {
       name: "John Doe",
       address: "123 Main St, Anytown, USA",
       age: 30,
       gender: "Male",
       adoptions: 5,
-      animalExperience: "no",
-      additionalAnimals: "yes",
+      animalExperience: "Yes",
+      additionalAnimals: "Yes",
       yard: "Yes",
       children: "Yes",
+      description: "I am a dedicated animal lover with years of experience in taking care of pets.",
       reviews: [
         {
           reviewer: "Jane Smith",
@@ -272,7 +264,7 @@ const VolProfile = () => {
           text: "Very reliable and good with animals."
         }
       ],
-      photo: person1 // שימוש בתמונה מייבוא
+      photo: person1 
     };
     setProfile(exampleProfile);
   }, []);

@@ -56,7 +56,7 @@ const Header = styled.div`
   align-items: center;
   position: relative;
   padding: 20px;
-  background-color: #DCE2E4;
+  background-color: #CBD5D0;
   box-shadow: none;
   border-radius: 10px;
   margin-bottom: 20px;
@@ -78,7 +78,7 @@ const BasicInfo = styled.div`
 
 const VolunteerName = styled.h2`
   font-family: arial;
-  font-size: 4rem; /* גודל כפול */
+  font-size: 4rem;
   margin: 5px 0;
   color: #555;
 `;
@@ -145,10 +145,23 @@ const EditButton = styled.button`
 `;
 
 const TitleSection = styled.div`
+  display: flex;
+  align-items: center;
   background-color: #DCE2E4;
   padding: 10px;
   border-radius: 10px 10px 0 0;
-  margin: -20px -20px 20px -20px; /* Adjust based on the card's padding */
+  margin: -20px -20px 20px -20px;
+`;
+
+const TitleWithIcon = styled.div`
+  display: flex;
+  align-items: center;
+
+  img {
+    margin-right: 10px;
+    width: 24px;
+    height: 24px;
+  }
 `;
 
 const RequestItem = styled.div`
@@ -183,7 +196,7 @@ const ActionButtons = styled.div`
 `;
 
 const Button = styled.button`
-  background-color: ${props => props.primary ? '#91B6A2' : '#B05D5D'};
+  background-color: ${props => props.primary ? '#628991' : '#B05D5D'};
   color: white;
   border: none;
   padding: 5px 10px;
@@ -193,12 +206,12 @@ const Button = styled.button`
 
   &:hover {
     box-shadow: 0px 8px 20px rgba(0, 0, 0, 0.5);
-    background-color: ${props => props.primary ? '#8BBBAA' : '#B05D5D'};
+    background-color: ${props => props.primary ? '#628991' : '#B05D5D'};
   }
 `;
 
 const PawPrint = styled.img`
-  width: 30px; /* Adjust size as needed */
+  width: 30px;
   height: 30px;
   position: absolute;
   z-index: 1;
@@ -209,28 +222,22 @@ const GalleryCard = styled(Card)`
 `;
 
 const UploadButton = styled.button`
-  background-color: #91B6A2;
+  background-color: #628991;
   color: white;
   border: none;
-  width: 40px; /* הגדרת הרוחב והגובה באותה מידה כדי ליצור כפתור מרובע */
+  width: 40px;
   height: 40px;
-  border-radius: 10%;
+  border-radius: 50%;
   cursor: pointer;
   font-size: 1.5rem;
   transition: box-shadow 0.3s ease-in-out;
-  display: flex; /* כדי למרכז את התוכן */
+  display: flex;
   justify-content: center;
   align-items: center;
 
   &:hover {
     box-shadow: 0px 8px 20px rgba(0, 0, 0, 0.5);
   }
-`;
-
-const UploadButtonContainer = styled.div`
-  display: flex;
-  align-items: center;
-  gap: 10px;
 `;
 
 
@@ -274,7 +281,10 @@ const RequestActions = ({ requests, onAccept, onDelete }) => {
   return (
     <Card>
       <TitleSection>
-        <SubTitle>Requests</SubTitle>
+        <TitleWithIcon>
+          <img src={pawPrint} alt="Paw Print" />
+          <SubTitle>Requests</SubTitle>
+        </TitleWithIcon>
       </TitleSection>
       {requests.map((request, index) => (
         <RequestItem key={index}>
@@ -292,7 +302,6 @@ const RequestActions = ({ requests, onAccept, onDelete }) => {
     </Card>
   );
 };
-
 
 const DogSitters = ({ sitters, onDelete, onAddReview }) => {
   const [reviewIndex, setReviewIndex] = useState(null);
@@ -316,7 +325,10 @@ const DogSitters = ({ sitters, onDelete, onAddReview }) => {
   return (
     <Card>
       <TitleSection>
-        <SubTitle>My Dog Sitters</SubTitle>
+        <TitleWithIcon>
+          <img src={pawPrint} alt="Paw Print" />
+          <SubTitle>My Dog Sitters</SubTitle>
+        </TitleWithIcon>
       </TitleSection>
       {sitters.map((sitter, index) => (
         <div key={index} style={{ marginBottom: '20px' }}>
@@ -365,15 +377,13 @@ const DogSitters = ({ sitters, onDelete, onAddReview }) => {
   );
 };
 
-
-
-
-
-
 const PersonalDetails = ({ profile, isEditing, formData, handleChange }) => (
   <Card>
     <TitleSection>
-      <SubTitle>Personal Details</SubTitle>
+      <TitleWithIcon>
+        <img src={pawPrint} alt="Paw Print" />
+        <SubTitle>Personal Details</SubTitle>
+      </TitleWithIcon>
     </TitleSection>
     {isEditing ? (
       <>
@@ -552,13 +562,13 @@ const Gallery = ({ images, onUpload }) => {
 
   return (
     <GalleryCard>
-      <UploadButtonContainer>
+      <TitleSection>
         <SubTitle>Gallery</SubTitle>
+      </TitleSection>
+      <div style={{ display: 'flex', flexWrap: 'wrap', alignItems: 'center' }}>
         <UploadButton onClick={() => document.getElementById('imageUpload').click()}>
           +
         </UploadButton>
-      </UploadButtonContainer>
-      <div style={{ display: 'flex', flexWrap: 'wrap' }}>
         {images.map((image, index) => (
           <img key={index} src={image} alt={`gallery-${index}`} style={{ width: '150px', height: '150px', margin: '10px', borderRadius: '10px' }} />
         ))}
@@ -572,6 +582,7 @@ const Gallery = ({ images, onUpload }) => {
     </GalleryCard>
   );
 };
+
 
 const DogProfileCard = ({ profile, onSave, requests, sitters, onRequestAccept, onRequestDelete, onSitterDelete, onAddReview, galleryImages, onImageUpload }) => {
   const [isEditing, setIsEditing] = useState(false);
@@ -608,9 +619,6 @@ const DogProfileCard = ({ profile, onSave, requests, sitters, onRequestAccept, o
           <Text>{formattedAddress}</Text>
         </BasicInfo>
         <ProfileImage src={formData.profilePic} alt={`${profile.name}`} />
-        <PawPrint src={pawPrint} style={{ top: '10%', left: '80%' }} />
-        <PawPrint src={pawPrint} style={{ top: '40%', left: '75%' }} />
-        <PawPrint src={pawPrint} style={{ top: '70%', left: '80%' }} />
       </Header>
       <ProfileSectionWrapper>
         <Section>
@@ -704,4 +712,3 @@ const MyProfile = () => {
 };
 
 export default MyProfile;
-

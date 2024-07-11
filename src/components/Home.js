@@ -60,10 +60,13 @@ function Home() {
                 <p style={{ fontSize: '40px', fontStyle: 'italic', fontFamily: 'Caveat, cursive' }}>Welcome to Dogbnb!</p>
                 <p>On our website you can find a solution for your dog while you are in reserve</p>
                 <p>And amazing dog-loving volunteers who will take care of your dog</p>
-                <button onClick={onSignIn} style={{ padding: '10px 20px', fontSize: '16px', cursor: 'pointer', width: '200px' }}>Sign in with Google</button> 
-            </div> 
+                <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+                    <button onClick={onSignIn} style={{ padding: '10px 20px', fontSize: '16px', cursor: 'pointer', width: '200px' }}>Sign in with Google</button>
+                </div>
+            </div>
         );
     }
+    
 
     if (user.isNewUser === true || user.details === null) {
         return (

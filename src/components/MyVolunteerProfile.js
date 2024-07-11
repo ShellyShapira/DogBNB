@@ -1,9 +1,9 @@
-import React, { useState, useEffect, useContext } from 'react';
+import React, { useState, useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
-import Collapsible from 'react-collapsible';
 import styled, { createGlobalStyle } from 'styled-components';
 import { FaWhatsapp } from 'react-icons/fa';
 import { UserContext } from '../App';
+import pawPrint from '../images/pawprint5.svg';
 
 const GlobalStyle = createGlobalStyle`
   :root {
@@ -56,7 +56,7 @@ const Header = styled.div`
   display: flex;
   align-items: center;
   padding: 20px;
-  background-color: #DCE2E4;
+  background-color: #CBD5D0;
   box-shadow: none;
   border-radius: 10px;
   margin-bottom: 20px;
@@ -143,35 +143,22 @@ const EditButton = styled.button`
   }
 `;
 
-const CollapsibleTrigger = styled.div`
-  font-size: 1.2rem;
-  font-weight: bold;
-  cursor: pointer;
-  color: #333;
-  padding: 10px;
-  background-color: #e0e0e0;
-  border-radius: 5px;
-  transition: background-color 0.3s ease;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-
-  &::after {
-    content: '▼';
-    font-size: 1rem;
-    margin-left: 10px;
-  }
-
-  &:hover {
-    background-color: #d5d5d5;
-  }
-`;
-
 const TitleSection = styled.div`
   background-color: #DCE2E4;
   padding: 10px;
   border-radius: 10px 10px 0 0;
   margin: -20px -20px 20px -20px;
+`;
+
+const TitleWithIcon = styled.div`
+  display: flex;
+  align-items: center;
+
+  img {
+    margin-right: 10px;
+    width: 24px;
+    height: 24px;
+  }
 `;
 
 const ReviewsContainer = styled.div`
@@ -247,7 +234,10 @@ const RequestDOS = ({ requests }) => {
   return (
     <Card>
       <TitleSection>
-        <SubTitle>Approved Requests</SubTitle>
+        <TitleWithIcon>
+          <img src={pawPrint} alt="Paw Print" />
+          <SubTitle>Approved Requests</SubTitle>
+        </TitleWithIcon>
       </TitleSection>
       {requests.map((request) => (
         <RequestItem key={request.id}>
@@ -268,7 +258,10 @@ const RequestDOS = ({ requests }) => {
 const PersonalDetails = ({ profile, isEditing, formData, handleChange }) => (
   <Card>
     <TitleSection>
-      <SubTitle>Personal Details</SubTitle>
+      <TitleWithIcon>
+        <img src={pawPrint} alt="Paw Print" />
+        <SubTitle>Personal Details</SubTitle>
+      </TitleWithIcon>
     </TitleSection>
     {isEditing ? (
       <>
@@ -309,91 +302,137 @@ const PersonalDetails = ({ profile, isEditing, formData, handleChange }) => (
               Yes
             </label>
             <label>
-                <input type="radio" name="animalExperience" value="No" checked={formData.animalExperience === 'No'} onChange={handleChange} />
-                No
-              </label>
-            </div>
-          </DetailRow>
-          <DetailRow>
-            <DetailLabel><strong>Additional Animals At Home:</strong></DetailLabel>
-            <div>
-              <label>
-                <input type="radio" name="additionalAnimalsAtHome" value="Yes" checked={formData.additionalAnimalsAtHome === 'Yes'} onChange={handleChange} />
-                Yes
-              </label>
-              <label>
-                <input type="radio" name="additionalAnimalsAtHome" value="No" checked={formData.additionalAnimalsAtHome === 'No'} onChange={handleChange} />
-                No
-              </label>
-            </div>
-          </DetailRow>
-          <DetailRow>
-            <DetailLabel><strong>A House with a Yard:</strong></DetailLabel>
-            <div>
-              <label>
-                <input type="radio" name="yard" value="Yes" checked={formData.yard === 'Yes'} onChange={handleChange} />
-                Yes
-              </label>
-              <label>
-                <input type="radio" name="yard" value="No" checked={formData.yard === 'No'} onChange={handleChange} />
-                No
-              </label>
-            </div>
-          </DetailRow>
-          <DetailRow>
-            <DetailLabel><strong>Children at Home:</strong></DetailLabel>
-            <div>
-              <label>
-                <input type="radio" name="childrenAtHome" value="Yes" checked={formData.childrenAtHome === 'Yes'} onChange={handleChange} />
-                Yes
-              </label>
-              <label>
-                <input type="radio" name="childrenAtHome" value="No" checked={formData.childrenAtHome === 'No'} onChange={handleChange} />
-                No
-              </label>
-            </div>
-          </DetailRow>
-        </>
+              <input type="radio" name="animalExperience" value="No" checked={formData.animalExperience === 'No'} onChange={handleChange} />
+              No
+            </label>
+          </div>
+        </DetailRow>
+        <DetailRow>
+          <DetailLabel><strong>Additional Animals At Home:</strong></DetailLabel>
+          <div>
+            <label>
+              <input type="radio" name="additionalAnimalsAtHome" value="Yes" checked={formData.additionalAnimalsAtHome === 'Yes'} onChange={handleChange} />
+              Yes
+            </label>
+            <label>
+              <input type="radio" name="additionalAnimalsAtHome" value="No" checked={formData.additionalAnimalsAtHome === 'No'} onChange={handleChange} />
+              No
+            </label>
+          </div>
+        </DetailRow>
+        <DetailRow>
+          <DetailLabel><strong>A House with a Yard:</strong></DetailLabel>
+          <div>
+            <label>
+              <input type="radio" name="yard" value="Yes" checked={formData.yard === 'Yes'} onChange={handleChange} />
+              Yes
+            </label>
+            <label>
+              <input type="radio" name="yard" value="No" checked={formData.yard === 'No'} onChange={handleChange} />
+              No
+            </label>
+          </div>
+        </DetailRow>
+        <DetailRow>
+          <DetailLabel><strong>Children at Home:</strong></DetailLabel>
+          <div>
+            <label>
+              <input type="radio" name="childrenAtHome" value="Yes" checked={formData.childrenAtHome === 'Yes'} onChange={handleChange} />
+              Yes
+            </label>
+            <label>
+              <input type="radio" name="childrenAtHome" value="No" checked={formData.childrenAtHome === 'No'} onChange={handleChange} />
+              No
+            </label>
+          </div>
+        </DetailRow>
+      </>
+    ) : (
+      <>
+        <DetailRow>
+          <DetailLabel><strong>Name:</strong></DetailLabel>
+          <DetailValue>{profile.name}</DetailValue>
+        </DetailRow>
+        <DetailRow>
+          <DetailLabel><strong>Address:</strong></DetailLabel>
+          <DetailValue>{profile.address}</DetailValue>
+        </DetailRow>
+        <DetailRow>
+          <DetailLabel><strong>Age:</strong></DetailLabel>
+          <DetailValue>{profile.age}</DetailValue>
+        </DetailRow>
+        <DetailRow>
+          <DetailLabel><strong>Gender:</strong></DetailLabel>
+          <DetailValue>{profile.gender}</DetailValue>
+        </DetailRow>
+        <DetailRow>
+          <DetailLabel><strong>Number of Adoptions:</strong></DetailLabel>
+          <DetailValue>{profile.numberOfAdoptions}</DetailValue>
+        </DetailRow>
+        <DetailRow>
+          <DetailLabel><strong>Animal Experience:</strong></DetailLabel>
+          <DetailValue>{profile.animalExperience}</DetailValue>
+        </DetailRow>
+        <DetailRow>
+          <DetailLabel><strong>Additional Animals At Home:</strong></DetailLabel>
+          <DetailValue>{profile.additionalAnimalsAtHome}</DetailValue>
+        </DetailRow>
+        <DetailRow>
+          <DetailLabel><strong>A House with a Yard:</strong></DetailLabel>
+          <DetailValue>{profile.yard}</DetailValue>
+        </DetailRow>
+        <DetailRow>
+          <DetailLabel><strong>Children at Home:</strong></DetailLabel>
+          <DetailValue>{profile.childrenAtHome}</DetailValue>
+        </DetailRow>
+      </>
+    )}
+  </Card>
+);
+
+const AboutMe = ({ profile, isEditing, formData, handleChange }) => (
+  <Card>
+    <TitleSection>
+      <TitleWithIcon>
+        <img src={pawPrint} alt="Paw Print" />
+        <SubTitle>A Little About Me</SubTitle>
+      </TitleWithIcon>
+    </TitleSection>
+    {isEditing ? (
+      <textarea
+        className="detail-value"
+        name="description"
+        value={formData.description}
+        onChange={handleChange}
+        rows="4"
+      />
+    ) : (
+      <Text>{profile.description}</Text>
+    )}
+  </Card>
+);
+
+const Reviews = ({ profile }) => (
+  <Card>
+    <TitleSection>
+      <TitleWithIcon>
+        <img src={pawPrint} alt="Paw Print" />
+        <SubTitle>Reviews</SubTitle>
+      </TitleWithIcon>
+    </TitleSection>
+    <ReviewsContainer>
+      {profile.reviews && profile.reviews.length > 0 ? (
+        profile.reviews.map((review, index) => (
+          <ReviewCard key={index}>
+            <DetailLabel><strong>{review.reviewer}:</strong></DetailLabel>
+            <DetailValue>{review.date}, {review.location}</DetailValue>
+            <Text>{review.text}</Text>
+          </ReviewCard>
+        ))
       ) : (
-        <>
-          <DetailRow>
-            <DetailLabel><strong>Name:</strong></DetailLabel>
-            <DetailValue>{profile.name}</DetailValue>
-          </DetailRow>
-          <DetailRow>
-            <DetailLabel><strong>Address:</strong></DetailLabel>
-            <DetailValue>{profile.address}</DetailValue>
-          </DetailRow>
-          <DetailRow>
-            <DetailLabel><strong>Age:</strong></DetailLabel>
-            <DetailValue>{profile.age}</DetailValue>
-          </DetailRow>
-          <DetailRow>
-            <DetailLabel><strong>Gender:</strong></DetailLabel>
-            <DetailValue>{profile.gender}</DetailValue>
-          </DetailRow>
-          <DetailRow>
-            <DetailLabel><strong>Number of Adoptions:</strong></DetailLabel>
-            <DetailValue>{profile.numberOfAdoptions}</DetailValue>
-          </DetailRow>
-          <DetailRow>
-            <DetailLabel><strong>Animal Experience:</strong></DetailLabel>
-            <DetailValue>{profile.animalExperience}</DetailValue>
-          </DetailRow>
-          <DetailRow>
-            <DetailLabel><strong>Additional Animals At Home:</strong></DetailLabel>
-            <DetailValue>{profile.additionalAnimalsAtHome}</DetailValue>
-          </DetailRow>
-          <DetailRow>
-            <DetailLabel><strong>A House with a Yard:</strong></DetailLabel>
-            <DetailValue>{profile.yard}</DetailValue>
-          </DetailRow>
-          <DetailRow>
-            <DetailLabel><strong>Children at Home:</strong></DetailLabel>
-            <DetailValue>{profile.childrenAtHome}</DetailValue>
-          </DetailRow>
-        </>
+        <Text>No reviews available</Text>
       )}
+    </ReviewsContainer>
   </Card>
 );
 
@@ -431,40 +470,7 @@ const VolProfileCard = ({ profile, onSave, requests }) => {
       <ProfileSectionWrapper>
         <Section>
           <PersonalDetails profile={profile} isEditing={isEditing} formData={formData} handleChange={handleChange} />
-          <Collapsible trigger={<CollapsibleTrigger>A Little About Me</CollapsibleTrigger>}>
-            <Card>
-              {isEditing ? (
-                <>
-                  <textarea
-                    className="detail-value"
-                    name="dogDetails"
-                    value={formData.dogDetails}
-                    onChange={handleChange}
-                    rows="4"
-                  />
-                </>
-              ) : (
-                <Text>{profile.dogDetails}</Text>
-              )}
-            </Card>
-          </Collapsible>
-          <Collapsible trigger={<CollapsibleTrigger>Reviews</CollapsibleTrigger>}>
-            <Card>
-              <ReviewsContainer>
-                {profile.reviews && profile.reviews.length > 0 ? (
-                  profile.reviews.map((review, index) => (
-                    <ReviewCard key={index}>
-                      <DetailLabel><strong>{review.reviewer}:</strong></DetailLabel>
-                      <DetailValue>{review.date}, {review.location}</DetailValue>
-                      <Text>{review.text}</Text>
-                    </ReviewCard>
-                  ))
-                ) : (
-                  <Text>No reviews available</Text>
-                )}
-              </ReviewsContainer>
-            </Card>
-          </Collapsible>
+          <AboutMe profile={profile} isEditing={isEditing} formData={formData} handleChange={handleChange} />
           {isEditing ? (
             <EditButton onClick={handleSaveClick}>Save Profile</EditButton>
           ) : (
@@ -472,6 +478,7 @@ const VolProfileCard = ({ profile, onSave, requests }) => {
           )}
         </Section>
         <Section>
+          <Reviews profile={profile} />
           <RequestDOS requests={requests} />
         </Section>
       </ProfileSectionWrapper>

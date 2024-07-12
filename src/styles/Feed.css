@@ -4,6 +4,7 @@
   --BACKGROUND_COLOR: #F0EDEB;
   --TEXT_COLOR_H1: #46454A;
   --BUTTON_COLOR_H1: #628991;
+  --APPLY_BUTTON_COLOR: #8BBBAA; /* צבע הכפתור החדש */
 }
 
 body {
@@ -162,26 +163,50 @@ button:hover,
   position: relative;
 }
 
-.filter-options label,
-.add-post-options label {
-  display: block;
-  margin-top: 10px;
+.filter-options {
+  display: flex;
+  flex-direction: column;
+  align-items: center; /* Center align all children */
+  gap: 10px;
+  margin-bottom: 20px;
+}
+
+.filter-options label {
+  width: 100%; /* Full width for labels */
+  text-align: center; /* Center align text */
   margin-bottom: 5px;
+  font-weight: bold;
 }
 
 .filter-options input,
-.filter-options select,
-.add-post-options input,
-.add-post-options select {
-  width: 100%;
+.filter-options select {
+  width: 100%; /* Full width for inputs and selects */
   padding: 8px;
-  margin-top: 5px;
   border: 1px solid #ccc;
   border-radius: 4px;
 }
 
-.exit-filters,
-.add-post-form .close-button {
+.apply-button-container {
+  display: flex;
+  justify-content: center;
+  margin-top: 20px;
+}
+
+.apply-button {
+  padding: 10px 20px;
+  font-size: 16px;
+  background-color: var(--APPLY_BUTTON_COLOR);
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.apply-button:hover {
+  background-color: #7AA897; /* גוון מעט כהה יותר לצבע הכפתור בעת ריחוף */
+}
+
+.exit-filters {
   position: absolute;
   top: 10px;
   right: 10px;
@@ -223,7 +248,7 @@ button:hover,
   display: block;
   margin: 20px auto 0;
   padding: 10px 20px;
-  background-color: var(--BUTTON_COLOR_H1);
+  background-color: var(--APPLY_BUTTON_COLOR);
   color: white;
   border: none;
   border-radius: 5px;
@@ -232,7 +257,7 @@ button:hover,
 }
 
 .new-post-form .post-button:hover {
-  box-shadow: 0px 8px 20px rgba(0, 0, 0, 0.5); /* Stronger shadow effect */
+  background-color: #7AA897; /* גוון מעט כהה יותר לצבע הכפתור בעת ריחוף */
 }
 
 .new-post-form .close-button {

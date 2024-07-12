@@ -179,6 +179,7 @@ const RequestItem = styled.div`
   display: flex;
   align-items: center;
   margin-bottom: 15px;
+  cursor: pointer; /* Added cursor to indicate clickability */
 `;
 
 const Avatar = styled.img`
@@ -227,8 +228,8 @@ const PhoneButton = styled.a`
 const RequestDOS = ({ requests }) => {
   const navigate = useNavigate();
 
-  const handleNameClick = (id) => {
-    navigate(`/volunteer-profile/${id}`);
+  const handleItemClick = (id) => {
+    navigate(`/DogProfiles/`);
   };
 
   return (
@@ -240,10 +241,10 @@ const RequestDOS = ({ requests }) => {
         </TitleWithIcon>
       </TitleSection>
       {requests.map((request) => (
-        <RequestItem key={request.id}>
+        <RequestItem key={request.id} onClick={() => handleItemClick(request.id)}>
           <Avatar src={request.avatar} alt={request.name} />
           <Info>
-            <Name onClick={() => handleNameClick(request.id)}>{request.name}</Name>
+            <Name>{request.name}</Name>
             <Date>{request.date}</Date>
           </Info>
           <PhoneButton href={`https://wa.me/${request.phone}`} target="_blank">
@@ -531,3 +532,4 @@ const VolProfile = () => {
 };
 
 export default VolProfile;
+         

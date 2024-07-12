@@ -119,6 +119,10 @@ const DetailLabel = styled.label`
   color: #333;
 `;
 
+const DogIdLabel = styled(DetailLabel)`
+  text-decoration: underline;
+`;
+
 const DetailValue = styled.span`
   align: left;
   display: flex;
@@ -175,6 +179,7 @@ const Avatar = styled.img`
   height: 50px;
   border-radius: 50%;
   margin-right: 15px;
+  cursor: pointer;
 `;
 
 const Info = styled.div`
@@ -240,7 +245,6 @@ const UploadButton = styled.button`
   }
 `;
 
-
 const PopupContainer = styled.div`
   position: fixed;
   top: 50%;
@@ -271,6 +275,12 @@ const CloseButton = styled.button`
   }
 `;
 
+const RadioGroup = styled.div`
+  display: flex;
+  justify-content: flex-end; /* שינוי זה מבטיח שכפתורי הרדיו יהיו צמודים לימין */
+  gap: 0.5px;
+`;
+
 const RequestActions = ({ requests, onAccept, onDelete }) => {
   const navigate = useNavigate();
 
@@ -288,7 +298,7 @@ const RequestActions = ({ requests, onAccept, onDelete }) => {
       </TitleSection>
       {requests.map((request, index) => (
         <RequestItem key={index}>
-          <Avatar src={request.avatar} alt={request.name} />
+          <Avatar src={request.avatar} alt={request.name} onClick={() => handleNameClick(request.id)} />
           <Info>
             <Name onClick={() => handleNameClick(request.id)}>{request.name}</Name>
             <Date>{request.date}</Date>
@@ -304,6 +314,7 @@ const RequestActions = ({ requests, onAccept, onDelete }) => {
 };
 
 const DogSitters = ({ sitters, onDelete, onAddReview }) => {
+  const navigate = useNavigate();
   const [reviewIndex, setReviewIndex] = useState(null);
   const [reviewText, setReviewText] = useState('');
 
@@ -322,6 +333,10 @@ const DogSitters = ({ sitters, onDelete, onAddReview }) => {
     setReviewText('');
   };
 
+  const handleNameClick = (id) => {
+    navigate(`/volunteer-profile/${id}`);
+  };
+
   return (
     <Card>
       <TitleSection>
@@ -333,9 +348,9 @@ const DogSitters = ({ sitters, onDelete, onAddReview }) => {
       {sitters.map((sitter, index) => (
         <div key={index} style={{ marginBottom: '20px' }}>
           <RequestItem>
-            <Avatar src={sitter.avatar} alt={sitter.name} />
+            <Avatar src={sitter.avatar} alt={sitter.name} onClick={() => handleNameClick(sitter.id)} />
             <Info>
-              <Name>{sitter.name}</Name>
+              <Name onClick={() => handleNameClick(sitter.id)}>{sitter.name}</Name>
               <Date>{sitter.date}</Date>
             </Info>
             <ActionButtons>
@@ -388,7 +403,7 @@ const PersonalDetails = ({ profile, isEditing, formData, handleChange }) => (
     {isEditing ? (
       <>
         <DetailRow>
-          <DetailLabel><strong>Name:</strong></DetailLabel>
+          <DetailLabel><strong>Owner Name:</strong></DetailLabel>
           <input className="detail-value" name="name" value={formData.name} onChange={handleChange} />
         </DetailRow>
         <DetailRow>
@@ -399,17 +414,17 @@ const PersonalDetails = ({ profile, isEditing, formData, handleChange }) => (
     ) : (
       <>
         <DetailRow>
-          <DetailLabel><strong>Name:</strong></DetailLabel>
+          <DetailLabel><strong>Owner Name:</strong></DetailLabel>
           <DetailValue>{profile.name}</DetailValue>
         </DetailRow>
-        <DetailRow>
+        <DetailRow style={{ marginBottom: '20px' }}>
           <DetailLabel><strong>Address:</strong></DetailLabel>
           <DetailValue>{profile.address}</DetailValue>
         </DetailRow>
       </>
     )}
     <DetailRow>
-      <DetailLabel><strong>Dog I.D</strong></DetailLabel>
+      <DogIdLabel><strong>Dog I.D</strong></DogIdLabel>
     </DetailRow>
     <Card>
       {isEditing ? (
@@ -427,47 +442,86 @@ const PersonalDetails = ({ profile, isEditing, formData, handleChange }) => (
             <input className="detail-value" name="dogAge" value={formData.dogAge} onChange={handleChange} />
           </DetailRow>
           <DetailRow>
-            <DetailLabel><strong>Gender (Male/Female):</strong></DetailLabel>
-            <select name="dogGender" value={formData.dogGender} onChange={handleChange}>
-              <option value="Male">Male</option>
-              <option value="Female">Female</option>
-            </select>
+            <DetailLabel><strong>Gender:</strong></DetailLabel>
+            <RadioGroup>
+            <label>
+              <input type="radio" name="dogGender" value="Male" checked={formData.dogGender === 'Male'} onChange={handleChange} />
+              Male
+            </label>
+            <label>
+              <input type="radio" name="dogGender" value="Female" checked={formData.dogGender === 'Female'} onChange={handleChange} />
+              Female
+            </label>
+            </RadioGroup>
           </DetailRow>
           <DetailRow>
             <DetailLabel><strong>Size:</strong></DetailLabel>
-            <select name="dogSize" value={formData.dogSize} onChange={handleChange}>
-              <option value="Small">Small</option>
-              <option value="Medium">Medium</option>
-              <option value="Large">Large</option>
-            </select>
+            <RadioGroup>
+            <label>
+              <input type="radio" name="dogSize" value="Small" checked={formData.dogSize === 'Small'} onChange={handleChange} />
+              Small
+            </label>
+            <label>
+              <input type="radio" name="dogSize" value="Medium" checked={formData.dogSize === 'Medium'} onChange={handleChange} />
+              Medium
+            </label>
+            <label>
+              <input type="radio" name="dogSize" value="Large" checked={formData.dogSize === 'Large'} onChange={handleChange} />
+              Large
+            </label>
+            </RadioGroup>
           </DetailRow>
           <DetailRow>
-            <DetailLabel><strong>Immune (Y/N):</strong></DetailLabel>
-            <select name="dogImmune" value={formData.dogImmune} onChange={handleChange}>
-              <option value="Yes">Yes</option>
-              <option value="No">No</option>
-            </select>
+            <DetailLabel><strong>Immune:</strong></DetailLabel>
+            <RadioGroup>
+            <label>
+              <input type="radio" name="dogImmune" value="Yes" checked={formData.dogImmune === 'Yes'} onChange={handleChange} />
+              Yes
+            </label>
+            <label>
+              <input type="radio" name="dogImmune" value="No" checked={formData.dogImmune === 'No'} onChange={handleChange} />
+              No
+            </label>
+            </RadioGroup>
           </DetailRow>
           <DetailRow>
-            <DetailLabel><strong>Neutered (Y/N):</strong></DetailLabel>
-            <select name="dogNeutered" value={formData.dogNeutered} onChange={handleChange}>
-              <option value="Yes">Yes</option>
-              <option value="No">No</option>
-            </select>
+            <DetailLabel><strong>Neutered:</strong></DetailLabel>
+            <RadioGroup>
+            <label>
+              <input type="radio" name="dogNeutered" value="Yes" checked={formData.dogNeutered === 'Yes'} onChange={handleChange} />
+              Yes
+            </label>
+            <label>
+              <input type="radio" name="dogNeutered" value="No" checked={formData.dogNeutered === 'No'} onChange={handleChange} />
+              No
+            </label>
+            </RadioGroup>
           </DetailRow>
           <DetailRow>
             <DetailLabel><strong>Suitable For:</strong></DetailLabel>
-            <select name="suitableFor" value={formData.suitableFor} onChange={handleChange}>
-              <option value="Apartment">Apartment</option>
-              <option value="House with yard">House with yard</option>
-            </select>
+            <RadioGroup>
+            <label>
+              <input type="radio" name="suitableFor" value="Apartment" checked={formData.suitableFor === 'Apartment'} onChange={handleChange} />
+              Apartment
+            </label>
+            <label>
+              <input type="radio" name="suitableFor" value="House with yard" checked={formData.suitableFor === 'House with yard'} onChange={handleChange} />
+              House with yard
+            </label>
+            </RadioGroup>
           </DetailRow>
           <DetailRow>
-            <DetailLabel><strong>Friendly with children(Y/N):</strong></DetailLabel>
-            <select name="friendlyWithChildren" value={formData.friendlyWithChildren} onChange={handleChange}>
-              <option value="Yes">Yes</option>
-              <option value="No">No</option>
-            </select>
+            <DetailLabel><strong>Friendly with children:</strong></DetailLabel>
+            <RadioGroup>
+            <label>
+              <input type="radio" name="friendlyWithChildren" value="Yes" checked={formData.friendlyWithChildren === 'Yes'} onChange={handleChange} />
+              Yes
+            </label>
+            <label>
+              <input type="radio" name="friendlyWithChildren" value="No" checked={formData.friendlyWithChildren === 'No'} onChange={handleChange} />
+              No
+            </label>
+            </RadioGroup>
           </DetailRow>
         </>
       ) : (
@@ -485,7 +539,7 @@ const PersonalDetails = ({ profile, isEditing, formData, handleChange }) => (
             <DetailValue>{formData.dogAge}</DetailValue>
           </DetailRow>
           <DetailRow>
-            <DetailLabel><strong>Gender (Male/Female):</strong></DetailLabel>
+            <DetailLabel><strong>Gender:</strong></DetailLabel>
             <DetailValue>{formData.dogGender}</DetailValue>
           </DetailRow>
           <DetailRow>
@@ -493,19 +547,19 @@ const PersonalDetails = ({ profile, isEditing, formData, handleChange }) => (
             <DetailValue>{formData.dogSize}</DetailValue>
           </DetailRow>
           <DetailRow>
-            <DetailLabel><strong>Immune (Y/N):</strong></DetailLabel>
+            <DetailLabel><strong>Immune:</strong></DetailLabel>
             <DetailValue>{formData.dogImmune}</DetailValue>
           </DetailRow>
           <DetailRow>
-            <DetailLabel><strong>Neutered (Y/N):</strong></DetailLabel>
+            <DetailLabel><strong>Neutered:</strong></DetailLabel>
             <DetailValue>{formData.dogNeutered}</DetailValue>
-          </DetailRow>
+            </DetailRow>
           <DetailRow>
             <DetailLabel><strong>Suitable For:</strong></DetailLabel>
             <DetailValue>{formData.suitableFor}</DetailValue>
           </DetailRow>
           <DetailRow>
-            <DetailLabel><strong>Friendly with children(Y/N):</strong></DetailLabel>
+            <DetailLabel><strong>Friendly with children:</strong></DetailLabel>
             <DetailValue>{formData.friendlyWithChildren}</DetailValue>
           </DetailRow>
         </>
@@ -583,7 +637,6 @@ const Gallery = ({ images, onUpload }) => {
   );
 };
 
-
 const DogProfileCard = ({ profile, onSave, requests, sitters, onRequestAccept, onRequestDelete, onSitterDelete, onAddReview, galleryImages, onImageUpload }) => {
   const [isEditing, setIsEditing] = useState(false);
   const [formData, setFormData] = useState(profile);
@@ -635,7 +688,6 @@ const DogProfileCard = ({ profile, onSave, requests, sitters, onRequestAccept, o
             onAccept={onRequestAccept}
             onDelete={onRequestDelete}
           />
-
           <DogSitters
             sitters={sitters}
             onDelete={onSitterDelete}

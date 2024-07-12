@@ -4,15 +4,9 @@ import { GoogleAuthProvider, getAdditionalUserInfo } from "firebase/auth";
 import { getAuth, signInWithPopup } from "firebase/auth";
 import { UserContext } from "../App";
 import { LogOut } from "./Config";
-//import { useSpring, animated } from "@react-spring/web";
-//import { ReactSVG } from 'react-svg'; // ייבוא הספרייה
 import logo from '../images/logo.png'; 
 
-
-
 const provider = new GoogleAuthProvider();
-
-
 
 function Home() {
     const { user, setUser } = useContext(UserContext);
@@ -37,18 +31,13 @@ function Home() {
             // Handle Errors here.
             const errorCode = error.code;
             const errorMessage = error.message;
-            // The email of the user's account used.
             const email = error.customData.email;
-            // The AuthCredential type that was used.
             const credential = GoogleAuthProvider.credentialFromError(error);
-            // ...
         });
     }
 
-    console.log(user)
     useEffect(() => {
         if (user && user.isNewUser !== true && user.details !== null) {
-            console.log('not new user!!');
             navigate('/feed');
         }
     }, [user, navigate]);
@@ -61,7 +50,9 @@ function Home() {
                 <p>On our website you can find a solution for your dog while you are in reserve</p>
                 <p>And amazing dog-loving volunteers who will take care of your dog</p>
                 <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
-                    <button onClick={onSignIn} style={{ padding: '10px 20px', fontSize: '16px', cursor: 'pointer', width: '200px' }}>Sign in with Google</button>
+                    <button onClick={onSignIn} style={{ padding: '10px 20px', fontSize: '16px', cursor: 'pointer', width: '200px', margin: '0 auto' }}>
+                        Sign in with Google
+                    </button>
                 </div>
             </div>
         );

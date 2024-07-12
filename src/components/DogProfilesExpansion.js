@@ -97,6 +97,10 @@ const Text = styled.p`
   color: var(--TEXT_COLOR_H1);
 `;
 
+const BoldTextInline = styled.span`
+  font-weight: bold;
+`;
+
 const Card = styled.div`
   background-color: white;
   padding: 20px;
@@ -117,6 +121,10 @@ const DetailRow = styled.div`
 const DetailLabel = styled.label`
   font-weight: bold;
   color: #333;
+`;
+
+const DogIdLabel = styled(DetailLabel)`
+  text-decoration: underline;
 `;
 
 const DetailValue = styled.span`
@@ -140,8 +148,8 @@ const TitleWithIcon = styled.div`
 
   img {
     margin-right: 10px;
-    width: 24px; /* גודל מתאים לאייקון */
-    height: 24px; /* גודל מתאים לאייקון */
+    width: 24px;
+    height: 24px;
   }
 `;
 
@@ -221,12 +229,16 @@ const PersonalDetails = ({ profile }) => (
       </TitleWithIcon>
     </TitleSection>
     <DetailRow>
-      <DetailLabel><strong>Name:</strong></DetailLabel>
+      <DetailLabel><strong>Owner Name:</strong></DetailLabel>
       <DetailValue>{profile.ownerName}</DetailValue>
     </DetailRow>
     <DetailRow>
       <DetailLabel><strong>Address:</strong></DetailLabel>
       <DetailValue>{profile.address}</DetailValue>
+    </DetailRow>
+    <div style={{ marginBottom: '20px' }}></div> {/* רווח נוסף בין "Address" ל-"Dog I.D" */}
+    <DetailRow>
+      <DogIdLabel><strong>Dog I.D</strong></DogIdLabel>
     </DetailRow>
     <Card>
       <DetailRow>
@@ -242,7 +254,7 @@ const PersonalDetails = ({ profile }) => (
         <DetailValue>{profile.age}</DetailValue>
       </DetailRow>
       <DetailRow>
-        <DetailLabel><strong>Gender (Male/Female):</strong></DetailLabel>
+        <DetailLabel><strong>Gender:</strong></DetailLabel>
         <DetailValue>{profile.gender}</DetailValue>
       </DetailRow>
       <DetailRow>
@@ -250,11 +262,11 @@ const PersonalDetails = ({ profile }) => (
         <DetailValue>{profile.size}</DetailValue>
       </DetailRow>
       <DetailRow>
-        <DetailLabel><strong>Immune (Y/N):</strong></DetailLabel>
+        <DetailLabel><strong>Immune:</strong></DetailLabel>
         <DetailValue>{profile.immune}</DetailValue>
       </DetailRow>
       <DetailRow>
-        <DetailLabel><strong>Neutered (Y/N):</strong></DetailLabel>
+        <DetailLabel><strong>Neutered:</strong></DetailLabel>
         <DetailValue>{profile.neutered}</DetailValue>
       </DetailRow>
       <DetailRow>
@@ -262,7 +274,7 @@ const PersonalDetails = ({ profile }) => (
         <DetailValue>{profile.suitableFor}</DetailValue>
       </DetailRow>
       <DetailRow>
-        <DetailLabel><strong>Friendly with children(Y/N):</strong></DetailLabel>
+        <DetailLabel><strong>Friendly with children:</strong></DetailLabel>
         <DetailValue>{profile.friendlyWithChildren}</DetailValue>
       </DetailRow>
     </Card>
@@ -273,7 +285,7 @@ const PersonalDetails = ({ profile }) => (
       <Text>{profile.dogDetails}</Text>
     </Card>
     <DetailRow>
-      <DetailLabel><strong>Care Instructions</strong></DetailLabel>
+    <DetailLabel><strong>Care Instructions</strong></DetailLabel>
     </DetailRow>
     <Card>
       <Text>{profile.careInstructions}</Text>
@@ -307,7 +319,9 @@ const DogProfileCard = ({ profile, galleryImages }) => {
           <VolunteerName>{profile.name}</VolunteerName>
           <Text>{profile.breed}, {profile.age}, {profile.size}</Text>
           <Text>{profile.address}</Text>
-          <Text>Dates for BBsitting: {profile.datesForBBsitting}</Text>
+          <div>
+            <BoldTextInline>Dates for BBsitting:</BoldTextInline> {profile.datesForBBsitting}
+          </div>
           <ContactButton onClick={handleContactClick}>Contact</ContactButton>
         </BasicInfo>
         <ProfileImage src={photoUrl} alt={`${profile.name}`} />

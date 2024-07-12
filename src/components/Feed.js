@@ -23,6 +23,15 @@ const Feed = () => {
     const [filterNeutered, setFilterNeutered] = useState('');
     const [filterFriendlyToChildren, setFilterFriendlyToChildren] = useState('');
 
+    // Temporary filter states
+    const [tempFilterCity, setTempFilterCity] = useState('');
+    const [tempFilterDuration, setTempFilterDuration] = useState('');
+    const [tempFilterGender, setTempFilterGender] = useState('');
+    const [tempFilterNeedsGarden, setTempFilterNeedsGarden] = useState('');
+    const [tempFilterImmune, setTempFilterImmune] = useState('');
+    const [tempFilterNeutered, setTempFilterNeutered] = useState('');
+    const [tempFilterFriendlyToChildren, setTempFilterFriendlyToChildren] = useState('');
+
     const uploadPost = async (post) => {
         await addDoc(collection(DB(), "posts"), post);
     }
@@ -32,25 +41,24 @@ const Feed = () => {
         const postOwnerDetails = (await getDoc(doc(DB(), "users", postData.postOwnerUid))).data();
 
         return {
-                id: post.id,
-                image: postOwnerDetails.profilePic,
-                name: postOwnerDetails.dogName,
-                city: postOwnerDetails.address,
-                description: postOwnerDetails.dogDetails,
-                startDate: postData.startDate,
-                endDate: postData.endDate,
-                gender: postOwnerDetails.dogGender || '',
-                needsGarden: postOwnerDetails.suitableFor?.includes('house with a yard') ? 'yes' : postOwnerDetails.suitableFor?.includes('apartment') ? 'no' : '',
-                immune: postOwnerDetails.dogImmune || '',
-                neutered: postOwnerDetails.dogNeutered || '',
-                friendlyToChildren: postOwnerDetails.suitableFor?.includes('children') ? 'yes' : 'no'
-            }
+            id: post.id,
+            image: postOwnerDetails.profilePic,
+            name: postOwnerDetails.dogName,
+            city: postOwnerDetails.address,
+            description: postOwnerDetails.dogDetails,
+            startDate: postData.startDate,
+            endDate: postData.endDate,
+            gender: postOwnerDetails.dogGender || '',
+            needsGarden: postOwnerDetails.suitableFor?.includes('house with a yard') ? 'yes' : postOwnerDetails.suitableFor?.includes('apartment') ? 'no' : '',
+            immune: postOwnerDetails.dogImmune || '',
+            neutered: postOwnerDetails.dogNeutered || '',
+            friendlyToChildren: postOwnerDetails.friendlyToChildren !== undefined ? (postOwnerDetails.friendlyToChildren === 'yes' ? 'yes' : 'no') : ''
+        }
     }
 
     useEffect(() => {
         onSnapshot(collection(DB(), "posts"), async (snapshot) => {
-            const updatedPosts = await Promise.all(snapshot.docs.map(async (post) =>await fillOwnerDetails(post)));
-            
+            const updatedPosts = await Promise.all(snapshot.docs.map(async (post) => await fillOwnerDetails(post)));
             setPosts(updatedPosts);
         });
     }, []);
@@ -63,6 +71,14 @@ const Feed = () => {
         setFilterImmune('');
         setFilterNeutered('');
         setFilterFriendlyToChildren('');
+
+        setTempFilterCity('');
+        setTempFilterDuration('');
+        setTempFilterGender('');
+        setTempFilterNeedsGarden('');
+        setTempFilterImmune('');
+        setTempFilterNeutered('');
+        setTempFilterFriendlyToChildren('');
     };
 
     const toggleFilter = () => {
@@ -118,7 +134,7 @@ const Feed = () => {
             (filterNeedsGarden === '' || post.needsGarden.toLowerCase() === filterNeedsGarden.toLowerCase() || post.needsGarden === '') &&
             (filterImmune === '' || post.immune.toLowerCase() === filterImmune.toLowerCase() || post.immune === '') &&
             (filterNeutered === '' || post.neutered.toLowerCase() === filterNeutered.toLowerCase() || post.neutered === '') &&
-            (filterFriendlyToChildren === '' || post.friendlyToChildren.toLowerCase() === filterFriendlyToChildren.toLowerCase() || post.friendlyToChildren === '')
+            (filterFriendlyToChildren === '' || post.friendlyToChildren === '' || post.friendlyToChildren.toLowerCase() === filterFriendlyToChildren.toLowerCase())
         );
     }).sort((a, b) => {
         const aStartDate = new Date(a.startDate.split('/').reverse().join('-'));
@@ -126,10 +142,21 @@ const Feed = () => {
         return aStartDate - bStartDate;
     });
 
+    const applyFilterChanges = () => {
+        setFilterCity(tempFilterCity);
+        setFilterDuration(tempFilterDuration);
+        setFilterGender(tempFilterGender);
+        setFilterNeedsGarden(tempFilterNeedsGarden);
+        setFilterImmune(tempFilterImmune);
+        setFilterNeutered(tempFilterNeutered);
+        setFilterFriendlyToChildren(tempFilterFriendlyToChildren);
+        setShowFilter(false);
+    };
+
     return (
         <div className="container">
             <div className="header-buttons">
-                <button onClick={toggleFilter}><FaFilter /> Filter</button>
+            <button onClick={toggleFilter}><FaFilter /> Filter</button>
                 {user.details.registrationType !== "volunteer" &&
                  <button onClick={toggleAddPost}><FaPlus /> Add Post</button>}
             </div>
@@ -140,79 +167,82 @@ const Feed = () => {
                         <button className="exit-filters" onClick={toggleFilter}>X</button>
                         <div className="filter-options">
                             <label htmlFor="city">City</label>
-                            <input type="text" id="city" name="city" value={filterCity} onChange={(e) => setFilterCity(e.target.value)} />
+                            <input type="text" id="city" name="city" value={tempFilterCity} onChange={(e) => setTempFilterCity(e.target.value)} />
                             <label htmlFor="duration">Duration</label>
-                            <select id="duration" name="duration" value={filterDuration} onChange={(e) => setFilterDuration(e.target.value)}>
+                            <select id="duration" name="duration" value={tempFilterDuration} onChange={(e) => setTempFilterDuration(e.target.value)}>
                                 <option value="">Any</option>
                                 <option value="1-6">1-6 days</option>
                                 <option value="7-14">7-14 days</option>
                                 <option value="14+">14+ days</option>
                             </select>
                             <label htmlFor="gender">Gender</label>
-                            <select id="gender" name="gender" value={filterGender} onChange={(e) => setFilterGender(e.target.value)}>
+                            <select id="gender" name="gender" value={tempFilterGender} onChange={(e) => setTempFilterGender(e.target.value)}>
                                 <option value="">Any</option>
                                 <option value="male">Male</option>
                                 <option value="female">Female</option>
                             </select>
                             <label htmlFor="needsGarden">Needs Garden</label>
-                            <select id="needsGarden" name="needsGarden" value={filterNeedsGarden} onChange={(e) => setFilterNeedsGarden(e.target.value)}>
+                            <select id="needsGarden" name="needsGarden" value={tempFilterNeedsGarden} onChange={(e) => setTempFilterNeedsGarden(e.target.value)}>
                                 <option value="">Any</option>
                                 <option value="yes">Yes</option>
                                 <option value="no">No</option>
                             </select>
                             <label htmlFor="immune">Immune</label>
-                            <select id="immune" name="immune" value={filterImmune} onChange={(e) => setFilterImmune(e.target.value)}>
+                            <select id="immune" name="immune" value={tempFilterImmune} onChange={(e) => setTempFilterImmune(e.target.value)}>
                                 <option value="">Any</option>
                                 <option value="yes">Yes</option>
                                 <option value="no">No</option>
                             </select>
                             <label htmlFor="neutered">Neutered</label>
-                            <select id="neutered" name="neutered" value={filterNeutered} onChange={(e) => setFilterNeutered(e.target.value)}>
+                            <select id="neutered" name="neutered" value={tempFilterNeutered} onChange={(e) => setTempFilterNeutered(e.target.value)}>
                                 <option value="">Any</option>
                                 <option value="yes">Yes</option>
                                 <option value="no">No</option>
                             </select>
                             <label htmlFor="friendlyToChildren">Friendly to Children</label>
-                            <select id="friendlyToChildren" name="friendlyToChildren" value={filterFriendlyToChildren} onChange={(e) => setFilterFriendlyToChildren(e.target.value)}>
+                            <select id="friendlyToChildren" name="friendlyToChildren" value={tempFilterFriendlyToChildren} onChange={(e) => setTempFilterFriendlyToChildren(e.target.value)}>
                                 <option value="">Any</option>
                                 <option value="yes">Yes</option>
                                 <option value="no">No</option>
                             </select>
                         </div>
+                        <div className="apply-button-container">
+                            <button className="apply-button" onClick={applyFilterChanges}>Apply</button>
+                        </div>
                     </div>
                 </div>
             )}
 
-{showAddPost && (
-    <div className="add-post-overlay">
-        <div className="new-post-form">
-            <button className="close-button" onClick={toggleAddPost}>X</button>
-            <p>Make sure you complete all details about your dog in "My Profile" for the best outcomes to your post</p>
-            <form onSubmit={addPost}>
-                <label htmlFor="startDate">Start Date</label>
-                <input type="date" id="startDate" name="startDate" required />
-                <label htmlFor="endDate">End Date</label>
-                <input type="date" id="endDate" name="endDate" required />
-                <button type="submit" className="post-button">Post</button>
-            </form>
-        </div>
-    </div>
-)}
+            {showAddPost && (
+                <div className="add-post-overlay">
+                    <div className="new-post-form">
+                        <button className="close-button" onClick={toggleAddPost}>X</button>
+                        <p>Make sure you complete all details about your dog in "My Profile" for the best outcomes to your post</p>
+                        <form onSubmit={addPost}>
+                            <label htmlFor="startDate">Start Date</label>
+                            <input type="date" id="startDate" name="startDate" required />
+                            <label htmlFor="endDate">End Date</label>
+                            <input type="date" id="endDate" name="endDate" required />
+                            <button type="submit" className="post-button">Post</button>
+                        </form>
+                    </div>
+                </div>
+            )}
 
-<div className="post-grid">
-    {filteredPosts.map(post => (
-        <div key={post.id} className="post">
-            <img src={post.image} alt={post.name} />
-            <h2>{post.name}</h2>
-            <p>{post.city}</p>
-            <p>{post.startDate} - {post.endDate}</p>
-            <p>{post.description}</p>
-            <button type="button" className="more-info" onClick={() => navigate(`/dog-profile/${post.id}`)}>more info</button>
+            <div className="post-grid">
+                {filteredPosts.map(post => (
+                    <div key={post.id} className="post">
+                        <img src={post.image} alt={post.name} />
+                        <h2>{post.name}</h2>
+                        <p>{post.city}</p>
+                        <p>{post.startDate} - {post.endDate}</p>
+                        <p>{post.description}</p>
+                        <button type="button" className="more-info" onClick={() => navigate(`/dog-profile/${post.id}`)}>more info</button>
+                    </div>
+                ))}
+            </div>
         </div>
-    ))}
-</div>
-</div>
-);
+    );
 };
 
 export default Feed;

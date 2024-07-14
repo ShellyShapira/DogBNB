@@ -281,6 +281,136 @@ const RadioGroup = styled.div`
   gap: 0.5px;
 `;
 
+const ModalOverlay = styled.div`
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+`;
+
+const ModalContent = styled.div`
+  position: relative;
+  background: white;
+  padding: 20px;
+  border-radius: 10px;
+  max-width: 90%;
+  max-height: 90%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+`;
+
+const ModalImage = styled.img`
+  max-width: 100%;
+  max-height: 80vh;
+  border-radius: 10px;
+`;
+
+const ArrowButton = styled.button`
+  background-color: #628991;
+  color: white;
+  border: none;
+  padding: 10px;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 1.5rem;
+  margin: 0 10px;
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 1001;
+
+    &:hover {
+    background-color: #527882;
+  }
+`;
+
+const GalleryImage = styled.img`
+  width: 150px;
+  height: 150px;
+  margin: 10px;
+  border-radius: 10px;
+  cursor: pointer;
+`;
+
+const Gallery = ({ images, onUpload }) => {
+  const [selectedImageIndex, setSelectedImageIndex] = useState(null);
+
+  const openModal = (index) => {
+    setSelectedImageIndex(index);
+  };
+
+  const closeModal = () => {
+    setSelectedImageIndex(null);
+  };
+
+  const showPrevImage = () => {
+    setSelectedImageIndex((prevIndex) =>
+      prevIndex === 0 ? images.length - 1 : prevIndex - 1
+    );
+  };
+
+  const showNextImage = () => {
+    setSelectedImageIndex((prevIndex) =>
+      prevIndex === images.length - 1 ? 0 : prevIndex + 1
+    );
+  };
+
+  const handleImageUpload = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      onUpload(file);
+    }
+  };
+
+  return (
+    <GalleryCard>
+      <TitleSection>
+        <SubTitle>Gallery</SubTitle>
+      </TitleSection>
+      <div style={{ display: 'flex', flexWrap: 'wrap', alignItems: 'center' }}>
+        <UploadButton onClick={() => document.getElementById('imageUpload').click()}>
+          +
+        </UploadButton>
+        {images.map((image, index) => (
+          <GalleryImage
+            key={index}
+            src={image}
+            alt={`gallery-${index}`}
+            onClick={() => openModal(index)}
+          />
+        ))}
+      </div>
+      <input
+        type="file"
+        id="imageUpload"
+        style={{ display: 'none' }}
+        onChange={handleImageUpload}
+      />
+      {selectedImageIndex !== null && (
+        <ModalOverlay onClick={closeModal}>
+          <ModalContent onClick={(e) => e.stopPropagation()}>
+            <ArrowButton style={{ left: 0 }} onClick={showPrevImage}>
+              &lt;
+            </ArrowButton>
+            <ModalImage src={images[selectedImageIndex]} alt={`gallery-${selectedImageIndex}`} />
+            <ArrowButton style={{ right: 0 }} onClick={showNextImage}>
+              &gt;
+            </ArrowButton>
+            <CloseButton onClick={closeModal}>X</CloseButton>
+          </ModalContent>
+        </ModalOverlay>
+      )}
+    </GalleryCard>
+  );
+};
+
 const RequestActions = ({ requests, onAccept, onDelete }) => {
   const navigate = useNavigate();
 
@@ -605,37 +735,6 @@ const PersonalDetails = ({ profile, isEditing, formData, handleChange }) => (
     </Card>
   </Card>
 );
-
-const Gallery = ({ images, onUpload }) => {
-  const handleImageUpload = (e) => {
-    const file = e.target.files[0];
-    if (file) {
-      onUpload(file);
-    }
-  };
-
-  return (
-    <GalleryCard>
-      <TitleSection>
-        <SubTitle>Gallery</SubTitle>
-      </TitleSection>
-      <div style={{ display: 'flex', flexWrap: 'wrap', alignItems: 'center' }}>
-        <UploadButton onClick={() => document.getElementById('imageUpload').click()}>
-          +
-        </UploadButton>
-        {images.map((image, index) => (
-          <img key={index} src={image} alt={`gallery-${index}`} style={{ width: '150px', height: '150px', margin: '10px', borderRadius: '10px' }} />
-        ))}
-      </div>
-      <input
-        type="file"
-        id="imageUpload"
-        style={{ display: 'none' }}
-        onChange={handleImageUpload}
-      />
-    </GalleryCard>
-  );
-};
 
 const DogProfileCard = ({ profile, onSave, requests, sitters, onRequestAccept, onRequestDelete, onSitterDelete, onAddReview, galleryImages, onImageUpload }) => {
   const [isEditing, setIsEditing] = useState(false);

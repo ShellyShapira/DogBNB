@@ -245,6 +245,27 @@ const UploadButton = styled.button`
   }
 `;
 
+const DeleteButton = styled.button`
+  background-color: #B05D5D;
+  color: white;
+  border: none;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  cursor: pointer;
+  font-size: 1.2rem;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: absolute;
+  top: 5px;
+  right: 5px;
+
+  &:hover {
+    background-color: #A04B4B;
+  }
+`;
+
 const PopupContainer = styled.div`
   position: fixed;
   top: 50%;
@@ -277,7 +298,7 @@ const CloseButton = styled.button`
 
 const RadioGroup = styled.div`
   display: flex;
-  justify-content: flex-end; /* שינוי זה מבטיח שכפתורי הרדיו יהיו צמודים לימין */
+  justify-content: flex-end;
   gap: 0.5px;
 `;
 
@@ -314,32 +335,25 @@ const ModalImage = styled.img`
 
 const ArrowButton = styled.button`
   background-color: #628991;
-  color: white;
-  border: none;
-  padding: 10px;
-  border-radius: 5px;
-  cursor: pointer;
-  font-size: 1.5rem;
-  margin: 0 10px;
-  position: absolute;
-  top: 50%;
-  transform: translateY(-50%);
-  z-index: 1001;
-
+}
     &:hover {
     background-color: #527882;
   }
 `;
 
-const GalleryImage = styled.img`
+const GalleryImage = styled.div`
+  position: relative;
+  margin: 10px;
+`;
+
+const Image = styled.img`
   width: 150px;
   height: 150px;
-  margin: 10px;
   border-radius: 10px;
   cursor: pointer;
 `;
 
-const Gallery = ({ images, onUpload }) => {
+const Gallery = ({ images, onUpload, onDelete }) => {
   const [selectedImageIndex, setSelectedImageIndex] = useState(null);
 
   const openModal = (index) => {
@@ -379,12 +393,14 @@ const Gallery = ({ images, onUpload }) => {
           +
         </UploadButton>
         {images.map((image, index) => (
-          <GalleryImage
-            key={index}
-            src={image}
-            alt={`gallery-${index}`}
-            onClick={() => openModal(index)}
-          />
+          <GalleryImage key={index}>
+            <Image
+              src={image}
+              alt={`gallery-${index}`}
+              onClick={() => openModal(index)}
+            />
+            <DeleteButton onClick={() => onDelete(index)}>×</DeleteButton>
+          </GalleryImage>
         ))}
       </div>
       <input
@@ -587,70 +603,70 @@ const PersonalDetails = ({ profile, isEditing, formData, handleChange }) => (
           <DetailRow>
             <DetailLabel><strong>Size:</strong></DetailLabel>
             <RadioGroup>
-            <label>
-              <input type="radio" name="dogSize" value="Small" checked={formData.dogSize === 'Small'} onChange={handleChange} />
-              Small
-            </label>
-            <label>
-              <input type="radio" name="dogSize" value="Medium" checked={formData.dogSize === 'Medium'} onChange={handleChange} />
-              Medium
-            </label>
-            <label>
-              <input type="radio" name="dogSize" value="Large" checked={formData.dogSize === 'Large'} onChange={handleChange} />
-              Large
-            </label>
+              <label>
+                <input type="radio" name="dogSize" value="Small" checked={formData.dogSize === 'Small'} onChange={handleChange} />
+                Small
+              </label>
+              <label>
+                <input type="radio" name="dogSize" value="Medium" checked={formData.dogSize === 'Medium'} onChange={handleChange} />
+                Medium
+              </label>
+              <label>
+                <input type="radio" name="dogSize" value="Large" checked={formData.dogSize === 'Large'} onChange={handleChange} />
+                Large
+              </label>
             </RadioGroup>
           </DetailRow>
           <DetailRow>
             <DetailLabel><strong>Immune:</strong></DetailLabel>
             <RadioGroup>
-            <label>
-              <input type="radio" name="dogImmune" value="Yes" checked={formData.dogImmune === 'Yes'} onChange={handleChange} />
-              Yes
-            </label>
-            <label>
-              <input type="radio" name="dogImmune" value="No" checked={formData.dogImmune === 'No'} onChange={handleChange} />
-              No
-            </label>
+              <label>
+                <input type="radio" name="dogImmune" value="Yes" checked={formData.dogImmune === 'Yes'} onChange={handleChange} />
+                Yes
+              </label>
+              <label>
+                <input type="radio" name="dogImmune" value="No" checked={formData.dogImmune === 'No'} onChange={handleChange} />
+                No
+              </label>
             </RadioGroup>
           </DetailRow>
           <DetailRow>
             <DetailLabel><strong>Neutered:</strong></DetailLabel>
             <RadioGroup>
-            <label>
-              <input type="radio" name="dogNeutered" value="Yes" checked={formData.dogNeutered === 'Yes'} onChange={handleChange} />
-              Yes
-            </label>
-            <label>
-              <input type="radio" name="dogNeutered" value="No" checked={formData.dogNeutered === 'No'} onChange={handleChange} />
-              No
-            </label>
+              <label>
+                <input type="radio" name="dogNeutered" value="Yes" checked={formData.dogNeutered === 'Yes'} onChange={handleChange} />
+                Yes
+              </label>
+              <label>
+                <input type="radio" name="dogNeutered" value="No" checked={formData.dogNeutered === 'No'} onChange={handleChange} />
+                No
+              </label>
             </RadioGroup>
           </DetailRow>
           <DetailRow>
             <DetailLabel><strong>Suitable For:</strong></DetailLabel>
             <RadioGroup>
-            <label>
-              <input type="radio" name="suitableFor" value="Apartment" checked={formData.suitableFor === 'Apartment'} onChange={handleChange} />
-              Apartment
-            </label>
-            <label>
-              <input type="radio" name="suitableFor" value="House with yard" checked={formData.suitableFor === 'House with yard'} onChange={handleChange} />
-              House with yard
-            </label>
+              <label>
+                <input type="radio" name="suitableFor" value="Apartment" checked={formData.suitableFor === 'Apartment'} onChange={handleChange} />
+                Apartment
+              </label>
+              <label>
+                <input type="radio" name="suitableFor" value="House with yard" checked={formData.suitableFor === 'House with yard'} onChange={handleChange} />
+                House with yard
+              </label>
             </RadioGroup>
           </DetailRow>
           <DetailRow>
             <DetailLabel><strong>Friendly with children:</strong></DetailLabel>
             <RadioGroup>
-            <label>
-              <input type="radio" name="friendlyWithChildren" value="Yes" checked={formData.friendlyWithChildren === 'Yes'} onChange={handleChange} />
-              Yes
-            </label>
-            <label>
-              <input type="radio" name="friendlyWithChildren" value="No" checked={formData.friendlyWithChildren === 'No'} onChange={handleChange} />
-              No
-            </label>
+              <label>
+                <input type="radio" name="friendlyWithChildren" value="Yes" checked={formData.friendlyWithChildren === 'Yes'} onChange={handleChange} />
+                Yes
+              </label>
+              <label>
+                <input type="radio" name="friendlyWithChildren" value="No" checked={formData.friendlyWithChildren === 'No'} onChange={handleChange} />
+                No
+              </label>
             </RadioGroup>
           </DetailRow>
         </>
@@ -683,7 +699,7 @@ const PersonalDetails = ({ profile, isEditing, formData, handleChange }) => (
           <DetailRow>
             <DetailLabel><strong>Neutered:</strong></DetailLabel>
             <DetailValue>{formData.dogNeutered}</DetailValue>
-            </DetailRow>
+          </DetailRow>
           <DetailRow>
             <DetailLabel><strong>Suitable For:</strong></DetailLabel>
             <DetailValue>{formData.suitableFor}</DetailValue>
@@ -700,16 +716,14 @@ const PersonalDetails = ({ profile, isEditing, formData, handleChange }) => (
     </DetailRow>
     <Card>
       {isEditing ? (
-        <>
-          <textarea
-            className="detail-value"
-            name="dogDetails"
-            value={formData.dogDetails}
-            onChange={handleChange}
-            rows="4"
-            style={{ width: '100%' }}
-          />
-        </>
+        <textarea
+          className="detail-value"
+          name="dogDetails"
+          value={formData.dogDetails}
+          onChange={handleChange}
+          rows="4"
+          style={{ width: '100%' }}
+        />
       ) : (
         <Text>{profile.dogDetails}</Text>
       )}
@@ -719,16 +733,14 @@ const PersonalDetails = ({ profile, isEditing, formData, handleChange }) => (
     </DetailRow>
     <Card>
       {isEditing ? (
-        <>
-          <textarea
-            className="detail-value"
-            name="careInstructions"
-            value={formData.careInstructions}
-            onChange={handleChange}
-            rows="4"
-            style={{ width: '100%' }}
-          />
-        </>
+        <textarea
+          className="detail-value"
+          name="careInstructions"
+          value={formData.careInstructions}
+          onChange={handleChange}
+          rows="4"
+          style={{ width: '100%' }}
+        />
       ) : (
         <Text>{profile.careInstructions}</Text>
       )}
@@ -736,7 +748,7 @@ const PersonalDetails = ({ profile, isEditing, formData, handleChange }) => (
   </Card>
 );
 
-const DogProfileCard = ({ profile, onSave, requests, sitters, onRequestAccept, onRequestDelete, onSitterDelete, onAddReview, galleryImages, onImageUpload }) => {
+const DogProfileCard = ({ profile, onSave, requests, sitters, onRequestAccept, onRequestDelete, onSitterDelete, onAddReview, galleryImages, onImageUpload, onImageDelete }) => {
   const [isEditing, setIsEditing] = useState(false);
   const [formData, setFormData] = useState(profile);
 
@@ -794,7 +806,7 @@ const DogProfileCard = ({ profile, onSave, requests, sitters, onRequestAccept, o
           />
         </Section>
       </ProfileSectionWrapper>
-      <Gallery images={galleryImages} onUpload={onImageUpload} />
+      <Gallery images={galleryImages} onUpload={onImageUpload} onDelete={onImageDelete} />
     </Container>
   );
 };
@@ -844,6 +856,11 @@ const MyProfile = () => {
     // TODO: Add backend code to upload the image to the server
   };
 
+  const handleImageDelete = (index) => {
+    setGalleryImages(galleryImages.filter((_, i) => i !== index));
+    // TODO: Add backend code to delete the image from the server
+  };
+
   return (
     <div>
       <DogProfileCard
@@ -857,6 +874,7 @@ const MyProfile = () => {
         onAddReview={handleAddReview}
         galleryImages={galleryImages}
         onImageUpload={handleImageUpload}
+        onImageDelete={handleImageDelete}
       />
     </div>
   );

@@ -89,16 +89,15 @@ function App() {
                 <Route path="about" element={<MainLayout><About /></MainLayout>} />
                 <Route path="my-profile" element={<MainLayout><MyDogProfiles /></MainLayout>} />
                 <Route path="reserved" exact element={<RegisterReserved />} />,
-                <Route path="DogProfiles" element={<MainLayout><DogProfiles /></MainLayout>} />
+                <Route path="DogExpansion" element={<MainLayout><DogProfiles /></MainLayout>} />   #expansion
                 <Route path="FormSection" element={<MainLayout><FormSection /></MainLayout>} />
                 <Route path="ImageSection" element={<MainLayout><ImageSection /></MainLayout>} />
                 <Route path="VolProfile" element={<MainLayout><VolProfile /></MainLayout>} />
                 <Route path="VolFormSection" element={<MainLayout><Volform /></MainLayout>} />
-
-                <Route path="dog-profile/:id" element={<MainLayout><DogProfiles /></MainLayout>} />
-                <Route path="volunteer-profile/:id" element={<MainLayout><VolunteerProfiles /></MainLayout>} />
+                <Route path="VolunteerExpansion" element={<MainLayout><VolunteerProfiles /></MainLayout>} />
                 <Route path="MydogProfile" element={<MainLayout><MyDogProfiles /></MainLayout>} />
                 <Route path="volunteer" exact element={<RegisterVolunteer />} />
+                
 
               </>
             )}

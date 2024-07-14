@@ -245,27 +245,6 @@ const UploadButton = styled.button`
   }
 `;
 
-const DeleteButton = styled.button`
-  background-color: #B05D5D;
-  color: white;
-  border: none;
-  width: 24px;
-  height: 24px;
-  border-radius: 50%;
-  cursor: pointer;
-  font-size: 1.2rem;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  position: absolute;
-  top: 5px;
-  right: 5px;
-
-  &:hover {
-    background-color: #A04B4B;
-  }
-`;
-
 const PopupContainer = styled.div`
   position: fixed;
   top: 50%;
@@ -298,7 +277,7 @@ const CloseButton = styled.button`
 
 const RadioGroup = styled.div`
   display: flex;
-  justify-content: flex-end;
+  justify-content: flex-end; /* שינוי זה מבטיח שכפתורי הרדיו יהיו צמודים לימין */
   gap: 0.5px;
 `;
 
@@ -335,25 +314,32 @@ const ModalImage = styled.img`
 
 const ArrowButton = styled.button`
   background-color: #628991;
-}
+  color: white;
+  border: none;
+  padding: 10px;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 1.5rem;
+  margin: 0 10px;
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 1001;
+
     &:hover {
     background-color: #527882;
   }
 `;
 
-const GalleryImage = styled.div`
-  position: relative;
-  margin: 10px;
-`;
-
-const Image = styled.img`
+const GalleryImage = styled.img`
   width: 150px;
   height: 150px;
+  margin: 10px;
   border-radius: 10px;
   cursor: pointer;
 `;
 
-const Gallery = ({ images, onUpload, onDelete }) => {
+const Gallery = ({ images, onUpload }) => {
   const [selectedImageIndex, setSelectedImageIndex] = useState(null);
 
   const openModal = (index) => {
@@ -393,14 +379,12 @@ const Gallery = ({ images, onUpload, onDelete }) => {
           +
         </UploadButton>
         {images.map((image, index) => (
-          <GalleryImage key={index}>
-            <Image
-              src={image}
-              alt={`gallery-${index}`}
-              onClick={() => openModal(index)}
-            />
-            <DeleteButton onClick={() => onDelete(index)}>×</DeleteButton>
-          </GalleryImage>
+          <GalleryImage
+            key={index}
+            src={image}
+            alt={`gallery-${index}`}
+            onClick={() => openModal(index)}
+          />
         ))}
       </div>
       <input
@@ -603,119 +587,120 @@ const PersonalDetails = ({ profile, isEditing, formData, handleChange }) => (
           <DetailRow>
             <DetailLabel><strong>Size:</strong></DetailLabel>
             <RadioGroup>
-              <label>
-                <input type="radio" name="dogSize" value="Small" checked={formData.dogSize === 'Small'} onChange={handleChange} />
-                Small
-              </label>
-              <label>
-                <input type="radio" name="dogSize" value="Medium" checked={formData.dogSize === 'Medium'} onChange={handleChange} />
-                Medium
-              </label>
-              <label>
-                <input type="radio" name="dogSize" value="Large" checked={formData.dogSize === 'Large'} onChange={handleChange} />
-                Large
-              </label>
-            </RadioGroup>
+            <label>
+              <input type="radio" name="dogSize" value="Small" checked={formData.dogSize === 'Small'} onChange={handleChange} />
+              Small
+            </label>
+            <label>
+            <input type="radio" name="dogSize" value="Medium" checked={formData.dogSize === 'Medium'} onChange={handleChange} />
+            Medium
+          </label>
+          <label>
+            <input type="radio" name="dogSize" value="Large" checked={formData.dogSize === 'Large'} onChange={handleChange} />
+            Large
+          </label>
+          </RadioGroup>
+        </DetailRow>
+        <DetailRow>
+          <DetailLabel><strong>Immune:</strong></DetailLabel>
+          <RadioGroup>
+          <label>
+            <input type="radio" name="dogImmune" value="Yes" checked={formData.dogImmune === 'Yes'} onChange={handleChange} />
+            Yes
+          </label>
+          <label>
+            <input type="radio" name="dogImmune" value="No" checked={formData.dogImmune === 'No'} onChange={handleChange} />
+            No
+          </label>
+          </RadioGroup>
+        </DetailRow>
+        <DetailRow>
+          <DetailLabel><strong>Neutered:</strong></DetailLabel>
+          <RadioGroup>
+          <label>
+            <input type="radio" name="dogNeutered" value="Yes" checked={formData.dogNeutered === 'Yes'} onChange={handleChange} />
+            Yes
+          </label>
+          <label>
+            <input type="radio" name="dogNeutered" value="No" checked={formData.dogNeutered === 'No'} onChange={handleChange} />
+            No
+          </label>
+          </RadioGroup>
+        </DetailRow>
+        <DetailRow>
+          <DetailLabel><strong>Suitable For:</strong></DetailLabel>
+          <RadioGroup>
+          <label>
+            <input type="radio" name="suitableFor" value="Apartment" checked={formData.suitableFor === 'Apartment'} onChange={handleChange} />
+            Apartment
+          </label>
+          <label>
+            <input type="radio" name="suitableFor" value="House with yard" checked={formData.suitableFor === 'House with yard'} onChange={handleChange} />
+            House with yard
+          </label>
+          </RadioGroup>
+        </DetailRow>
+        <DetailRow>
+          <DetailLabel><strong>Friendly with children:</strong></DetailLabel>
+          <RadioGroup>
+          <label>
+            <input type="radio" name="friendlyWithChildren" value="Yes" checked={formData.friendlyWithChildren === 'Yes'} onChange={handleChange} />
+            Yes
+          </label>
+          <label>
+            <input type="radio" name="friendlyWithChildren" value="No" checked={formData.friendlyWithChildren === 'No'} onChange={handleChange} />
+            No
+          </label>
+          </RadioGroup>
+        </DetailRow>
+      </>
+    ) : (
+      <>
+        <DetailRow>
+          <DetailLabel><strong>Name:</strong></DetailLabel>
+          <DetailValue>{formData.dogName}</DetailValue>
+        </DetailRow>
+        <DetailRow>
+          <DetailLabel><strong>Breed:</strong></DetailLabel>
+          <DetailValue>{formData.dogType}</DetailValue>
+        </DetailRow>
+        <DetailRow>
+          <DetailLabel><strong>Age:</strong></DetailLabel>
+          <DetailValue>{formData.dogAge}</DetailValue>
+        </DetailRow>
+        <DetailRow>
+          <DetailLabel><strong>Gender:</strong></DetailLabel>
+          <DetailValue>{formData.dogGender}</DetailValue>
+        </DetailRow>
+        <DetailRow>
+          <DetailLabel><strong>Size:</strong></DetailLabel>
+          <DetailValue>{formData.dogSize}</DetailValue>
+        </DetailRow>
+        <DetailRow>
+          <DetailLabel><strong>Immune:</strong></DetailLabel>
+          <DetailValue>{formData.dogImmune}</DetailValue>
+        </DetailRow>
+        <DetailRow>
+          <DetailLabel><strong>Neutered:</strong></DetailLabel>
+          <DetailValue>{formData.dogNeutered}</DetailValue>
           </DetailRow>
-          <DetailRow>
-            <DetailLabel><strong>Immune:</strong></DetailLabel>
-            <RadioGroup>
-              <label>
-                <input type="radio" name="dogImmune" value="Yes" checked={formData.dogImmune === 'Yes'} onChange={handleChange} />
-                Yes
-              </label>
-              <label>
-                <input type="radio" name="dogImmune" value="No" checked={formData.dogImmune === 'No'} onChange={handleChange} />
-                No
-              </label>
-            </RadioGroup>
-          </DetailRow>
-          <DetailRow>
-            <DetailLabel><strong>Neutered:</strong></DetailLabel>
-            <RadioGroup>
-              <label>
-                <input type="radio" name="dogNeutered" value="Yes" checked={formData.dogNeutered === 'Yes'} onChange={handleChange} />
-                Yes
-              </label>
-              <label>
-                <input type="radio" name="dogNeutered" value="No" checked={formData.dogNeutered === 'No'} onChange={handleChange} />
-                No
-              </label>
-            </RadioGroup>
-          </DetailRow>
-          <DetailRow>
-            <DetailLabel><strong>Suitable For:</strong></DetailLabel>
-            <RadioGroup>
-              <label>
-                <input type="radio" name="suitableFor" value="Apartment" checked={formData.suitableFor === 'Apartment'} onChange={handleChange} />
-                Apartment
-              </label>
-              <label>
-                <input type="radio" name="suitableFor" value="House with yard" checked={formData.suitableFor === 'House with yard'} onChange={handleChange} />
-                House with yard
-              </label>
-            </RadioGroup>
-          </DetailRow>
-          <DetailRow>
-            <DetailLabel><strong>Friendly with children:</strong></DetailLabel>
-            <RadioGroup>
-              <label>
-                <input type="radio" name="friendlyWithChildren" value="Yes" checked={formData.friendlyWithChildren === 'Yes'} onChange={handleChange} />
-                Yes
-              </label>
-              <label>
-                <input type="radio" name="friendlyWithChildren" value="No" checked={formData.friendlyWithChildren === 'No'} onChange={handleChange} />
-                No
-              </label>
-            </RadioGroup>
-          </DetailRow>
-        </>
-      ) : (
-        <>
-          <DetailRow>
-            <DetailLabel><strong>Name:</strong></DetailLabel>
-            <DetailValue>{formData.dogName}</DetailValue>
-          </DetailRow>
-          <DetailRow>
-            <DetailLabel><strong>Breed:</strong></DetailLabel>
-            <DetailValue>{formData.dogType}</DetailValue>
-          </DetailRow>
-          <DetailRow>
-            <DetailLabel><strong>Age:</strong></DetailLabel>
-            <DetailValue>{formData.dogAge}</DetailValue>
-          </DetailRow>
-          <DetailRow>
-            <DetailLabel><strong>Gender:</strong></DetailLabel>
-            <DetailValue>{formData.dogGender}</DetailValue>
-          </DetailRow>
-          <DetailRow>
-            <DetailLabel><strong>Size:</strong></DetailLabel>
-            <DetailValue>{formData.dogSize}</DetailValue>
-          </DetailRow>
-          <DetailRow>
-            <DetailLabel><strong>Immune:</strong></DetailLabel>
-            <DetailValue>{formData.dogImmune}</DetailValue>
-          </DetailRow>
-          <DetailRow>
-            <DetailLabel><strong>Neutered:</strong></DetailLabel>
-            <DetailValue>{formData.dogNeutered}</DetailValue>
-          </DetailRow>
-          <DetailRow>
-            <DetailLabel><strong>Suitable For:</strong></DetailLabel>
-            <DetailValue>{formData.suitableFor}</DetailValue>
-          </DetailRow>
-          <DetailRow>
-            <DetailLabel><strong>Friendly with children:</strong></DetailLabel>
-            <DetailValue>{formData.friendlyWithChildren}</DetailValue>
-          </DetailRow>
-        </>
-      )}
-    </Card>
-    <DetailRow>
-      <DetailLabel><strong>A Little About Me</strong></DetailLabel>
-    </DetailRow>
-    <Card>
-      {isEditing ? (
+        <DetailRow>
+          <DetailLabel><strong>Suitable For:</strong></DetailLabel>
+          <DetailValue>{formData.suitableFor}</DetailValue>
+        </DetailRow>
+        <DetailRow>
+          <DetailLabel><strong>Friendly with children:</strong></DetailLabel>
+          <DetailValue>{formData.friendlyWithChildren}</DetailValue>
+        </DetailRow>
+      </>
+    )}
+  </Card>
+  <DetailRow>
+    <DetailLabel><strong>A Little About Me</strong></DetailLabel>
+  </DetailRow>
+  <Card>
+    {isEditing ? (
+      <>
         <textarea
           className="detail-value"
           name="dogDetails"
@@ -724,15 +709,17 @@ const PersonalDetails = ({ profile, isEditing, formData, handleChange }) => (
           rows="4"
           style={{ width: '100%' }}
         />
-      ) : (
-        <Text>{profile.dogDetails}</Text>
-      )}
-    </Card>
-    <DetailRow>
-      <DetailLabel><strong>Care Instructions</strong></DetailLabel>
-    </DetailRow>
-    <Card>
-      {isEditing ? (
+      </>
+    ) : (
+      <Text>{profile.dogDetails}</Text>
+    )}
+  </Card>
+  <DetailRow>
+    <DetailLabel><strong>Care Instructions</strong></DetailLabel>
+  </DetailRow>
+  <Card>
+    {isEditing ? (
+      <>
         <textarea
           className="detail-value"
           name="careInstructions"
@@ -741,143 +728,138 @@ const PersonalDetails = ({ profile, isEditing, formData, handleChange }) => (
           rows="4"
           style={{ width: '100%' }}
         />
-      ) : (
-        <Text>{profile.careInstructions}</Text>
-      )}
-    </Card>
+      </>
+    ) : (
+      <Text>{profile.careInstructions}</Text>
+    )}
   </Card>
+</Card>
 );
 
-const DogProfileCard = ({ profile, onSave, requests, sitters, onRequestAccept, onRequestDelete, onSitterDelete, onAddReview, galleryImages, onImageUpload, onImageDelete }) => {
-  const [isEditing, setIsEditing] = useState(false);
-  const [formData, setFormData] = useState(profile);
+const DogProfileCard = ({ profile, onSave, requests, sitters, onRequestAccept, onRequestDelete, onSitterDelete, onAddReview, galleryImages, onImageUpload }) => {
+const [isEditing, setIsEditing] = useState(false);
+const [formData, setFormData] = useState(profile);
 
-  const handleEditClick = () => {
-    setIsEditing(true);
-  };
+const handleEditClick = () => {
+  setIsEditing(true);
+};
 
-  const handleSaveClick = async () => {
-    setIsEditing(false);
-    await onSave(formData); // Save the updated profile data
-  };
+const handleSaveClick = async () => {
+  setIsEditing(false);
+  await onSave(formData); // Save the updated profile data
+};
 
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    setFormData({
-      ...formData,
-      [name]: value,
-    });
-  };
+const handleChange = (e) => {
+  const { name, value } = e.target;
+  setFormData({
+    ...formData,
+    [name]: value,
+  });
+};
 
-  // Removing extra commas from the address
-  const formattedAddress = formData.address.replace(/,+/g, ',').replace(/^,|,$/g, '').trim();
+// Removing extra commas from the address
+const formattedAddress = formData.address.replace(/,+/g, ',').replace(/^,|,$/g, '').trim();
 
-  return (
-    <Container>
-      <GlobalStyle />
-      <Header>
-        <BasicInfo>
-          <VolunteerName>{formData.name}</VolunteerName>
-          <Text>{formData.dogName}</Text>
-          <Text>{[formData.dogType, formData.dogAge, formData.dogSize].filter(Boolean).join(', ')}</Text>
-          <Text>{formattedAddress}</Text>
-        </BasicInfo>
-        <ProfileImage src={formData.profilePic} alt={`${profile.name}`} />
-      </Header>
-      <ProfileSectionWrapper>
-        <Section>
-          <PersonalDetails profile={profile} isEditing={isEditing} formData={formData} handleChange={handleChange} />
-          {isEditing ? (
-            <EditButton onClick={handleSaveClick}>Save Profile</EditButton>
-          ) : (
-            <EditButton onClick={handleEditClick}>Edit Profile</EditButton>
-          )}
-        </Section>
-        <Section>
-          <RequestActions
-            requests={requests}
-            onAccept={onRequestAccept}
-            onDelete={onRequestDelete}
-          />
-          <DogSitters
-            sitters={sitters}
-            onDelete={onSitterDelete}
-            onAddReview={onAddReview}
-          />
-        </Section>
-      </ProfileSectionWrapper>
-      <Gallery images={galleryImages} onUpload={onImageUpload} onDelete={onImageDelete} />
-    </Container>
-  );
+return (
+  <Container>
+    <GlobalStyle />
+    <Header>
+      <BasicInfo>
+        <VolunteerName>{formData.name}</VolunteerName>
+        <Text>{formData.dogName}</Text>
+        <Text>{[formData.dogType, formData.dogAge, formData.dogSize].filter(Boolean).join(', ')}</Text>
+        <Text>{formattedAddress}</Text>
+      </BasicInfo>
+      <ProfileImage src={formData.profilePic} alt={`${profile.name}`} />
+    </Header>
+    <ProfileSectionWrapper>
+      <Section>
+        <PersonalDetails profile={profile} isEditing={isEditing} formData={formData} handleChange={handleChange} />
+        {isEditing ? (
+          <EditButton onClick={handleSaveClick}>Save Profile</EditButton>
+        ) : (
+          <EditButton onClick={handleEditClick}>Edit Profile</EditButton>
+        )}
+      </Section>
+      <Section>
+        <RequestActions
+          requests={requests}
+          onAccept={onRequestAccept}
+          onDelete={onRequestDelete}
+        />
+        <DogSitters
+          sitters={sitters}
+          onDelete={onSitterDelete}
+          onAddReview={onAddReview}
+        />
+      </Section>
+    </ProfileSectionWrapper>
+    <Gallery images={galleryImages} onUpload={onImageUpload} />
+  </Container>
+);
 };
 
 const MyProfile = () => {
-  const { user, updateUserDetails } = useContext(UserContext);
-  const [requests, setRequests] = useState([
-    { id: 1, name: 'John Doe', date: '2023-07-07', avatar: '../images/person3.jpg' },
-    { id: 2, name: 'Jane Smith', date: '2023-07-06', avatar: '../images/person3.jpg' },
-  ]);
+const { user, updateUserDetails } = useContext(UserContext);
+const [requests, setRequests] = useState([
+  { id: 1, name: 'John Doe', date: '2023-07-07', avatar: '../images/person3.jpg' },
+  { id: 2, name: 'Jane Smith', date: '2023-07-06', avatar: '../images/person3.jpg' },
+]);
 
-  const [sitters, setSitters] = useState([
-    { id: 1, name: 'Emily Clark', date: '2023-07-05', avatar: '../images/person2.jpg' },
-    { id: 2, name: 'Michael Johnson', date: '2023-07-04', avatar: '../images/person1.jpg' },
-  ]);
+const [sitters, setSitters] = useState([
+  { id: 1, name: 'Emily Clark', date: '2023-07-05', avatar: '../images/person2.jpg' },
+  { id: 2, name: 'Michael Johnson', date: '2023-07-04', avatar: '../images/person1.jpg' },
+]);
 
-  const [galleryImages, setGalleryImages] = useState([user.details.profilePic]);
+const [galleryImages, setGalleryImages] = useState([user.details.profilePic]);
 
-  const handleRequestAccept = (index) => {
-    const acceptedRequest = requests[index];
-    setSitters([...sitters, acceptedRequest]);
-    setRequests(requests.filter((_, i) => i !== index));
-    // TODO: Add backend code to notify the volunteer of acceptance
+const handleRequestAccept = (index) => {
+  const acceptedRequest = requests[index];
+  setSitters([...sitters, acceptedRequest]);
+  setRequests(requests.filter((_, i) => i !== index));
+  // TODO: Add backend code to notify the volunteer of acceptance
+};
+
+const handleRequestDelete = (index) => {
+  setRequests(requests.filter((_, i) => i !== index));
+  // TODO: Add backend code to delete the request
+};
+
+const handleSitterDelete = (index) => {
+  setSitters(sitters.filter((_, i) => i !== index));
+  // TODO: Add backend code to delete the sitter
+};
+
+const handleAddReview = (index, reviewText) => {
+  // TODO: Add backend code to save the review to the volunteer's profile
+  console.log(`Review for sitter ${index}: ${reviewText}`);
+};
+
+const handleImageUpload = (file) => {
+  const reader = new FileReader();
+  reader.onloadend = () => {
+    setGalleryImages([...galleryImages, reader.result]);
   };
+  reader.readAsDataURL(file);
+  // TODO: Add backend code to upload the image to the server
+};
 
-  const handleRequestDelete = (index) => {
-    setRequests(requests.filter((_, i) => i !== index));
-    // TODO: Add backend code to delete the request
-  };
-
-  const handleSitterDelete = (index) => {
-    setSitters(sitters.filter((_, i) => i !== index));
-    // TODO: Add backend code to delete the sitter
-  };
-
-  const handleAddReview = (index, reviewText) => {
-    // TODO: Add backend code to save the review to the volunteer's profile
-    console.log(`Review for sitter ${index}: ${reviewText}`);
-  };
-
-  const handleImageUpload = (file) => {
-    const reader = new FileReader();
-    reader.onloadend = () => {
-      setGalleryImages([...galleryImages, reader.result]);
-    };
-    reader.readAsDataURL(file);
-    // TODO: Add backend code to upload the image to the server
-  };
-
-  const handleImageDelete = (index) => {
-    setGalleryImages(galleryImages.filter((_, i) => i !== index));
-    // TODO: Add backend code to delete the image from the server
-  };
-
-  return (
-    <div>
-      <DogProfileCard
-        profile={user.details}
-        onSave={updateUserDetails}
-        requests={requests}
-        sitters={sitters}
-        onRequestAccept={handleRequestAccept}
-        onRequestDelete={handleRequestDelete}
-        onSitterDelete={handleSitterDelete}
-        onAddReview={handleAddReview}
-        galleryImages={galleryImages}
-        onImageUpload={handleImageUpload}
-        onImageDelete={handleImageDelete}
-      />
-    </div>
-  );
+return (
+  <div>
+    <DogProfileCard
+      profile={user.details}
+      onSave={updateUserDetails}
+      requests={requests}
+      sitters={sitters}
+      onRequestAccept={handleRequestAccept}
+      onRequestDelete={handleRequestDelete}
+      onSitterDelete={handleSitterDelete}
+      onAddReview={handleAddReview}
+      galleryImages={galleryImages}
+      onImageUpload={handleImageUpload}
+    />
+  </div>
+);
 };
 
 export default MyProfile;

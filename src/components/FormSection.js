@@ -8,7 +8,7 @@ import { getStorage, ref, uploadBytes, getDownloadURL } from "firebase/storage";
 import { Link } from 'react-router-dom';
 import { UserContext } from '../App';
 
-let registrationType = "reserve"
+let registrationType = "reserve";
 function FormSection() {
   const { user, updateUserDetails } = useContext(UserContext);
   const currentUser = user.firebaseUser;
@@ -59,9 +59,8 @@ function FormSection() {
 
   return (
     <div className={styles["form-section"]}>
-      {/* <h1>Thank you for your service,<br />some details about you:</h1> */}
       <p className={styles["intro"]} style={{ fontSize: '40px', fontStyle: 'italic', fontFamily: 'Caveat, cursive' }}>
-      Thank you for yor service! Let's get started
+        Thank you for your service! Let's get started
       </p>
       <form id="signup-form" onSubmit={handleSubmit}>
         <div className={styles["profile-picture"]}>
@@ -82,5 +81,6 @@ function FormSection() {
     </div>
   );
 }
-export {registrationType};
+
+export { registrationType };
 export default FormSection;

@@ -1,5 +1,8 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { useParams } from 'react-router-dom';
 import styled, { createGlobalStyle } from 'styled-components';
+import { doc, getDoc } from 'firebase/firestore';
+import { DB } from './Config';
 import dog1 from '../images/dog1.jpg';
 import dog2 from '../images/dog2.jpg';
 import pawPrint from '../images/pawprint5.svg';
@@ -204,21 +207,208 @@ const CloseButton = styled.button`
   }
 `;
 
-const Gallery = ({ images }) => (
-  <GalleryCard>
-    <TitleSection>
-      <TitleWithIcon>
-        <img src={pawPrint} alt="Paw Print" />
-        <SubTitle>Gallery</SubTitle>
-      </TitleWithIcon>
-    </TitleSection>
-    <div style={{ display: 'flex', flexWrap: 'wrap' }}>
-      {images.map((image, index) => (
-        <img key={index} src={image} alt={`gallery-${index}`} style={{ width: '150px', height: '150px', margin: '10px', borderRadius: '10px' }} />
-      ))}
-    </div>
-  </GalleryCard>
-);
+const GalleryImage = styled.img`
+  width: 150px;
+  height: 150px;
+  margin: 10px;
+  border-radius: 10px;
+  cursor: pointer;
+`;
+
+const ModalOverlay = styled.div`
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+`;
+
+const ModalContent = styled.div`
+  position: relative;
+  background: white;
+  padding: 20px;
+  border-radius: 10px;
+  max-width: 90%;
+  max-height: 90%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+`;
+
+const ModalImage = styled.img`
+  max-width: 100%;
+  max-height: 80vh;
+  border-radius: 10px;
+`;
+
+const ArrowButton = styled.button`
+  background-color: #628991;
+  color: white;
+  border: none;
+  padding: 10px;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 1.5rem;
+  margin: 0 10px;
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 1001;
+
+  &:hover {
+    background-color: #527882;
+  }
+`;
+
+const DogProfiles = () => {
+  const { uid } = useParams();
+  const [profile, setProfile] = useState({
+    name: '',
+    dogType: '',
+    dogAge: '',
+    dogSize: '',
+    address: '',
+    datesForBBsitting: '',
+    photoUrl: '',
+    dogName: '',
+    dogType: '',
+    dogAge: '',
+    dogGender: '',
+    dogSize: '',
+    dogImmune: '',
+    dogNeutered: '',
+    suitableFor: '',
+    friendlyWithChildren: '',
+    dogDetails: '',
+    careInstructions: ''
+  });
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  useEffect(() => {
+    const fetchProfile = async () => {
+      setLoading(true);
+      try {
+        console.log("Fetching profile for UID:", uid);
+        const docRef = doc(DB, 'users', uid);
+        const docSnap = await getDoc(docRef);
+        if (docSnap.exists()) {
+          const data = docSnap.data();
+          console.log("Fetched profile data:", data);
+          setProfile(data);
+        } else {
+          console.log("No such document!");
+          setError("No such document!");
+        }
+      } catch (err) {
+        console.error("Error fetching document:", err);
+        setError("Error fetching document: " + err.message);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchProfile();
+  }, [uid]);
+
+  if (loading) return <div>Loading...</div>;
+  if (error) return <div>{error}</div>;
+  if (!profile) return <div>No profile data found</div>;
+
+  const handleContactClick = () => {
+    // Implement contact logic
+  };
+
+  return (
+    <Container>
+      <GlobalStyle />
+      <Header>
+        <BasicInfo>
+          <VolunteerName>{profile.dogName}</VolunteerName>
+          <Text>{profile.dogType}, {profile.dogAge}, {profile.dogSize}</Text>
+          <Text>{profile.address}</Text>
+          <div>
+            <BoldTextInline>Dates for BBsitting:</BoldTextInline> {profile.datesForBBsitting}
+          </div>
+          <ContactButton onClick={handleContactClick}>Contact</ContactButton>
+        </BasicInfo>
+        <ProfileImage src={profile.photoUrl || dog1} alt={profile.name} />
+      </Header>
+      <ProfileSectionWrapper>
+        <Section>
+          <PersonalDetails profile={profile} />
+        </Section>
+        <Section>
+          <Gallery images={[dog1, dog2]} />
+        </Section>
+      </ProfileSectionWrapper>
+    </Container>
+  );
+};
+
+const Gallery = ({ images }) => {
+  const [selectedImageIndex, setSelectedImageIndex] = useState(null);
+
+  const openModal = (index) => {
+    setSelectedImageIndex(index);
+  };
+
+  const closeModal = () => {
+    setSelectedImageIndex(null);
+  };
+
+  const showPrevImage = () => {
+    setSelectedImageIndex((prevIndex) =>
+      prevIndex === 0 ? images.length - 1 : prevIndex - 1
+    );
+  };
+
+  const showNextImage = () => {
+    setSelectedImageIndex((prevIndex) =>
+      prevIndex === images.length - 1 ? 0 : prevIndex + 1
+    );
+  };
+
+  return (
+    <GalleryCard>
+      <TitleSection>
+        <TitleWithIcon>
+          <img src={pawPrint} alt="Paw Print" />
+          <SubTitle>Gallery</SubTitle>
+        </TitleWithIcon>
+      </TitleSection>
+      <div style={{ display: 'flex', flexWrap: 'wrap' }}>
+        {images.map((image, index) => (
+          <GalleryImage
+            key={index}
+            src={image}
+            alt={`gallery-${index}`}
+            onClick={() => openModal(index)}
+          />
+        ))}
+      </div>
+      {selectedImageIndex !== null && (
+        <ModalOverlay onClick={closeModal}>
+          <ModalContent onClick={(e) => e.stopPropagation()}>
+            <ArrowButton style={{ left: 0 }} onClick={showPrevImage}>
+              &lt;
+            </ArrowButton>
+            <ModalImage src={images[selectedImageIndex]} alt={`gallery-${selectedImageIndex}`} />
+            <ArrowButton style={{ right: 0 }} onClick={showNextImage}>
+              &gt;
+            </ArrowButton>
+            <CloseButton onClick={closeModal}>X</CloseButton>
+          </ModalContent>
+        </ModalOverlay>
+      )}
+    </GalleryCard>
+  );
+};
 
 const PersonalDetails = ({ profile }) => (
   <Card>
@@ -230,149 +420,67 @@ const PersonalDetails = ({ profile }) => (
     </TitleSection>
     <DetailRow>
       <DetailLabel><strong>Owner Name:</strong></DetailLabel>
-      <DetailValue>{profile.ownerName}</DetailValue>
+      <DetailValue>{profile.name || ''}</DetailValue>
     </DetailRow>
     <DetailRow>
       <DetailLabel><strong>Address:</strong></DetailLabel>
-      <DetailValue>{profile.address}</DetailValue>
+      <DetailValue>{profile.address || ''}</DetailValue>
     </DetailRow>
-    <div style={{ marginBottom: '20px' }}></div> {/* רווח נוסף בין "Address" ל-"Dog I.D" */}
+    <div style={{ marginBottom: '20px' }}></div> {/* Additional spacing */}
     <DetailRow>
       <DogIdLabel><strong>Dog I.D</strong></DogIdLabel>
     </DetailRow>
     <Card>
       <DetailRow>
         <DetailLabel><strong>Name:</strong></DetailLabel>
-        <DetailValue>{profile.name}</DetailValue>
+        <DetailValue>{profile.dogName || ''}</DetailValue>
       </DetailRow>
       <DetailRow>
         <DetailLabel><strong>Breed:</strong></DetailLabel>
-        <DetailValue>{profile.breed}</DetailValue>
+        <DetailValue>{profile.dogType || ''}</DetailValue>
       </DetailRow>
       <DetailRow>
         <DetailLabel><strong>Age:</strong></DetailLabel>
-        <DetailValue>{profile.age}</DetailValue>
+        <DetailValue>{profile.dogAge || ''}</DetailValue>
       </DetailRow>
       <DetailRow>
         <DetailLabel><strong>Gender:</strong></DetailLabel>
-        <DetailValue>{profile.gender}</DetailValue>
+        <DetailValue>{profile.dogGender || ''}</DetailValue>
       </DetailRow>
       <DetailRow>
         <DetailLabel><strong>Size:</strong></DetailLabel>
-        <DetailValue>{profile.size}</DetailValue>
+        <DetailValue>{profile.dogSize || ''}</DetailValue>
       </DetailRow>
       <DetailRow>
         <DetailLabel><strong>Immune:</strong></DetailLabel>
-        <DetailValue>{profile.immune}</DetailValue>
+        <DetailValue>{profile.dogImmune || ''}</DetailValue>
       </DetailRow>
       <DetailRow>
         <DetailLabel><strong>Neutered:</strong></DetailLabel>
-        <DetailValue>{profile.neutered}</DetailValue>
+        <DetailValue>{profile.dogNeutered || ''}</DetailValue>
       </DetailRow>
       <DetailRow>
         <DetailLabel><strong>Suitable For:</strong></DetailLabel>
-        <DetailValue>{profile.suitableFor}</DetailValue>
+        <DetailValue>{profile.suitableFor || ''}</DetailValue>
       </DetailRow>
       <DetailRow>
         <DetailLabel><strong>Friendly with children:</strong></DetailLabel>
-        <DetailValue>{profile.friendlyWithChildren}</DetailValue>
+        <DetailValue>{profile.friendlyWithChildren || ''}</DetailValue>
       </DetailRow>
     </Card>
     <DetailRow>
       <DetailLabel><strong>A Little About Me</strong></DetailLabel>
     </DetailRow>
     <Card>
-      <Text>{profile.dogDetails}</Text>
+      <Text>{profile.dogDetails || ''}</Text>
     </Card>
     <DetailRow>
-    <DetailLabel><strong>Care Instructions</strong></DetailLabel>
+      <DetailLabel><strong>Care Instructions</strong></DetailLabel>
     </DetailRow>
     <Card>
-      <Text>{profile.careInstructions}</Text>
+      <Text>{profile.careInstructions || ''}</Text>
     </Card>
   </Card>
 );
-
-const DogProfileCard = ({ profile, galleryImages }) => {
-  const [photoUrl, setPhotoUrl] = useState('');
-  const [isPopupOpen, setIsPopupOpen] = useState(false);
-
-  useEffect(() => {
-    const photos = [dog1, dog2];
-    const photoIndex = (profile.id - 1) % photos.length;
-    setPhotoUrl(photos[photoIndex]);
-  }, [profile.id]);
-
-  const handleContactClick = () => {
-    setIsPopupOpen(true);
-  };
-
-  const handleClosePopup = () => {
-    setIsPopupOpen(false);
-  };
-
-  return (
-    <Container>
-      <GlobalStyle />
-      <Header>
-        <BasicInfo>
-          <VolunteerName>{profile.name}</VolunteerName>
-          <Text>{profile.breed}, {profile.age}, {profile.size}</Text>
-          <Text>{profile.address}</Text>
-          <div>
-            <BoldTextInline>Dates for BBsitting:</BoldTextInline> {profile.datesForBBsitting}
-          </div>
-          <ContactButton onClick={handleContactClick}>Contact</ContactButton>
-        </BasicInfo>
-        <ProfileImage src={photoUrl} alt={`${profile.name}`} />
-      </Header>
-      <ProfileSectionWrapper>
-        <Section>
-          <PersonalDetails profile={profile} />
-        </Section>
-        <Section>
-          <Gallery images={galleryImages} />
-        </Section>
-      </ProfileSectionWrapper>
-      {isPopupOpen && (
-        <PopupContainer>
-          <h2>Thank you!</h2>
-          <p>Your contact request has been sent to {profile.ownerName}.</p>
-          <CloseButton onClick={handleClosePopup}>X</CloseButton>
-        </PopupContainer>
-      )}
-    </Container>
-  );
-};
-
-const DogProfiles = () => {
-  const profile = {
-    id: 1,
-    name: 'Buddy',
-    breed: 'Golden Retriever',
-    age: '5 years',
-    gender: 'Male',
-    size: 'Large',
-    immune: 'Yes',
-    neutered: 'Yes',
-    suitableFor: 'Apartment',
-    friendlyWithChildren: 'Yes',
-    ownerName: 'John Doe',
-    address: '1234 Elm Street, Springfield',
-    email: 'johndoe@example.com',
-    phone: '123-456-7890',
-    datesForBBsitting: '12/07/2023 - 20/07/2023',
-    dogDetails: 'Buddy is a friendly dog that loves to play and enjoys spending time with family. Buddy is very loyal and makes a great companion.',
-    careInstructions: 'Feed twice a day. Walk twice a day. Make sure he has fresh water at all times.',
-  };
-
-  const galleryImages = [dog1, dog2];
-
-  return (
-    <div>
-      <DogProfileCard profile={profile} galleryImages={galleryImages} />
-    </div>
-  );
-};
 
 export default DogProfiles;

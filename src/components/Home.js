@@ -3,7 +3,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { GoogleAuthProvider, getAdditionalUserInfo } from "firebase/auth";
 import { getAuth, signInWithPopup } from "firebase/auth";
 import { UserContext } from "../App";
-import { LogOut } from "./Config";
+import { logOut } from "./Config";
 import logo from '../images/logo.png'; 
 
 const provider = new GoogleAuthProvider();
@@ -13,7 +13,7 @@ function Home() {
     const navigate = useNavigate();
 
     const handleLogOut = async () => {
-        await LogOut();
+        await logOut();
         setUser(null);
     }
 

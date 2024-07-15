@@ -60,14 +60,41 @@ const Header = styled.div`
   box-shadow: none;
   border-radius: 10px;
   margin-bottom: 20px;
+  min-height: 200px; /* גובה קבוע לחלק העליון */
 `;
 
-const ProfileImage = styled.img`
+const ProfileImage = styled.div`
+  position: relative;
+  display: inline-block;
+`;
+
+const ProfilePic = styled.img`
   border-radius: 50%;
   width: 150px;
   height: 150px;
   object-fit: cover;
-  margin-left: 20px;
+  z-index: 2;
+`;
+
+const ProfileUploadButton = styled.button`
+  background-color: #6591A4;
+  color: white;
+  border: none;
+  border-radius: 50%;
+  cursor: pointer;
+  font-size: 1.5rem;
+  width: 30px;
+  height: 30px;
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  &:hover {
+    box-shadow: 0px 8px 20px rgba(0, 0, 0, 0.5);
+  }
 `;
 
 const BasicInfo = styled.div`
@@ -286,7 +313,7 @@ const PersonalDetails = ({ profile, isEditing, formData, handleChange }) => (
               Male
             </label>
             <label>
-              <input type="radio" name="gender" value="Female" checked={formData.gender === 'Female'} onChange={handleChange} />
+              <input type="radio" name="gender"               value="Female" checked={formData.gender === 'Female'} onChange={handleChange} />
               Female
             </label>
           </div>
@@ -458,6 +485,20 @@ const VolProfileCard = ({ profile, onSave, requests }) => {
     });
   };
 
+  const handleProfileImageUpload = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setFormData({
+          ...formData,
+          profilePic: reader.result,
+        });
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
   return (
     <Container>
       <GlobalStyle />
@@ -466,7 +507,16 @@ const VolProfileCard = ({ profile, onSave, requests }) => {
           <VolunteerName>{formData.name}</VolunteerName>
           <Text>{formData.address}</Text>
         </BasicInfo>
-        <ProfileImage src={formData.profilePic} alt={`${profile.name}`} />
+        <ProfileImage>
+          <ProfilePic src={formData.profilePic} alt={`${profile.name}`} />
+          <ProfileUploadButton onClick={() => document.getElementById('profileImageUpload').click()}>+</ProfileUploadButton>
+          <input
+            type="file"
+            id="profileImageUpload"
+            style={{ display: 'none' }}
+            onChange={handleProfileImageUpload}
+          />
+        </ProfileImage>
       </Header>
       <ProfileSectionWrapper>
         <Section>
@@ -495,7 +545,6 @@ const VolProfile = () => {
     { id: 3, name: 'Miki Shapira', date: '12/03/24 - 11/04/2024', phone: '0555555555', avatar: '../images/dog3.jpg' },
   ]);
 
-  // הוספת ביקורות דמה לפרופיל
   const dummyProfile = {
     ...user.details,
     reviews: [
@@ -532,4 +581,3 @@ const VolProfile = () => {
 };
 
 export default VolProfile;
-         

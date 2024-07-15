@@ -53,7 +53,7 @@ const Feed = () => {
       startDate: postData.startDate,
       endDate: postData.endDate,
       gender: postOwnerDetails.dogGender || '',
-      needsGarden: postOwnerDetails.suitableFor?.includes('house with a yard') ? 'yes' : postOwnerDetails.suitableFor?.includes('apartment') ? 'no' : '',
+      needsGarden: postOwnerDetails.suitableFor?.includes('house with a yard') || postOwnerDetails.suitableFor?.includes('all spaces') || postOwnerDetails.suitableFor === '' ? 'yes' : postOwnerDetails.suitableFor?.includes('apartment') ? 'no' : '',
       immune: postOwnerDetails.dogImmune || '',
       neutered: postOwnerDetails.dogNeutered || '',
       friendlyToChildren: postOwnerDetails.friendlyToChildren !== undefined ? (postOwnerDetails.friendlyToChildren === 'yes' ? 'yes' : 'no') : ''
@@ -165,7 +165,7 @@ const Feed = () => {
 
       {showFilter && (
         <div className="filter-overlay">
-          <div className="filter-container">
+          <div className="filter-container" style={{ maxWidth: '300px', padding: '10px' }}>
             <button className="exit-filters" onClick={toggleFilter}>X</button>
             <div className="filter-options">
               <label htmlFor="city">City</label>
@@ -175,6 +175,7 @@ const Feed = () => {
                 name="city"
                 value={tempFilterCity}
                 onChange={(e) => setTempFilterCity(e.target.value)}
+                style={{ width: '100%' }}
               />
               <label htmlFor="duration">Duration</label>
               <select
@@ -182,6 +183,7 @@ const Feed = () => {
                 name="duration"
                 value={tempFilterDuration}
                 onChange={(e) => setTempFilterDuration(e.target.value)}
+                style={{ width: '100%' }}
               >
                 <option value="">Any</option>
                 <option value="1-6">1-6 days</option>
@@ -194,6 +196,7 @@ const Feed = () => {
                 name="gender"
                 value={tempFilterGender}
                 onChange={(e) => setTempFilterGender(e.target.value)}
+                style={{ width: '100%' }}
               >
                 <option value="">Any</option>
                 <option value="male">Male</option>
@@ -205,6 +208,7 @@ const Feed = () => {
                 name="needsGarden"
                 value={tempFilterNeedsGarden}
                 onChange={(e) => setTempFilterNeedsGarden(e.target.value)}
+                style={{ width: '100%' }}
               >
                 <option value="">Any</option>
                 <option value="yes">Yes</option>
@@ -216,6 +220,7 @@ const Feed = () => {
                 name="immune"
                 value={tempFilterImmune}
                 onChange={(e) => setTempFilterImmune(e.target.value)}
+                style={{ width: '100%' }}
               >
                 <option value="">Any</option>
                 <option value="yes">Yes</option>
@@ -227,6 +232,7 @@ const Feed = () => {
                 name="neutered"
                 value={tempFilterNeutered}
                 onChange={(e) => setTempFilterNeutered(e.target.value)}
+                style={{ width: '100%' }}
               >
                 <option value="">Any</option>
                 <option value="yes">Yes</option>
@@ -238,6 +244,7 @@ const Feed = () => {
                 name="friendlyToChildren"
                 value={tempFilterFriendlyToChildren}
                 onChange={(e) => setTempFilterFriendlyToChildren(e.target.value)}
+                style={{ width: '100%' }}
               >
                 <option value="">Any</option>
                 <option value="yes">Yes</option>
@@ -245,7 +252,7 @@ const Feed = () => {
               </select>
             </div>
             <div className="apply-button-container">
-              <button className="apply-button" onClick={applyFilterChanges}>Apply</button>
+              <button className="apply-button" onClick={applyFilterChanges} style={{ width: '100%' }}>Apply</button>
             </div>
           </div>
         </div>
@@ -258,10 +265,10 @@ const Feed = () => {
             <p>Make sure you complete all details about your dog in "My Profile" for the best outcomes to your post</p>
             <form onSubmit={addPost}>
               <label htmlFor="startDate">Start Date</label>
-              <input type="date" id="startDate" name="startDate" required />
+              <input type="date" id="startDate" name="startDate" required style={{ width: '100%' }} />
               <label htmlFor="endDate">End Date</label>
-              <input type="date" id="endDate" name="endDate" required />
-              <button type="submit" className="post-button">Post</button>
+              <input type="date" id="endDate" name="endDate" required style={{ width: '100%' }} />
+              <button type="submit" className="post-button" style={{ width: '100%' }}>Post</button>
             </form>
           </div>
         </div>
@@ -275,7 +282,8 @@ const Feed = () => {
             <p>{post.city}</p>
             <p>{post.startDate} - {post.endDate}</p>
             <p>{post.description}</p>
-            <button type="button" className="more-info" onClick={() => navigate(`/dog-profile/${post.ownerUid}`)}>more info</button>          </div>
+            <button type="button" className="more-info" onClick={() => navigate(`/dog-profile/${post.ownerUid}`)}>more info</button>
+          </div>
         ))}
       </div>
     </div>
@@ -283,3 +291,4 @@ const Feed = () => {
 };
 
 export default Feed;
+

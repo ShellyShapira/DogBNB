@@ -329,7 +329,7 @@ const DogProfiles = () => {
       <GlobalStyle />
       <Header>
         <BasicInfo>
-          <VolunteerName>{profile.name}</VolunteerName>
+          <VolunteerName>{profile.dogName}</VolunteerName>
           <Text>{profile.dogType}, {profile.dogAge}, {profile.dogSize}</Text>
           <Text>{profile.address}</Text>
           <div>

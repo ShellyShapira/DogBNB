@@ -435,7 +435,7 @@ const RequestActions = ({ requests, onAccept, onDelete }) => {
           </Info>
           <ActionButtons>
             <Button onClick={() => onDelete(index)}>Delete</Button>
-            <Button primary onClick={() => onAccept(index)}>Accept</Button>
+            <Button $primary onClick={() => onAccept(index)}>Accept</Button>
           </ActionButtons>
         </RequestItem>
       ))}
@@ -485,7 +485,7 @@ const DogSitters = ({ sitters, onDelete, onAddReview }) => {
             </Info>
             <ActionButtons>
               <Button onClick={() => onDelete(index)}>Delete</Button>
-              <Button primary onClick={() => handleAddReview(index)}>Add Review</Button>
+              <Button $primary onClick={() => handleAddReview(index)}>Add Review</Button>
             </ActionButtons>
           </RequestItem>
           {reviewIndex === index && (

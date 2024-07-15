@@ -1,6 +1,7 @@
-import { getApp, initializeApp } from "firebase/app";
+import { getApp, initializeApp, getApps } from "firebase/app";
 import { getAuth } from "firebase/auth";
 import { getFirestore, getDoc, doc } from "firebase/firestore";
+
 
 
 const firebaseConfig = {
@@ -13,14 +14,17 @@ const firebaseConfig = {
   measurementId: "G-MVQZ578XXW"
 };
 
-  const initializeFirebase = () => {
-    const app = initializeApp(firebaseConfig);
-  }
-  
-  const logOut = async () => {
-    await getAuth().signOut();
-  }
+let app;
 
-export const DB = () => getFirestore(getApp());
-export const InitializeFirebase = initializeFirebase;
-export const LogOut = logOut;
+if (!getApps().length) {
+  app = initializeApp(firebaseConfig);
+} else {
+  app = getApp();
+}
+
+export const auth = getAuth(app);
+export const DB = getFirestore(app);
+
+export const logOut = async () => {
+  await auth.signOut();
+};

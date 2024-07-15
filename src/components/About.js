@@ -168,7 +168,7 @@ const main_about = () => {
   return (
     <MainAbout>
       <GlobalStyle />
-      <Section bgColor="var(--SECTION_BG_1)">
+      <Section $bgColor="var(--SECTION_BG_1)">
         <AboutContent>
           <h1>About DogBNB</h1>
           <p>
@@ -183,7 +183,7 @@ const main_about = () => {
           <h2>Join us making a difference, one dog at a time!</h2>
         </AboutContent>
       </Section>
-      <Section bgColor="var(--SECTION_BG_2)">
+      <Section $bgColor="var(--SECTION_BG_2)">
         <ReviewsSection>
           <Review>
             <img src={dor} alt="Dor, Golani unit" />
@@ -219,7 +219,7 @@ const main_about = () => {
           </Review>
         </ReviewsSection>
       </Section>
-      <HowItWorksSection bgColor="var(--SECTION_BG_3)">
+      <HowItWorksSection $bgColor="var(--SECTION_BG_3)">
         <h2>Why it works</h2>
         <HowItWorks>
           <Feature>
@@ -239,7 +239,7 @@ const main_about = () => {
           </Feature>
         </HowItWorks>
       </HowItWorksSection>
-      <Section bgColor="var(--SECTION_BG_4)">
+      <Section $bgColor="var(--SECTION_BG_4)">
         <GallerySection>
           <img src={galleryImage1} alt="Gallery" />
           <img src={galleryImage2} alt="Gallery" />
@@ -249,7 +249,7 @@ const main_about = () => {
           <img src={galleryImage6} alt="Gallery" />
         </GallerySection>
       </Section>
-      <Section bgColor="var(--SECTION_BG_5)">
+      <Section $bgColor="var(--SECTION_BG_5)">
         <RatingSection>
           <CustomRating />
         </RatingSection>

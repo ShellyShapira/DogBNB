@@ -337,7 +337,7 @@ const DogProfiles = () => {
           </div>
           <ContactButton onClick={handleContactClick}>Contact</ContactButton>
         </BasicInfo>
-        <ProfileImage src={profile.photoUrl || dog1} alt={profile.name} />
+        <ProfileImage src={profile.profilePic || dog1} alt={profile.name} />
       </Header>
       <ProfileSectionWrapper>
         <Section>

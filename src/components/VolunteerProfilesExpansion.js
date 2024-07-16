@@ -1,7 +1,14 @@
 import React, { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { useParams } from 'react-router-dom';
 import styled, { createGlobalStyle } from 'styled-components';
+import { doc, getDoc } from 'firebase/firestore';
+import { DB } from './Config';
 import person1 from '../images/person1.jpg';
 import pawPrint from '../images/pawprint5.svg';
+import { updateDoc, arrayUnion } from 'firebase/firestore';
+import { getAuth, onAuthStateChanged } from 'firebase/auth'; // Ensure this import is present
+
 
 const GlobalStyle = createGlobalStyle`
   :root {
@@ -152,7 +159,72 @@ const PawPrint = styled.img`
   margin-right: 10px; 
 `;
 
-const VolProfileCard = ({ profile }) => {
+
+const VolProfile = () => {
+  const { uid } = useParams();
+  const navigate = useNavigate();
+  const [profile, setProfile] = useState({
+    name: '',
+    addres: '',
+    age: '',
+    additionalAnimalsAtHome: '',
+    animalExperience: '',
+    childrenAtHome: '',
+    description: '',
+    gender: '',
+    mobile: '',
+    numberOfAdoptions: '',
+    profilePic: '',
+    yard: '',
+    reviews: '',
+  });
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  useEffect(() => {
+    const fetchProfile = async () => {
+      setLoading(true);
+      try {
+        console.log("Fetching profile for UID:", uid);
+        const docRef = doc(DB, 'users', uid);
+        const docSnap = await getDoc(docRef);
+        if (docSnap.exists()) {
+          const data = docSnap.data();
+          console.log("Fetched profile data:", data);
+          setProfile(data);
+        } else {
+          console.log("No such document!");
+          setError("No such document!");
+        }
+      } catch (err) {
+        console.error("Error fetching document:", err);
+        setError("Error fetching document: " + err.message);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchProfile();
+  }, [uid]);
+
+  if (loading) return <div>Loading...</div>;
+  if (error) return <div>{error}</div>;
+  if (!profile) return <div>No profile data found</div>;
+
+  const handleContactClick = async () => {
+    const auth = getAuth();
+    const currentUser = auth.currentUser;
+  
+    if (!currentUser) {
+      console.error("No user is signed in");
+      // You might want to show an error message to the user or redirect to login
+      return;
+    }
+
+  };
+  
+
+    
   return (
     <Container>
       <GlobalStyle />
@@ -161,7 +233,7 @@ const VolProfileCard = ({ profile }) => {
           <VolunteerName>{profile.name}</VolunteerName>
           <Text>{profile.address}</Text>
         </BasicInfo>
-        <ProfileImage src={profile.photo || person1} alt={`${profile.name}`} />
+        <ProfileImage src={profile.profilePic || person1} alt={`${profile.name}`} />
       </Header>
       <ProfileSectionWrapper>
         <Section>
@@ -188,7 +260,7 @@ const VolProfileCard = ({ profile }) => {
             </DetailRow>
             <DetailRow>
               <DetailLabel><strong>Number of Adoptions:</strong></DetailLabel>
-              <DetailValue>{profile.adoptions}</DetailValue>
+              <DetailValue>{profile.numberOfAdoptions}</DetailValue>
             </DetailRow>
             <DetailRow>
               <DetailLabel><strong>Animal Experience:</strong></DetailLabel>
@@ -196,7 +268,7 @@ const VolProfileCard = ({ profile }) => {
             </DetailRow>
             <DetailRow>
               <DetailLabel><strong>Additional Animals At Home:</strong></DetailLabel>
-              <DetailValue>{profile.additionalAnimals}</DetailValue>
+              <DetailValue>{profile.additionalAnimalsAtHome}</DetailValue>
             </DetailRow>
             <DetailRow>
               <DetailLabel><strong>A House with a Yard:</strong></DetailLabel>
@@ -204,7 +276,7 @@ const VolProfileCard = ({ profile }) => {
             </DetailRow>
             <DetailRow>
               <DetailLabel><strong>Children at Home:</strong></DetailLabel>
-              <DetailValue>{profile.children}</DetailValue>
+              <DetailValue>{profile.childrenAtHome}</DetailValue>
             </DetailRow>
           </Card>
           <Card>
@@ -221,7 +293,7 @@ const VolProfileCard = ({ profile }) => {
               <PawPrint src={pawPrint} alt="Paw Print" />
               <SubTitle>Reviews</SubTitle>
             </TitleSection>
-            {profile.reviews.map((review, index) => (
+            {Array.isArray(profile.reviews) && profile.reviews.map((review, index) => (
               <ReviewCard key={index}>
                 <DetailLabel><strong>{review.reviewer}:</strong></DetailLabel>
                 <DetailValue>{review.date}, {review.location}</DetailValue>
@@ -235,49 +307,51 @@ const VolProfileCard = ({ profile }) => {
   );
 };
 
-const VolProfile = () => {
-  const [profile, setProfile] = useState(null);
 
-  useEffect(() => {
-    const exampleProfile = {
-      name: "John Doe",
-      address: "123 Main St, Anytown, USA",
-      age: 30,
-      gender: "Male",
-      adoptions: 5,
-      animalExperience: "Yes",
-      additionalAnimals: "Yes",
-      yard: "Yes",
-      children: "Yes",
-      description: "I am a dedicated animal lover with years of experience in taking care of pets.",
-      reviews: [
-        {
-          reviewer: "Jane Smith",
-          date: "2023-06-01",
-          location: "Anytown, USA",
-          text: "John was fantastic! He took great care of our dog."
-        },
-        {
-          reviewer: "Emily Johnson",
-          date: "2023-07-15",
-          location: "Anytown, USA",
-          text: "Very reliable and good with animals."
-        }
-      ],
-      photo: person1 
-    };
-    setProfile(exampleProfile);
-  }, []);
 
-  if (!profile) {
-    return <div>Loading...</div>;
-  }
+// const VolProfile = () => {
+//   const [profile, setProfile] = useState(null);
 
-  return (
-    <div>
-      <VolProfileCard profile={profile} />
-    </div>
-  );
-};
+//   useEffect(() => {
+//     const exampleProfile = {
+//       name: "John Doe",
+//       address: "123 Main St, Anytown, USA",
+//       age: 30,
+//       gender: "Male",
+//       adoptions: 5,
+//       animalExperience: "Yes",
+//       additionalAnimals: "Yes",
+//       yard: "Yes",
+//       children: "Yes",
+//       description: "I am a dedicated animal lover with years of experience in taking care of pets.",
+//       reviews: [
+//         {
+//           reviewer: "Jane Smith",
+//           date: "2023-06-01",
+//           location: "Anytown, USA",
+//           text: "John was fantastic! He took great care of our dog."
+//         },
+//         {
+//           reviewer: "Emily Johnson",
+//           date: "2023-07-15",
+//           location: "Anytown, USA",
+//           text: "Very reliable and good with animals."
+//         }
+//       ],
+//       photo: person1 
+//     };
+//     setProfile(exampleProfile);
+//   }, []);
+
+//   if (!profile) {
+//     return <div>Loading...</div>;
+//   }
+
+//   return (
+//     <div>
+//       <VolProfileCard profile={profile} />
+//     </div>
+//   );
+// };
 
 export default VolProfile;

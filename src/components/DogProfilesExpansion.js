@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { useParams } from 'react-router-dom';
 import styled, { createGlobalStyle } from 'styled-components';
 import { doc, getDoc } from 'firebase/firestore';
@@ -6,6 +7,9 @@ import { DB } from './Config';
 import dog1 from '../images/dog1.jpg';
 import dog2 from '../images/dog2.jpg';
 import pawPrint from '../images/pawprint5.svg';
+import { updateDoc, arrayUnion } from 'firebase/firestore';
+import { getAuth, onAuthStateChanged } from 'firebase/auth'; // Ensure this import is present
+
 
 const GlobalStyle = createGlobalStyle`
   :root {
@@ -267,6 +271,7 @@ const ArrowButton = styled.button`
 
 const DogProfiles = () => {
   const { uid } = useParams();
+  const navigate = useNavigate();
   const [profile, setProfile] = useState({
     name: '',
     dogType: '',
@@ -320,9 +325,40 @@ const DogProfiles = () => {
   if (error) return <div>{error}</div>;
   if (!profile) return <div>No profile data found</div>;
 
-  const handleContactClick = () => {
-    // Implement contact logic
+  const handleContactClick = async () => {
+    const auth = getAuth();
+    const currentUser = auth.currentUser;
+  
+    if (!currentUser) {
+      console.error("No user is signed in");
+      // You might want to show an error message to the user or redirect to login
+      return;
+    }
+  
+    try {
+      const userDocRef = doc(DB, 'users', uid);
+      const connectionRequest = {
+        userId: currentUser.uid,
+        name: currentUser.displayName || 'Anonymous',
+        timestamp: new Date().toISOString(),
+        profilePic: currentUser.photoURL || '' // Ensure this field is never undefined
+      };
+  
+      console.log("Sending connection request:", connectionRequest);
+      
+      await updateDoc(userDocRef, {
+        connectionRequests: arrayUnion(connectionRequest)
+      });
+  
+      console.log("Connection request sent successfully");
+      // You might want to show a success message to the user
+    } catch (error) {
+      console.error("Error sending connection request:", error);
+      // You might want to show an error message to the user
+    }
   };
+  
+
 
   return (
     <Container>
@@ -335,7 +371,7 @@ const DogProfiles = () => {
           <div>
             <BoldTextInline>Dates for BBsitting:</BoldTextInline> {profile.datesForBBsitting}
           </div>
-          <ContactButton onClick={handleContactClick}>Contact</ContactButton>
+          <ContactButton onClick={handleContactClick}>Connect</ContactButton>
         </BasicInfo>
         <ProfileImage src={profile.profilePic || dog1} alt={profile.name} />
       </Header>

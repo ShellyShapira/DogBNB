@@ -1,8 +1,12 @@
-import React, { useState, useContext } from 'react';
+import React, { useState, useContext, useEffect} from 'react';
 import styled, { createGlobalStyle } from 'styled-components';
-import { UserContext } from '../App';
 import { useNavigate } from 'react-router-dom';
 import pawPrint from '../images/pawprint5.svg';
+import { UserContext } from '../App';
+import { doc, getDoc } from 'firebase/firestore';
+import { DB } from './Config';
+import { getAuth } from 'firebase/auth';
+
 
 const GlobalStyle = createGlobalStyle`
   :root {
@@ -62,57 +66,13 @@ const Header = styled.div`
   margin-bottom: 20px;
 `;
 
-const ProfileImage = styled.div`
-  position: relative;
-  display: inline-block;
-`;
-
-const ProfilePic = styled.img`
+const ProfileImage = styled.img`
   border-radius: 50%;
   width: 150px;
   height: 150px;
   object-fit: cover;
+  margin-left: 20px;
   z-index: 2;
-`;
-
-const ProfileUploadButton = styled.button`
-  background-color: #6591A4;
-  color: white;
-  border: none;
-  border-radius: 50%;
-  cursor: pointer;
-  font-size: 1.5rem;
-  width: 30px;
-  height: 30px;
-  position: absolute;
-  bottom: 0;
-  right: 0;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-
-  &:hover {
-    box-shadow: 0px 8px 20px rgba(0, 0, 0, 0.5);
-  }
-`;
-
-const GalleryUploadButton = styled.button`
-  background-color: #6591A4;
-  color: white;
-  border: none;
-  border-radius: 50%;
-  cursor: pointer;
-  font-size: 1.5rem;
-  width: 40px;
-  height: 40px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  margin-right: 10px;
-
-  &:hover {
-    box-shadow: 0px 8px 20px rgba(0, 0, 0, 0.5);
-  }
 `;
 
 const BasicInfo = styled.div`
@@ -270,6 +230,25 @@ const GalleryCard = styled(Card)`
   width: 100%;
 `;
 
+const UploadButton = styled.button`
+  background-color: #628991;
+  color: white;
+  border: none;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  cursor: pointer;
+  font-size: 1.5rem;
+  transition: box-shadow 0.3s ease-in-out;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  &:hover {
+    box-shadow: 0px 8px 20px rgba(0, 0, 0, 0.5);
+  }
+`;
+
 const PopupContainer = styled.div`
   position: fixed;
   top: 50%;
@@ -351,7 +330,7 @@ const ArrowButton = styled.button`
   transform: translateY(-50%);
   z-index: 1001;
 
-  &:hover {
+    &:hover {
     background-color: #527882;
   }
 `;
@@ -363,6 +342,7 @@ const GalleryImage = styled.img`
   border-radius: 10px;
   cursor: pointer;
 `;
+
 
 const Gallery = ({ images, onUpload }) => {
   const [selectedImageIndex, setSelectedImageIndex] = useState(null);
@@ -400,9 +380,9 @@ const Gallery = ({ images, onUpload }) => {
         <SubTitle>Gallery</SubTitle>
       </TitleSection>
       <div style={{ display: 'flex', flexWrap: 'wrap', alignItems: 'center' }}>
-        <GalleryUploadButton onClick={() => document.getElementById('imageUpload').click()}>
+        <UploadButton onClick={() => document.getElementById('imageUpload').click()}>
           +
-        </GalleryUploadButton>
+        </UploadButton>
         {images.map((image, index) => (
           <GalleryImage
             key={index}
@@ -433,117 +413,6 @@ const Gallery = ({ images, onUpload }) => {
         </ModalOverlay>
       )}
     </GalleryCard>
-  );
-};
-
-const RequestActions = ({ requests, onAccept, onDelete }) => {
-  const navigate = useNavigate();
-
-  const handleNameClick = (id) => {
-    navigate(`/volunteer-profile/${id}`);
-  };
-
-  return (
-    <Card>
-      <TitleSection>
-        <TitleWithIcon>
-          <img src={pawPrint} alt="Paw Print" />
-          <SubTitle>Requests</SubTitle>
-        </TitleWithIcon>
-      </TitleSection>
-      {requests.map((request, index) => (
-        <RequestItem key={index}>
-          <Avatar src={request.avatar} alt={request.name} onClick={() => handleNameClick(request.id)} />
-          <Info>
-            <Name onClick={() => handleNameClick(request.id)}>{request.name}</Name>
-            <Date>{request.date}</Date>
-          </Info>
-          <ActionButtons>
-            <Button onClick={() => onDelete(index)}>Delete</Button>
-            <Button primary onClick={() => onAccept(index)}>Accept</Button>
-          </ActionButtons>
-        </RequestItem>
-      ))}
-    </Card>
-  );
-};
-
-const DogSitters = ({ sitters, onDelete, onAddReview }) => {
-  const navigate = useNavigate();
-  const [reviewIndex, setReviewIndex] = useState(null);
-  const [reviewText, setReviewText] = useState('');
-
-  const handleAddReview = (index) => {
-    setReviewIndex(index);
-  };
-
-  const handleSaveReview = () => {
-    onAddReview(reviewIndex, reviewText);
-    setReviewIndex(null);
-    setReviewText('');
-  };
-
-  const handleCloseReview = () => {
-    setReviewIndex(null);
-    setReviewText('');
-  };
-
-  const handleNameClick = (id) => {
-    navigate(`/volunteer-profile/${id}`);
-  };
-
-  return (
-    <Card>
-      <TitleSection>
-        <TitleWithIcon>
-          <img src={pawPrint} alt="Paw Print" />
-          <SubTitle>My Dog Sitters</SubTitle>
-        </TitleWithIcon>
-      </TitleSection>
-      {sitters.map((sitter, index) => (
-        <div key={index} style={{ marginBottom: '20px' }}>
-          <RequestItem>
-            <Avatar src={sitter.avatar} alt={sitter.name} onClick={() => handleNameClick(sitter.id)} />
-            <Info>
-              <Name onClick={() => handleNameClick(sitter.id)}>{sitter.name}</Name>
-              <Date>{sitter.date}</Date>
-            </Info>
-            <ActionButtons>
-              <Button onClick={() => onDelete(index)}>Delete</Button>
-              <Button primary style={{ backgroundColor: '#526c7a' }} onClick={() => handleAddReview(index)}>Add Review</Button>
-            </ActionButtons>
-          </RequestItem>
-          {reviewIndex === index && (
-            <div style={{ position: 'relative', width: '100%' }}>
-              <button
-                onClick={handleCloseReview}
-                style={{
-                  position: 'absolute',
-                  top: '-20px',
-                  right: '10px',
-                  background: 'none',
-                  border: 'none',
-                  fontSize: '1.2rem',
-                  cursor: 'pointer',
-                  color: '#B05D5D',
-                }}
-              >
-                ×
-              </button>
-              <textarea
-                rows="4"
-                value={reviewText}
-                onChange={(e) => setReviewText(e.target.value)}
-                style={{ width: 'calc(100% - 20px)', margin: '10px 10px 0 10px' }}
-              />
-              <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: '10px', marginLeft: '10px', marginRight: '10px' }}>
-                <Button style={{ backgroundColor: 'blue' }} onClick={handleSaveReview}>Save</Button>
-              </div>
-            </div>
-          )}
-        </div>
-      ))}
-    </Card>
   );
 };
 
@@ -624,10 +493,6 @@ const PersonalDetails = ({ profile, isEditing, formData, handleChange }) => (
                 <input type="radio" name="dogSize" value="Large" checked={formData.dogSize === 'Large'} onChange={handleChange} />
                 Large
               </label>
-              <label>
-                <input type="radio" name="dogSize" value="All Spaces" checked={formData.dogSize === 'All Spaces'} onChange={handleChange} />
-                All Spaces
-              </label>
             </RadioGroup>
           </DetailRow>
           <DetailRow>
@@ -666,10 +531,6 @@ const PersonalDetails = ({ profile, isEditing, formData, handleChange }) => (
               <label>
                 <input type="radio" name="suitableFor" value="House with yard" checked={formData.suitableFor === 'House with yard'} onChange={handleChange} />
                 House with yard
-              </label>
-              <label>
-                <input type="radio" name="suitableFor" value="All Spaces" checked={formData.suitableFor === 'All Spaces'} onChange={handleChange} />
-                All Spaces
               </label>
             </RadioGroup>
           </DetailRow>
@@ -769,7 +630,141 @@ const PersonalDetails = ({ profile, isEditing, formData, handleChange }) => (
   </Card>
 );
 
-const DogProfileCard = ({ profile, onSave, requests, sitters, onRequestAccept, onRequestDelete, onSitterDelete, onAddReview, galleryImages, onImageUpload }) => {
+const RequestActions = ({ requests, onAccept, onDelete, isLoading }) => {
+  const auth = getAuth();
+  const currentUser = auth.currentUser;
+  const navigate = useNavigate();
+
+  const handleNameClick = (id) => {
+    navigate(`/volunteer-profile/${id}`);
+  };
+
+  if (isLoading) {
+    return <Card>Loading requests...</Card>;
+  }
+
+  if (!requests || requests.length === 0) {
+    return <Card>No requests at this time.</Card>;
+  }
+
+  return (
+    <Card>
+      <TitleSection>
+        <TitleWithIcon>
+          <img src={pawPrint} alt="Paw Print" />
+          <SubTitle>Requests</SubTitle>
+        </TitleWithIcon>
+      </TitleSection>
+      {requests.map((request, index) => (
+        <RequestItem key={index}>
+          <Avatar src={request.profilePic} alt={request.name} onClick={() => handleNameClick(request.id)} />
+          <Info>
+            <Name onClick={() => handleNameClick(request.id)}>{request.name}</Name>
+            <Date>{request.date}</Date>
+          </Info>
+          <ActionButtons>
+            <Button onClick={() => onDelete(index)}>Delete</Button>
+            <Button $primary onClick={() => onAccept(index)}>Accept</Button>
+          </ActionButtons>
+        </RequestItem>
+      ))}
+    </Card>
+  );
+};
+
+const DogSitters = ({ sitters, onDelete, onAddReview }) => {
+  const navigate = useNavigate();
+  const [reviewIndex, setReviewIndex] = useState(null);
+  const [reviewText, setReviewText] = useState('');
+
+  const handleAddReview = (index) => {
+    setReviewIndex(index);
+  };
+
+  const handleSaveReview = () => {
+    onAddReview(reviewIndex, reviewText);
+    setReviewIndex(null);
+    setReviewText('');
+  };
+
+  const handleCloseReview = () => {
+    setReviewIndex(null);
+    setReviewText('');
+  };
+
+  const handleNameClick = (id) => {
+    navigate(`/volunteer-profile/${id}`);
+  };
+
+  return (
+    <Card>
+      <TitleSection>
+        <TitleWithIcon>
+          <img src={pawPrint} alt="Paw Print" />
+          <SubTitle>My Dog Sitters</SubTitle>
+        </TitleWithIcon>
+      </TitleSection>
+      {sitters.map((sitter, index) => (
+        <div key={index} style={{ marginBottom: '20px' }}>
+          <RequestItem>
+            <Avatar src={sitter.avatar} alt={sitter.name} onClick={() => handleNameClick(sitter.id)} />
+            <Info>
+              <Name onClick={() => handleNameClick(sitter.id)}>{sitter.name}</Name>
+              <Date>{sitter.date}</Date>
+            </Info>
+            <ActionButtons>
+              <Button onClick={() => onDelete(index)}>Delete</Button>
+              <Button $primary onClick={() => handleAddReview(index)}>Add Review</Button>
+            </ActionButtons>
+          </RequestItem>
+          {reviewIndex === index && (
+            <div style={{ position: 'relative', width: '100%' }}>
+              <button
+                onClick={handleCloseReview}
+                style={{
+                  position: 'absolute',
+                  top: '-20px',
+                  right: '10px',
+                  background: 'none',
+                  border: 'none',
+                  fontSize: '1.2rem',
+                  cursor: 'pointer',
+                  color: '#B05D5D',
+                }}
+              >
+                ×
+              </button>
+              <textarea
+                rows="4"
+                value={reviewText}
+                onChange={(e) => setReviewText(e.target.value)}
+                style={{ width: 'calc(100% - 20px)', margin: '10px 10px 0 10px' }}
+              />
+              <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: '10px', marginLeft: '10px', marginRight: '10px' }}>
+                <Button style={{ backgroundColor: 'blue' }} onClick={handleSaveReview}>Save</Button>
+              </div>
+            </div>
+          )}
+        </div>
+      ))}
+    </Card>
+  );
+};
+
+const DogProfileCard = ({ 
+  profile, 
+  onSave, 
+  requests, 
+  sitters, 
+  onRequestAccept, 
+  onRequestDelete, 
+  onSitterDelete, 
+  onAddReview, 
+  galleryImages, 
+  onImageUpload,
+  isLoading 
+  
+}) => {
   const [isEditing, setIsEditing] = useState(false);
   const [formData, setFormData] = useState(profile);
 
@@ -779,7 +774,7 @@ const DogProfileCard = ({ profile, onSave, requests, sitters, onRequestAccept, o
 
   const handleSaveClick = async () => {
     setIsEditing(false);
-    await onSave(formData); // Save the updated profile data
+    await onSave(formData);
   };
 
   const handleChange = (e) => {
@@ -791,21 +786,7 @@ const DogProfileCard = ({ profile, onSave, requests, sitters, onRequestAccept, o
   };
 
   // Removing extra commas from the address
-  const formattedAddress = formData.address.replace(/,+/g, ',').replace(/^,|,$/g, '').trim();
-
-  const handleProfileImageUpload = (e) => {
-    const file = e.target.files[0];
-    if (file) {
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        setFormData({
-          ...formData,
-          profilePic: reader.result,
-        });
-      };
-      reader.readAsDataURL(file);
-    }
-  };
+  const formattedAddress = formData.address?.replace(/,+/g, ',').replace(/^,|,$/g, '').trim();
 
   return (
     <Container>
@@ -817,20 +798,11 @@ const DogProfileCard = ({ profile, onSave, requests, sitters, onRequestAccept, o
           <Text>{[formData.dogType, formData.dogAge, formData.dogSize].filter(Boolean).join(', ')}</Text>
           <Text>{formattedAddress}</Text>
         </BasicInfo>
-        <ProfileImage>
-          <ProfilePic src={formData.profilePic} alt={`${profile.name}`} />
-          <ProfileUploadButton onClick={() => document.getElementById('profileImageUpload').click()}>+</ProfileUploadButton>
-          <input
-            type="file"
-            id="profileImageUpload"
-            style={{ display: 'none' }}
-            onChange={handleProfileImageUpload}
-          />
-        </ProfileImage>
+        <ProfileImage src={formData.profilePic} alt={`${profile.name}`} />
       </Header>
       <ProfileSectionWrapper>
         <Section>
-          <PersonalDetails profile={profile} isEditing={isEditing} formData={          formData} handleChange={handleChange} />
+          <PersonalDetails profile={profile} isEditing={isEditing} formData={formData} handleChange={handleChange} />
           {isEditing ? (
             <EditButton onClick={handleSaveClick}>Save Profile</EditButton>
           ) : (
@@ -842,6 +814,7 @@ const DogProfileCard = ({ profile, onSave, requests, sitters, onRequestAccept, o
             requests={requests}
             onAccept={onRequestAccept}
             onDelete={onRequestDelete}
+            isLoading={isLoading}
           />
           <DogSitters
             sitters={sitters}
@@ -857,17 +830,43 @@ const DogProfileCard = ({ profile, onSave, requests, sitters, onRequestAccept, o
 
 const MyProfile = () => {
   const { user, updateUserDetails } = useContext(UserContext);
-  const [requests, setRequests] = useState([
-    { id: 1, name: 'John Doe', date: '2023-07-07', avatar: '../images/person3.jpg' },
-    { id: 2, name: 'Jane Smith', date: '2023-07-06', avatar: '../images/person3.jpg' },
-  ]);
-
+  const [requests, setRequests] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
   const [sitters, setSitters] = useState([
     { id: 1, name: 'Emily Clark', date: '2023-07-05', avatar: '../images/person2.jpg' },
     { id: 2, name: 'Michael Johnson', date: '2023-07-04', avatar: '../images/person1.jpg' },
   ]);
-
   const [galleryImages, setGalleryImages] = useState([user.details.profilePic]);
+
+  useEffect(() => {
+    const fetchDocument = async () => {
+      try {
+        setIsLoading(true);
+        const docRef = doc(DB, 'users', user.firebaseUser.uid); 
+        const docSnap = await getDoc(docRef);
+
+        if (docSnap.exists()) {
+          const data = docSnap.data();
+          const connectionRequests = data.connectionRequests || [];
+          const formattedRequests = connectionRequests.map(request => ({
+            id: request.userId,
+            name: request.name,
+            profilePic: request.profilePic || '../images/default-avatar.jpg'
+          }));
+
+          setRequests(formattedRequests);
+        } else {
+          setRequests([]);
+        }
+      } catch (error) {
+        setRequests([]);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchDocument();
+  }, [user.firebaseUser.uid]);
 
   const handleRequestAccept = (index) => {
     const acceptedRequest = requests[index];
@@ -888,7 +887,6 @@ const MyProfile = () => {
 
   const handleAddReview = (index, reviewText) => {
     // TODO: Add backend code to save the review to the volunteer's profile
-    console.log(`Review for sitter ${index}: ${reviewText}`);
   };
 
   const handleImageUpload = (file) => {
@@ -913,6 +911,7 @@ const MyProfile = () => {
         onAddReview={handleAddReview}
         galleryImages={galleryImages}
         onImageUpload={handleImageUpload}
+        isLoading={isLoading}
       />
     </div>
   );

@@ -8,7 +8,7 @@ import dog1 from '../images/dog1.jpg';
 import dog2 from '../images/dog2.jpg';
 import pawPrint from '../images/pawprint5.svg';
 import { updateDoc, arrayUnion } from 'firebase/firestore';
-import { getAuth, onAuthStateChanged } from 'firebase/auth'; // Ensure this import is present
+import { getAuth } from 'firebase/auth'; // Ensure this import is present
 
 
 const GlobalStyle = createGlobalStyle`
@@ -268,7 +268,6 @@ const ArrowButton = styled.button`
     background-color: #527882;
   }
 `;
-
 const DogProfiles = () => {
   const { uid } = useParams();
   const navigate = useNavigate();
@@ -299,7 +298,7 @@ const DogProfiles = () => {
     const fetchProfile = async () => {
       setLoading(true);
       try {
-        console.log("Fetching profile for UID:", uid);
+        console.log("Fetching profile for UID:", uid);// delete at some point 
         const docRef = doc(DB, 'users', uid);
         const docSnap = await getDoc(docRef);
         if (docSnap.exists()) {
@@ -340,8 +339,7 @@ const DogProfiles = () => {
       const connectionRequest = {
         userId: currentUser.uid,
         name: currentUser.displayName || 'Anonymous',
-        timestamp: new Date().toISOString(),
-        profilePic: currentUser.photoURL || '' // Ensure this field is never undefined
+        profilePic: currentUser.photoURL
       };
   
       console.log("Sending connection request:", connectionRequest);

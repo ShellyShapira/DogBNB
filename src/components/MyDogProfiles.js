@@ -3,9 +3,12 @@ import styled, { createGlobalStyle } from 'styled-components';
 import { useNavigate } from 'react-router-dom';
 import pawPrint from '../images/pawprint5.svg';
 import { UserContext } from '../App';
-import { doc, getDoc } from 'firebase/firestore';
 import { DB } from './Config';
 import { getAuth } from 'firebase/auth';
+import {  doc, getDoc, updateDoc, arrayUnion, arrayRemove } from 'firebase/firestore';
+import { getStorage, ref, uploadBytes, getDownloadURL } from 'firebase/storage';
+
+
 
 
 const GlobalStyle = createGlobalStyle`
@@ -756,8 +759,8 @@ const DogProfileCard = ({
   onSave, 
   requests, 
   sitters, 
-  onRequestAccept, 
-  onRequestDelete, 
+  handleRequestAccept,  
+  handleRequestDelete,
   onSitterDelete, 
   onAddReview, 
   galleryImages, 
@@ -810,10 +813,10 @@ const DogProfileCard = ({
           )}
         </Section>
         <Section>
-          <RequestActions
+        <RequestActions
             requests={requests}
-            onAccept={onRequestAccept}
-            onDelete={onRequestDelete}
+            onAccept={handleRequestAccept}  // Change this line
+            onDelete={handleRequestDelete}
             isLoading={isLoading}
           />
           <DogSitters
@@ -832,72 +835,177 @@ const MyProfile = () => {
   const { user, updateUserDetails } = useContext(UserContext);
   const [requests, setRequests] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
-  const [sitters, setSitters] = useState([
-    { id: 1, name: 'Emily Clark', date: '2023-07-05', avatar: '../images/person2.jpg' },
-    { id: 2, name: 'Michael Johnson', date: '2023-07-04', avatar: '../images/person1.jpg' },
-  ]);
+  const [sitters, setSitters] = useState([]);
   const [galleryImages, setGalleryImages] = useState([user.details.profilePic]);
 
   useEffect(() => {
-    const fetchDocument = async () => {
+    const fetchUserData = async () => {
       try {
         setIsLoading(true);
-        const docRef = doc(DB, 'users', user.firebaseUser.uid); 
+        const docRef = doc(DB, 'users', user.firebaseUser.uid);
         const docSnap = await getDoc(docRef);
-
+  
         if (docSnap.exists()) {
           const data = docSnap.data();
+          console.log("Fetched user data:", data); // Add this log
+  
+          // Format and set connection requests
           const connectionRequests = data.connectionRequests || [];
+          console.log("Connection requests:", connectionRequests); // Add this log
           const formattedRequests = connectionRequests.map(request => ({
             id: request.userId,
             name: request.name,
             profilePic: request.profilePic || '../images/default-avatar.jpg'
           }));
-
+          console.log("Formatted requests:", formattedRequests); // Add this log
           setRequests(formattedRequests);
+  
+          // Format and set sitters
+          const sitters = data.sitters || [];
+          console.log("Sitters:", sitters); // Add this log
+          const formattedSitters = sitters.map(sitter => ({
+            id: sitter.id,
+            name: sitter.name,
+            profilePic: sitter.profilePic || '../images/default-avatar.jpg',
+            date: sitter.date
+          }));
+          console.log("Formatted sitters:", formattedSitters); // Add this log
+          setSitters(formattedSitters);
         } else {
+          console.log("No such document!"); // Add this log
           setRequests([]);
+          setSitters([]);
         }
       } catch (error) {
+        console.error("Error fetching user data:", error);
         setRequests([]);
+        setSitters([]);
       } finally {
         setIsLoading(false);
       }
     };
-
-    fetchDocument();
+  
+    fetchUserData();
   }, [user.firebaseUser.uid]);
-
-  const handleRequestAccept = (index) => {
+  
+  const handleRequestAccept = async (index) => {
     const acceptedRequest = requests[index];
-    setSitters([...sitters, acceptedRequest]);
-    setRequests(requests.filter((_, i) => i !== index));
-    // TODO: Add backend code to notify the volunteer of acceptance
+  
+    try {
+      const userDocRef = doc(DB, 'users', user.firebaseUser.uid);
+  
+      // Remove the accepted request from connectionRequests array
+      await updateDoc(userDocRef, {
+        connectionRequests: arrayRemove(acceptedRequest),
+        sitters: arrayUnion({
+          ...acceptedRequest
+        })
+      });
+  
+      // Update the local state
+      setSitters([...sitters, { ...acceptedRequest }]);
+      setRequests(requests.filter((_, i) => i !== index));
+  
+      console.log("Request accepted successfully");
+    } catch (error) {
+      console.error("Error accepting request:", error);
+    }
+  };
+  
+  const handleRequestDelete = async (index) => {
+    try {
+      const requestToDelete = requests[index];
+      
+      // Get a reference to the user's document
+      const userDocRef = doc(DB, 'users', user.firebaseUser.uid);
+      
+      // Update the document in Firebase
+      await updateDoc(userDocRef, {
+        // Remove the request from 'connectionRequests' array
+        connectionRequests: arrayRemove(requestToDelete)
+      });
+  
+      // Update local state
+      setRequests(prevRequests => prevRequests.filter((_, i) => i !== index));
+  
+    } catch (error) {
+      console.error("Error deleting request:", error);
+      // Handle the error (e.g., show an error message to the user)
+    }
   };
 
-  const handleRequestDelete = (index) => {
-    setRequests(requests.filter((_, i) => i !== index));
-    // TODO: Add backend code to delete the request
+  const handleSitterDelete = async (index) => {
+    try {
+      const sitterToDelete = sitters[index];
+      
+      // Get a reference to the user's document
+      const userDocRef = doc(DB, 'users', user.firebaseUser.uid);
+      
+      // Update the document in Firebase
+      await updateDoc(userDocRef, {
+        // Remove the sitter from the 'sitters' array
+        sitters: arrayRemove(sitterToDelete)
+      });
+  
+      // Update local state
+      setSitters(prevSitters => prevSitters.filter((_, i) => i !== index));
+  
+    } catch (error) {
+      console.error("Error deleting sitter:", error);
+      // Handle the error (e.g., show an error message to the user)
+    }
   };
 
-  const handleSitterDelete = (index) => {
-    setSitters(sitters.filter((_, i) => i !== index));
-    // TODO: Add backend code to delete the sitter
+  const handleAddReview = async (index, reviewText) => {
+    try {
+      const sitterToUpdate = sitters[index];
+      
+      // Get a reference to the user's document
+      const userDocRef = doc(DB, 'users', user.firebaseUser.uid);
+      
+      // Update the document in Firebase
+      await updateDoc(userDocRef, {
+        sitters: sitters.map((sitter, i) => 
+          i === index ? { ...sitter, review: reviewText } : sitter
+        )
+      });
+  
+      // Update local state
+      setSitters(prevSitters => prevSitters.map((sitter, i) => 
+        i === index ? { ...sitter, review: reviewText } : sitter
+      ));
+  
+    } catch (error) {
+      console.error("Error adding review:", error);
+      // Handle the error (e.g., show an error message to the user)
+    }
   };
 
-  const handleAddReview = (index, reviewText) => {
-    // TODO: Add backend code to save the review to the volunteer's profile
+  const handleImageUpload = async (file) => {
+    try {
+      const storage = getStorage();
+      const storageRef = ref(storage, `gallery/${user.firebaseUser.uid}/${file.name}`);
+      
+      // Upload the file to Firebase Storage
+      await uploadBytes(storageRef, file);
+      
+      // Get the download URL
+      const downloadURL = await getDownloadURL(storageRef);
+      
+      // Update the user's document in Firestore with the new image URL
+      const userDocRef = doc(DB, 'users', user.firebaseUser.uid);
+      await updateDoc(userDocRef, {
+        galleryImages: arrayUnion(downloadURL)
+      });
+  
+      // Update local state
+      setGalleryImages(prevImages => [...prevImages, downloadURL]);
+  
+    } catch (error) {
+      console.error("Error uploading image:", error);
+      // Handle the error (e.g., show an error message to the user)
+    }
   };
-
-  const handleImageUpload = (file) => {
-    const reader = new FileReader();
-    reader.onloadend = () => {
-      setGalleryImages([...galleryImages, reader.result]);
-    };
-    reader.readAsDataURL(file);
-    // TODO: Add backend code to upload the image to the server
-  };
-
   return (
     <div>
       <DogProfileCard
@@ -905,8 +1013,8 @@ const MyProfile = () => {
         onSave={updateUserDetails}
         requests={requests}
         sitters={sitters}
-        onRequestAccept={handleRequestAccept}
-        onRequestDelete={handleRequestDelete}
+        handleRequestAccept={handleRequestAccept}  // Make sure this line is here
+        handleRequestDelete={handleRequestDelete} 
         onSitterDelete={handleSitterDelete}
         onAddReview={handleAddReview}
         galleryImages={galleryImages}

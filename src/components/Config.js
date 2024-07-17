@@ -1,8 +1,6 @@
 import { getApp, initializeApp, getApps } from "firebase/app";
-import { getAuth } from "firebase/auth";
+import { getAuth, signOut } from "firebase/auth"; // Added signOut import
 import { getFirestore, getDoc, doc } from "firebase/firestore";
-
-
 
 const firebaseConfig = {
   apiKey: "AIzaSyBsNze9h4qw50zh2LON03mIOgw8nlmMQDU",
@@ -26,5 +24,10 @@ export const auth = getAuth(app);
 export const DB = getFirestore(app);
 
 export const logOut = async () => {
-  await auth.signOut();
+  try {
+    await signOut(auth); // Use signOut function
+    localStorage.clear(); // Clear any additional user data stored in local storage if needed
+  } catch (error) {
+    console.error("Error logging out: ", error);
+  }
 };

@@ -1,8 +1,8 @@
-import React, { Profiler, useContext } from 'react';
+import React, { useContext } from 'react';
 import styled from 'styled-components';
 import { Link, useNavigate } from 'react-router-dom';
 import { UserContext } from '../App';
-
+import { logOut } from '../components/Config'; // Adjust this import path if necessary
 
 const NavbarContainer = styled.nav`
   background-color: #96C3BB;
@@ -30,22 +30,45 @@ const NavbarLink = styled(Link)`
   }
 `;
 
-const Navbar = ({ handleLogOut }) => {
-  const { user } = useContext(UserContext);
+const LogoutButton = styled.button`
+  background: none;
+  border: none;
+  color: white;
+  cursor: pointer;
+  font-size: 1em;
+  padding: 0;
+
+  &:hover {
+    text-decoration: underline;
+  }
+`;
+
+const Navbar = () => {
+  const { user, setUser } = useContext(UserContext);
   const navigate = useNavigate();
 
-  const getProfileLink = () => { 
-    if (user.details == null)
-    {
+  const getProfileLink = () => {
+    if (!user || !user.details) {
       return '/';
     }
 
     if (user.details.registrationType === 'reserve') {
-      return '/MydogProfile';
+      return '/myDogProfile';
     } else if (user.details.registrationType === 'volunteer') {
-      return'/VolProfile';
+      return '/volProfile';
     } else {
-      return '/VolProfile';
+      return '/volProfile';
+    }
+  };
+
+  const handleLogOut = async () => {
+    try {
+      await logOut(); // Call the logOut function from your Config file
+      setUser(null); // Reset the user state
+      navigate('/'); // Navigate to the Welcome page
+    } catch (error) {
+      console.error("Logout failed", error);
+      // Optionally, you can show an error message to the user here
     }
   };
 
@@ -55,8 +78,9 @@ const Navbar = ({ handleLogOut }) => {
         <NavbarItem><NavbarLink to="/feed">Home</NavbarLink></NavbarItem>
         <NavbarItem><NavbarLink to="/about">About Us</NavbarLink></NavbarItem>
         <NavbarItem><NavbarLink to={getProfileLink()}>My Profile</NavbarLink></NavbarItem>
-        {/* <NavbarItem><NavbarLink to="/requests">Request-volunteer</NavbarLink></NavbarItem>
-        <NavbarItem><NavbarLink to="/requests-2">Requests-reserve</NavbarLink></NavbarItem> */}
+        <NavbarItem>
+          <LogoutButton onClick={handleLogOut}>Log Out</LogoutButton>
+        </NavbarItem>
       </NavbarList>
     </NavbarContainer>
   );

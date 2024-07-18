@@ -261,7 +261,7 @@ const RequestDOS = ({ requests }) => {
   const navigate = useNavigate();
 
   const handleItemClick = (id) => {
-    navigate(`/DogProfiles/${id}`);
+    navigate(`/dog-profile/${id}`);
   };
 
   return (
@@ -279,7 +279,7 @@ const RequestDOS = ({ requests }) => {
             <Name>{request.name}</Name>
             <Date>{request.date}</Date>
           </Info>
-          <PhoneButton href={`https://wa.me/${request.phone}`} target="_blank">
+          <PhoneButton href={`https://wa.me/${request.mobile}`} target="_blank">
             <FaWhatsapp />
           </PhoneButton>
         </RequestItem>
@@ -591,34 +591,11 @@ const VolProfile = () => {
     fetchApprovedRequests();
   }, [user.firebaseUser.uid]);
 
-  const dummyProfile = {
-    ...user.details,
-    reviews: [
-      {
-        reviewer: 'Alice',
-        date: '2023-01-01',
-        location: 'New York',
-        text: 'Great volunteer! Very reliable and kind.'
-      },
-      {
-        reviewer: 'Bob',
-        date: '2023-02-15',
-        location: 'Los Angeles',
-        text: 'Took excellent care of the animals.'
-      },
-      {
-        reviewer: 'Charlie',
-        date: '2023-03-10',
-        location: 'Chicago',
-        text: 'Would definitely recommend!'
-      }
-    ]
-  };
-
+  
   return (
     <div>
       <VolProfileCard
-        profile={dummyProfile}
+        profile={approvedRequests}
         onSave={updateUserDetails}
         approvedRequests={approvedRequests}
         user={user}

@@ -893,7 +893,8 @@ const MyProfile = () => {
         approvedRequests: arrayUnion({
           uid: user.firebaseUser.uid,
           name: userData.name,
-          profilePic: userData.profilePic
+          profilePic: userData.profilePic,
+          mobile: userData.mobile
         })
       });
   

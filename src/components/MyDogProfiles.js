@@ -847,31 +847,9 @@ const MyProfile = () => {
   
         if (docSnap.exists()) {
           const data = docSnap.data();
-          console.log("Fetched user data:", data); // Add this log
-  
-          // Format and set connection requests
-          const connectionRequests = data.connectionRequests || [];
-          console.log("Connection requests:", connectionRequests); // Add this log
-          const formattedRequests = connectionRequests.map(request => ({
-            userId: request.userId,
-            name: request.name,
-            profilePic: request.profilePic || '../images/default-avatar.jpg'
-          }));
-          console.log("Formatted requests:", formattedRequests); // Add this log
-          setRequests(formattedRequests);
-  
-          // Format and set sitters
-          const sitters = data.sitters || [];
-          console.log("Sitters:", sitters); // Add this log
-          const formattedSitters = sitters.map(sitter => ({
-            id: sitter.userId,
-            name: sitter.name,
-            profilePic: sitter.profilePic 
-          }));
-          console.log("Formatted sitters:", formattedSitters); // Add this log
-          setSitters(formattedSitters);
+          setRequests(data.connectionRequests || []);
+          setSitters(data.sitters || []);
         } else {
-          console.log("No such document!"); // Add this log
           setRequests([]);
           setSitters([]);
         }
@@ -886,13 +864,13 @@ const MyProfile = () => {
   
     fetchUserData();
   }, [user.firebaseUser.uid]);
-  
+
   const handleRequestAccept = async (index) => {
     const acceptedRequest = requests[index];
     const userDocRef = doc(DB, 'users', user.firebaseUser.uid);
+    const volunteerDocRef = doc(DB, 'users', acceptedRequest.userId);  // Updated to point to the users collection
   
     try {
-      // Fetch the current data for the user
       const userDoc = await getDoc(userDocRef);
       if (!userDoc.exists()) {
         console.log("User document does not exist!");
@@ -904,17 +882,23 @@ const MyProfile = () => {
         (request) => request.userId !== acceptedRequest.userId
       );
   
-      // Perform batch write to ensure atomic operation
       const batch = writeBatch(DB);
       batch.update(userDocRef, {
         connectionRequests: newConnectionRequests,
         sitters: arrayUnion(acceptedRequest)
       });
   
-      // Commit the batch
+      console.log("Updating volunteer profile with dog profile UID and name:", user.firebaseUser.uid, userData.name);
+      batch.update(volunteerDocRef, {
+        approvedRequests: arrayUnion({
+          uid: user.firebaseUser.uid,
+          name: userData.name,
+          profilePic: userData.profilePic
+        })
+      });
+  
       await batch.commit();
   
-      // Update the local state
       setSitters((prevSitters) => [...prevSitters, acceptedRequest]);
       setRequests((prevRequests) => prevRequests.filter((_, i) => i !== index));
   
@@ -929,69 +913,49 @@ const MyProfile = () => {
   const handleRequestDelete = async (index) => {
     try {
       const requestToDelete = requests[index];
-      
-      // Get a reference to the user's document
       const userDocRef = doc(DB, 'users', user.firebaseUser.uid);
-      
-      // Update the document in Firebase
+
       await updateDoc(userDocRef, {
-        // Remove the request from 'connectionRequests' array
         connectionRequests: arrayRemove(requestToDelete)
       });
-  
-      // Update local state
+
       setRequests(prevRequests => prevRequests.filter((_, i) => i !== index));
-  
     } catch (error) {
       console.error("Error deleting request:", error);
-      // Handle the error (e.g., show an error message to the user)
     }
   };
 
   const handleSitterDelete = async (index) => {
     try {
       const sitterToDelete = sitters[index];
-      
-      // Get a reference to the user's document
       const userDocRef = doc(DB, 'users', user.firebaseUser.uid);
-      
-      // Update the document in Firebase
+
       await updateDoc(userDocRef, {
-        // Remove the sitter from the 'sitters' array
         sitters: arrayRemove(sitterToDelete)
       });
-  
-      // Update local state
+
       setSitters(prevSitters => prevSitters.filter((_, i) => i !== index));
-  
     } catch (error) {
       console.error("Error deleting sitter:", error);
-      // Handle the error (e.g., show an error message to the user)
     }
   };
 
   const handleAddReview = async (index, reviewText) => {
     try {
       const sitterToUpdate = sitters[index];
-      
-      // Get a reference to the user's document
       const userDocRef = doc(DB, 'users', user.firebaseUser.uid);
-      
-      // Update the document in Firebase
+
       await updateDoc(userDocRef, {
         sitters: sitters.map((sitter, i) => 
           i === index ? { ...sitter, review: reviewText } : sitter
         )
       });
-  
-      // Update local state
+
       setSitters(prevSitters => prevSitters.map((sitter, i) => 
         i === index ? { ...sitter, review: reviewText } : sitter
       ));
-  
     } catch (error) {
       console.error("Error adding review:", error);
-      // Handle the error (e.g., show an error message to the user)
     }
   };
 
@@ -999,27 +963,21 @@ const MyProfile = () => {
     try {
       const storage = getStorage();
       const storageRef = ref(storage, `gallery/${user.firebaseUser.uid}/${file.name}`);
-      
-      // Upload the file to Firebase Storage
+
       await uploadBytes(storageRef, file);
-      
-      // Get the download URL
       const downloadURL = await getDownloadURL(storageRef);
-      
-      // Update the user's document in Firestore with the new image URL
+
       const userDocRef = doc(DB, 'users', user.firebaseUser.uid);
       await updateDoc(userDocRef, {
         galleryImages: arrayUnion(downloadURL)
       });
-  
-      // Update local state
+
       setGalleryImages(prevImages => [...prevImages, downloadURL]);
-  
     } catch (error) {
       console.error("Error uploading image:", error);
-      // Handle the error (e.g., show an error message to the user)
     }
   };
+
   return (
     <div>
       <DogProfileCard
@@ -1027,8 +985,8 @@ const MyProfile = () => {
         onSave={updateUserDetails}
         requests={requests}
         sitters={sitters}
-        handleRequestAccept={handleRequestAccept}  // Make sure this line is here
-        handleRequestDelete={handleRequestDelete} 
+        handleRequestAccept={handleRequestAccept}
+        handleRequestDelete={handleRequestDelete}
         onSitterDelete={handleSitterDelete}
         onAddReview={handleAddReview}
         galleryImages={galleryImages}

@@ -1,10 +1,12 @@
-import React, { useState, useContext } from 'react';
+import React, { useState, useContext, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import styled, { createGlobalStyle } from 'styled-components';
 import { FaWhatsapp } from 'react-icons/fa';
 import { UserContext } from '../App';
 import pawPrint from '../images/pawprint5.svg';
 import { getStorage, ref, uploadBytes, getDownloadURL } from "firebase/storage";
+import {  doc, getDoc} from 'firebase/firestore';
+import { DB } from './Config';
 
 
 
@@ -259,7 +261,7 @@ const RequestDOS = ({ requests }) => {
   const navigate = useNavigate();
 
   const handleItemClick = (id) => {
-    navigate(`/DogProfiles/`);
+    navigate(`/DogProfiles/${id}`);
   };
 
   return (
@@ -270,9 +272,9 @@ const RequestDOS = ({ requests }) => {
           <SubTitle>Approved Requests</SubTitle>
         </TitleWithIcon>
       </TitleSection>
-      {requests.map((request) => (
-        <RequestItem key={request.id} onClick={() => handleItemClick(request.id)}>
-          <Avatar src={request.avatar} alt={request.name} />
+      {requests.map((request, index) => (
+        <RequestItem key={index} onClick={() => handleItemClick(request.uid)}>
+          <Avatar src={request.profilePic || '../images/default-avatar.jpg'} alt={request.name} />
           <Info>
             <Name>{request.name}</Name>
             <Date>{request.date}</Date>
@@ -285,6 +287,7 @@ const RequestDOS = ({ requests }) => {
     </Card>
   );
 };
+
 
 const PersonalDetails = ({ profile, isEditing, formData, handleChange }) => (
   <Card>
@@ -467,7 +470,7 @@ const Reviews = ({ profile }) => (
   </Card>
 );
 
-const VolProfileCard = ({ profile, onSave, requests, user }) => {
+const VolProfileCard = ({ profile, onSave, approvedRequests, user }) => {
   const [isEditing, setIsEditing] = useState(false);
   const [formData, setFormData] = useState(profile);
 
@@ -494,7 +497,6 @@ const VolProfileCard = ({ profile, onSave, requests, user }) => {
   const handleProfileImageUpload = async (e) => {
     const file = e.target.files[0];
     if (file) {
-
       const localURL = URL.createObjectURL(file);
       setFormData({
         ...formData,
@@ -503,28 +505,26 @@ const VolProfileCard = ({ profile, onSave, requests, user }) => {
 
       const storage = getStorage();
       const storageRef = ref(storage, `profile_pics/${user.firebaseUser.uid}`);
-  
+
       try {
         await uploadBytes(storageRef, file);
         const profilePicURL = await getDownloadURL(storageRef);
-  
+
         setFormData(prevData => ({
           ...formData,
           profilePic: profilePicURL,
         }));
 
-      // שחרור המשאבים של ה-URL המקומי
-      URL.revokeObjectURL(localURL);
-    } catch (error) {
-      console.error("Error uploading image:", error);
-      // במקרה של שגיאה, נחזיר את התמונה הקודמת
-      setFormData(prevData => ({
-        ...prevData,
-        profilePic: profile.profilePic,
-      }));
+        URL.revokeObjectURL(localURL);
+      } catch (error) {
+        console.error("Error uploading image:", error);
+        setFormData(prevData => ({
+          ...prevData,
+          profilePic: profile.profilePic,
+        }));
+      }
     }
-  }
-};
+  };
 
   return (
     <Container>
@@ -557,20 +557,39 @@ const VolProfileCard = ({ profile, onSave, requests, user }) => {
         </Section>
         <Section>
           <Reviews profile={profile} />
-          <RequestDOS requests={requests} />
+          <RequestDOS requests={approvedRequests} />
         </Section>
       </ProfileSectionWrapper>
     </Container>
   );
 };
 
+
+
 const VolProfile = () => {
   const { user, updateUserDetails } = useContext(UserContext);
-  const [requests, setRequests] = useState([
-    { id: 1, name: 'Rina Cohen', date: '12/03/24 - 11/04/2024', phone: '0555555555', avatar: '../images/dog1.jpg' },
-    { id: 2, name: 'Elad Farber', date: '12/03/24 - 11/04/2024', phone: '0555555555', avatar: '../images/dog2.jpg' },
-    { id: 3, name: 'Miki Shapira', date: '12/03/24 - 11/04/2024', phone: '0555555555', avatar: '../images/dog3.jpg' },
-  ]);
+  const [approvedRequests, setApprovedRequests] = useState([]);
+
+  useEffect(() => {
+    const fetchApprovedRequests = async () => {
+      try {
+        const docRef = doc(DB, 'users', user.firebaseUser.uid);
+        const docSnap = await getDoc(docRef);
+
+        if (docSnap.exists()) {
+          const data = docSnap.data();
+          setApprovedRequests(data.approvedRequests || []);
+        } else {
+          setApprovedRequests([]);
+        }
+      } catch (error) {
+        console.error("Error fetching user data:", error);
+        setApprovedRequests([]);
+      }
+    };
+
+    fetchApprovedRequests();
+  }, [user.firebaseUser.uid]);
 
   const dummyProfile = {
     ...user.details,
@@ -596,21 +615,12 @@ const VolProfile = () => {
     ]
   };
 
-  const handleUpdateUserDetails = async (updatedDetails) => {
-    try {
-      await updateUserDetails(updatedDetails);
-      // Optionally, you can add a success message or update the local state
-    } catch (error) {
-      console.error("Error updating user details:", error);
-    }
-  };
-
   return (
     <div>
       <VolProfileCard
         profile={dummyProfile}
         onSave={updateUserDetails}
-        requests={requests}
+        approvedRequests={approvedRequests}
         user={user}
       />
     </div>

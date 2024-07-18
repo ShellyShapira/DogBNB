@@ -494,6 +494,13 @@ const VolProfileCard = ({ profile, onSave, requests, user }) => {
   const handleProfileImageUpload = async (e) => {
     const file = e.target.files[0];
     if (file) {
+
+      const localURL = URL.createObjectURL(file);
+      setFormData({
+        ...formData,
+        profilePic: localURL,
+      });
+
       const storage = getStorage();
       const storageRef = ref(storage, `profile_pics/${user.firebaseUser.uid}`);
   
@@ -501,15 +508,23 @@ const VolProfileCard = ({ profile, onSave, requests, user }) => {
         await uploadBytes(storageRef, file);
         const profilePicURL = await getDownloadURL(storageRef);
   
-        setFormData({
+        setFormData(prevData => ({
           ...formData,
           profilePic: profilePicURL,
-        });
-      } catch (error) {
-        console.error("Error uploading image:", error);
-      }
+        }));
+
+      // שחרור המשאבים של ה-URL המקומי
+      URL.revokeObjectURL(localURL);
+    } catch (error) {
+      console.error("Error uploading image:", error);
+      // במקרה של שגיאה, נחזיר את התמונה הקודמת
+      setFormData(prevData => ({
+        ...prevData,
+        profilePic: profile.profilePic,
+      }));
     }
-  };
+  }
+};
 
   return (
     <Container>

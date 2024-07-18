@@ -660,7 +660,7 @@ const RequestActions = ({ requests, onAccept, onDelete, isLoading }) => {
       </TitleSection>
       {requests.map((request, index) => (
         <RequestItem key={index}>
-          <Avatar src={request.profilePic} alt={request.name} onClick={() => handleNameClick(request.id)} />
+          <Avatar src={request.profilePic} alt={request.name} onClick={() => handleNameClick(request.userId)} />
           <Info>
             <Name onClick={() => handleNameClick(request.id)}>{request.name}</Name>
             <Date>{request.date}</Date>
@@ -815,7 +815,7 @@ const DogProfileCard = ({
         <Section>
         <RequestActions
             requests={requests}
-            onAccept={handleRequestAccept}  // Change this line
+            onAccept={handleRequestAccept} 
             onDelete={handleRequestDelete}
             isLoading={isLoading}
           />
@@ -864,7 +864,7 @@ const MyProfile = () => {
           const sitters = data.sitters || [];
           console.log("Sitters:", sitters); // Add this log
           const formattedSitters = sitters.map(sitter => ({
-            id: sitter.id,
+            id: sitter.userId,
             name: sitter.name,
             profilePic: sitter.profilePic 
           }));

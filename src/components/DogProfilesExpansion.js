@@ -268,6 +268,7 @@ const ArrowButton = styled.button`
     background-color: #527882;
   }
 `;
+
 const DogProfiles = () => {
   const { uid } = useParams();
   const navigate = useNavigate();
@@ -327,7 +328,7 @@ const DogProfiles = () => {
   const handleContactClick = async () => {
     const auth = getAuth();
     const currentUser = auth.currentUser;
-  
+    
     if (!currentUser) {
       console.error("No user is signed in");
       // You might want to show an error message to the user or redirect to login
@@ -335,16 +336,26 @@ const DogProfiles = () => {
     }
   
     try {
-      const userDocRef = doc(DB, 'users', uid);
+      const userDocRef = doc(DB, 'users', currentUser.uid);
+      const userDocSnap = await getDoc(userDocRef);
+  
+      if (!userDocSnap.exists()) {
+        console.error("User document does not exist");
+        // You might want to show an error message to the user
+        return;
+      }
+  
+      const userData = userDocSnap.data();
       const connectionRequest = {
         userId: currentUser.uid,
-        name: currentUser.displayName || 'Anonymous',
-        profilePic: currentUser.photoURL
+        name: userData.name || 'Anonymous',
+        profilePic: userData.profilePic
       };
   
       console.log("Sending connection request:", connectionRequest);
       
-      await updateDoc(userDocRef, {
+      const recipientDocRef = doc(DB, 'users', uid); // Ensure 'uid' is defined elsewhere in your code
+      await updateDoc(recipientDocRef, {
         connectionRequests: arrayUnion(connectionRequest)
       });
   

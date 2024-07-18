@@ -88,8 +88,7 @@ function App() {
               <Route path="formSection" element={<MainLayout><FormSection /></MainLayout>} />
               <Route path="imageSection" element={<MainLayout><ImageSection /></MainLayout>} />
               <Route path="volProfile" element={<MainLayout><MyVolunteerProfile /></MainLayout>} />
-              <Route path="volFormSection" element={<MainLayout><Volform /></MainLayout>} />
-              
+              <Route path="volFormSection" element={<MainLayout><Volform /></MainLayout>} />  
               <Route path="dog-profile/:uid" element={<MainLayout><DogProfilesExpansion /></MainLayout>} />
               <Route path="volunteer-profile/:uid" element={<MainLayout><VolunteerProfilesExpansion /></MainLayout>} />
               <Route path="myDogProfile" element={<MainLayout><MyDogProfiles /></MainLayout>} />

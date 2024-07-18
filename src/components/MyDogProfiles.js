@@ -5,7 +5,7 @@ import pawPrint from '../images/pawprint5.svg';
 import { UserContext } from '../App';
 import { DB } from './Config';
 import { getAuth } from 'firebase/auth';
-import {  doc, getDoc, updateDoc, arrayUnion, arrayRemove } from 'firebase/firestore';
+import {  doc, getDoc, updateDoc, arrayUnion, arrayRemove, writeBatch } from 'firebase/firestore';
 import { getStorage, ref, uploadBytes, getDownloadURL } from 'firebase/storage';
 
 
@@ -710,7 +710,7 @@ const DogSitters = ({ sitters, onDelete, onAddReview }) => {
       {sitters.map((sitter, index) => (
         <div key={index} style={{ marginBottom: '20px' }}>
           <RequestItem>
-            <Avatar src={sitter.avatar} alt={sitter.name} onClick={() => handleNameClick(sitter.id)} />
+            <Avatar src={sitter.profilePic} alt={sitter.name} onClick={() => handleNameClick(sitter.id)} />
             <Info>
               <Name onClick={() => handleNameClick(sitter.id)}>{sitter.name}</Name>
               <Date>{sitter.date}</Date>
@@ -853,7 +853,7 @@ const MyProfile = () => {
           const connectionRequests = data.connectionRequests || [];
           console.log("Connection requests:", connectionRequests); // Add this log
           const formattedRequests = connectionRequests.map(request => ({
-            id: request.userId,
+            userId: request.userId,
             name: request.name,
             profilePic: request.profilePic || '../images/default-avatar.jpg'
           }));
@@ -866,8 +866,7 @@ const MyProfile = () => {
           const formattedSitters = sitters.map(sitter => ({
             id: sitter.id,
             name: sitter.name,
-            profilePic: sitter.profilePic || '../images/default-avatar.jpg',
-            date: sitter.date
+            profilePic: sitter.profilePic 
           }));
           console.log("Formatted sitters:", formattedSitters); // Add this log
           setSitters(formattedSitters);
@@ -890,27 +889,42 @@ const MyProfile = () => {
   
   const handleRequestAccept = async (index) => {
     const acceptedRequest = requests[index];
+    const userDocRef = doc(DB, 'users', user.firebaseUser.uid);
   
     try {
-      const userDocRef = doc(DB, 'users', user.firebaseUser.uid);
+      // Fetch the current data for the user
+      const userDoc = await getDoc(userDocRef);
+      if (!userDoc.exists()) {
+        console.log("User document does not exist!");
+        return;
+      }
   
-      // Remove the accepted request from connectionRequests array
-      await updateDoc(userDocRef, {
-        connectionRequests: arrayRemove(acceptedRequest),
-        sitters: arrayUnion({
-          ...acceptedRequest
-        })
+      const userData = userDoc.data();
+      const newConnectionRequests = userData.connectionRequests.filter(
+        (request) => request.userId !== acceptedRequest.userId
+      );
+  
+      // Perform batch write to ensure atomic operation
+      const batch = writeBatch(DB);
+      batch.update(userDocRef, {
+        connectionRequests: newConnectionRequests,
+        sitters: arrayUnion(acceptedRequest)
       });
   
+      // Commit the batch
+      await batch.commit();
+  
       // Update the local state
-      setSitters([...sitters, { ...acceptedRequest }]);
-      setRequests(requests.filter((_, i) => i !== index));
+      setSitters((prevSitters) => [...prevSitters, acceptedRequest]);
+      setRequests((prevRequests) => prevRequests.filter((_, i) => i !== index));
   
       console.log("Request accepted successfully");
     } catch (error) {
       console.error("Error accepting request:", error);
     }
   };
+  
+  
   
   const handleRequestDelete = async (index) => {
     try {

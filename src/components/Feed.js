@@ -282,7 +282,15 @@ const Feed = () => {
             <p>{post.city}</p>
             <p>{post.startDate} - {post.endDate}</p>
             <p>{post.description}</p>
-            <button type="button" className="more-info" onClick={() => navigate(`/dog-profile/${post.ownerUid}`)}>more info</button>
+            <button 
+              type="button" 
+              className="more-info" 
+              onClick={() => navigate(`/dog-profile/${post.ownerUid}`, { 
+                state: { startDate: post.startDate, endDate: post.endDate } 
+              })}
+            >
+              more info
+            </button>
           </div>
         ))}
       </div>

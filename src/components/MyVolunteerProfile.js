@@ -4,6 +4,9 @@ import styled, { createGlobalStyle } from 'styled-components';
 import { FaWhatsapp } from 'react-icons/fa';
 import { UserContext } from '../App';
 import pawPrint from '../images/pawprint5.svg';
+import { getStorage, ref, uploadBytes, getDownloadURL } from "firebase/storage";
+
+
 
 const GlobalStyle = createGlobalStyle`
   :root {
@@ -464,7 +467,7 @@ const Reviews = ({ profile }) => (
   </Card>
 );
 
-const VolProfileCard = ({ profile, onSave, requests }) => {
+const VolProfileCard = ({ profile, onSave, requests, user }) => {
   const [isEditing, setIsEditing] = useState(false);
   const [formData, setFormData] = useState(profile);
 
@@ -474,7 +477,10 @@ const VolProfileCard = ({ profile, onSave, requests }) => {
 
   const handleSaveClick = async () => {
     setIsEditing(false);
-    await onSave(formData); // Save the updated profile data
+    await onSave({
+      ...formData,
+      profilePic: formData.profilePic,
+    });
   };
 
   const handleChange = (e) => {
@@ -485,17 +491,23 @@ const VolProfileCard = ({ profile, onSave, requests }) => {
     });
   };
 
-  const handleProfileImageUpload = (e) => {
+  const handleProfileImageUpload = async (e) => {
     const file = e.target.files[0];
     if (file) {
-      const reader = new FileReader();
-      reader.onloadend = () => {
+      const storage = getStorage();
+      const storageRef = ref(storage, `profile_pics/${user.firebaseUser.uid}`);
+  
+      try {
+        await uploadBytes(storageRef, file);
+        const profilePicURL = await getDownloadURL(storageRef);
+  
         setFormData({
           ...formData,
-          profilePic: reader.result,
+          profilePic: profilePicURL,
         });
-      };
-      reader.readAsDataURL(file);
+      } catch (error) {
+        console.error("Error uploading image:", error);
+      }
     }
   };
 
@@ -569,12 +581,22 @@ const VolProfile = () => {
     ]
   };
 
+  const handleUpdateUserDetails = async (updatedDetails) => {
+    try {
+      await updateUserDetails(updatedDetails);
+      // Optionally, you can add a success message or update the local state
+    } catch (error) {
+      console.error("Error updating user details:", error);
+    }
+  };
+
   return (
     <div>
       <VolProfileCard
         profile={dummyProfile}
         onSave={updateUserDetails}
         requests={requests}
+        user={user}
       />
     </div>
   );

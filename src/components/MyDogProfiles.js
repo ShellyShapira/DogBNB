@@ -642,6 +642,14 @@ const RequestActions = ({ requests, onAccept, onDelete, isLoading }) => {
     navigate(`/volunteer-profile/${id}`);
   };
 
+  if (isLoading) {
+    return <Card>Loading requests...</Card>;
+  }
+
+  if (!requests || requests.length === 0) {
+    return <Card>No requests at this time.</Card>;
+  }
+
   return (
     <Card>
       <TitleSection>
@@ -650,29 +658,22 @@ const RequestActions = ({ requests, onAccept, onDelete, isLoading }) => {
           <SubTitle>Requests</SubTitle>
         </TitleWithIcon>
       </TitleSection>
-      {isLoading ? (
-        <div>Loading requests...</div>
-      ) : !requests || requests.length === 0 ? (
-        <div>No current requests</div>
-      ) : (
-        requests.map((request, index) => (
-          <RequestItem key={index}>
-            <Avatar src={request.profilePic} alt={request.name} onClick={() => handleNameClick(request.userId)} />
-            <Info>
-              <Name onClick={() => handleNameClick(request.id)}>{request.name}</Name>
-              <Date>{request.date}</Date>
-            </Info>
-            <ActionButtons>
-              <Button onClick={() => onDelete(index)}>Delete</Button>
-              <Button $primary onClick={() => onAccept(index)}>Accept</Button>
-            </ActionButtons>
-          </RequestItem>
-        ))
-      )}
+      {requests.map((request, index) => (
+        <RequestItem key={index}>
+          <Avatar src={request.profilePic} alt={request.name} onClick={() => handleNameClick(request.userId)} />
+          <Info>
+            <Name onClick={() => handleNameClick(request.id)}>{request.name}</Name>
+            <Date>{request.date}</Date>
+          </Info>
+          <ActionButtons>
+            <Button onClick={() => onDelete(index)}>Delete</Button>
+            <Button $primary onClick={() => onAccept(index)}>Accept</Button>
+          </ActionButtons>
+        </RequestItem>
+      ))}
     </Card>
   );
 };
-
 
 const DogSitters = ({ sitters, onDelete, onAddReview }) => {
   const navigate = useNavigate();
@@ -706,57 +707,52 @@ const DogSitters = ({ sitters, onDelete, onAddReview }) => {
           <SubTitle>My Dog Sitters</SubTitle>
         </TitleWithIcon>
       </TitleSection>
-      {sitters.length === 0 ? (
-        <div>No sitters at this time.</div>
-      ) : (
-        sitters.map((sitter, index) => (
-          <div key={index} style={{ marginBottom: '20px' }}>
-            <RequestItem>
-              <Avatar src={sitter.profilePic} alt={sitter.name} onClick={() => handleNameClick(sitter.id)} />
-              <Info>
-                <Name onClick={() => handleNameClick(sitter.id)}>{sitter.name}</Name>
-                <Date>{sitter.date}</Date>
-              </Info>
-              <ActionButtons>
-                <Button onClick={() => onDelete(index)}>Delete</Button>
-                <Button $primary onClick={() => handleAddReview(index)}>Add Review</Button>
-              </ActionButtons>
-            </RequestItem>
-            {reviewIndex === index && (
-              <div style={{ position: 'relative', width: '100%' }}>
-                <button
-                  onClick={handleCloseReview}
-                  style={{
-                    position: 'absolute',
-                    top: '-20px',
-                    right: '10px',
-                    background: 'none',
-                    border: 'none',
-                    fontSize: '1.2rem',
-                    cursor: 'pointer',
-                    color: '#B05D5D',
-                  }}
-                >
-                  ×
-                </button>
-                <textarea
-                  rows="4"
-                  value={reviewText}
-                  onChange={(e) => setReviewText(e.target.value)}
-                  style={{ width: 'calc(100% - 20px)', margin: '10px 10px 0 10px' }}
-                />
-                <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: '10px', marginLeft: '10px', marginRight: '10px' }}>
-                  <Button style={{ backgroundColor: 'blue' }} onClick={handleSaveReview}>Save</Button>
-                </div>
+      {sitters.map((sitter, index) => (
+        <div key={index} style={{ marginBottom: '20px' }}>
+          <RequestItem>
+            <Avatar src={sitter.profilePic} alt={sitter.name} onClick={() => handleNameClick(sitter.id)} />
+            <Info>
+              <Name onClick={() => handleNameClick(sitter.id)}>{sitter.name}</Name>
+              <Date>{sitter.date}</Date>
+            </Info>
+            <ActionButtons>
+              <Button onClick={() => onDelete(index)}>Delete</Button>
+              <Button $primary onClick={() => handleAddReview(index)}>Add Review</Button>
+            </ActionButtons>
+          </RequestItem>
+          {reviewIndex === index && (
+            <div style={{ position: 'relative', width: '100%' }}>
+              <button
+                onClick={handleCloseReview}
+                style={{
+                  position: 'absolute',
+                  top: '-20px',
+                  right: '10px',
+                  background: 'none',
+                  border: 'none',
+                  fontSize: '1.2rem',
+                  cursor: 'pointer',
+                  color: '#B05D5D',
+                }}
+              >
+                ×
+              </button>
+              <textarea
+                rows="4"
+                value={reviewText}
+                onChange={(e) => setReviewText(e.target.value)}
+                style={{ width: 'calc(100% - 20px)', margin: '10px 10px 0 10px' }}
+              />
+              <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: '10px', marginLeft: '10px', marginRight: '10px' }}>
+                <Button style={{ backgroundColor: 'blue' }} onClick={handleSaveReview}>Save</Button>
               </div>
-            )}
-          </div>
-        ))
-      )}
+            </div>
+          )}
+        </div>
+      ))}
     </Card>
   );
 };
-
 
 const DogProfileCard = ({ 
   profile, 

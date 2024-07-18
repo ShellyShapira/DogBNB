@@ -591,11 +591,34 @@ const VolProfile = () => {
     fetchApprovedRequests();
   }, [user.firebaseUser.uid]);
 
-  
+  const dummyProfile = {
+    ...user.details,
+    reviews: [
+      {
+        reviewer: 'Alice',
+        date: '2023-01-01',
+        location: 'New York',
+        text: 'Great volunteer! Very reliable and kind.'
+      },
+      {
+        reviewer: 'Bob',
+        date: '2023-02-15',
+        location: 'Los Angeles',
+        text: 'Took excellent care of the animals.'
+      },
+      {
+        reviewer: 'Charlie',
+        date: '2023-03-10',
+        location: 'Chicago',
+        text: 'Would definitely recommend!'
+      }
+    ]
+  };
+
   return (
     <div>
       <VolProfileCard
-        profile={approvedRequests}
+        profile={dummyProfile}
         onSave={updateUserDetails}
         approvedRequests={approvedRequests}
         user={user}

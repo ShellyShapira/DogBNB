@@ -5,7 +5,7 @@ import pawPrint from '../images/pawprint5.svg';
 import { UserContext } from '../App';
 import { DB } from './Config';
 import { getAuth } from 'firebase/auth';
-import {  doc, getDoc, updateDoc, arrayUnion, arrayRemove, writeBatch } from 'firebase/firestore';
+import {  doc, getDoc, updateDoc, arrayUnion, arrayRemove, writeBatch, serverTimestamp } from 'firebase/firestore';
 import { getStorage, ref, uploadBytes, getDownloadURL } from 'firebase/storage';
 
 
@@ -761,8 +761,8 @@ const DogProfileCard = ({
   sitters, 
   handleRequestAccept,  
   handleRequestDelete,
-  onSitterDelete, 
-  onAddReview, 
+  handleSitterDelete, 
+  handleAddReview, 
   galleryImages, 
   onImageUpload,
   isLoading 
@@ -821,8 +821,8 @@ const DogProfileCard = ({
           />
           <DogSitters
             sitters={sitters}
-            onDelete={onSitterDelete}
-            onAddReview={onAddReview}
+            onDelete={handleSitterDelete}
+            onAddReview={handleAddReview}
           />
         </Section>
       </ProfileSectionWrapper>
@@ -945,18 +945,38 @@ const MyProfile = () => {
     try {
       const sitterToUpdate = sitters[index];
       const userDocRef = doc(DB, 'users', user.firebaseUser.uid);
-
-      await updateDoc(userDocRef, {
-        sitters: sitters.map((sitter, i) => 
-          i === index ? { ...sitter, review: reviewText } : sitter
-        )
+      const volunteerDocRef = doc(DB, 'users', sitterToUpdate.userId);
+  
+      console.log("Adding review for volunteer:", sitterToUpdate.userId);
+  
+      
+      const review = {
+        reviewerId: user.firebaseUser.uid,
+        reviewerName: user.details.name,
+        text: reviewText,
+        // date: serverTimestamp()
+      };
+  
+      // Update the volunteer's document
+      await updateDoc(volunteerDocRef, {
+        reviews: arrayUnion(review)
       });
-
+  
+      console.log("Review added successfully to Firestore");
+  
+      // Fetch the updated document to confirm the change
+      const updatedVolunteerDoc = await getDoc(volunteerDocRef);
+      console.log("Updated volunteer document:", updatedVolunteerDoc.data());
+  
+      // Update the local state
       setSitters(prevSitters => prevSitters.map((sitter, i) => 
         i === index ? { ...sitter, review: reviewText } : sitter
       ));
+  
+      console.log("Local state updated");
     } catch (error) {
       console.error("Error adding review:", error);
+      // You might want to show an error message to the user here
     }
   };
 
@@ -988,8 +1008,8 @@ const MyProfile = () => {
         sitters={sitters}
         handleRequestAccept={handleRequestAccept}
         handleRequestDelete={handleRequestDelete}
-        onSitterDelete={handleSitterDelete}
-        onAddReview={handleAddReview}
+        handleSitterDelete={handleSitterDelete}
+        handleAddReview={handleAddReview}
         galleryImages={galleryImages}
         onImageUpload={handleImageUpload}
         isLoading={isLoading}

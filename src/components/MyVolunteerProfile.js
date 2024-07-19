@@ -446,7 +446,7 @@ const AboutMe = ({ profile, isEditing, formData, handleChange }) => (
   </Card>
 );
 
-const Reviews = ({ profile }) => (
+const Reviews = ({ reviews }) => (
   <Card>
     <TitleSection>
       <TitleWithIcon>
@@ -455,10 +455,10 @@ const Reviews = ({ profile }) => (
       </TitleWithIcon>
     </TitleSection>
     <ReviewsContainer>
-      {profile.reviews && profile.reviews.length > 0 ? (
-        profile.reviews.map((review, index) => (
+      {reviews && reviews.length > 0 ? (
+        reviews.map((review, index) => (
           <ReviewCard key={index}>
-            <DetailLabel><strong>{review.reviewer}:</strong></DetailLabel>
+            <DetailLabel><strong>{review.reviewerName}:</strong></DetailLabel>
             <DetailValue>{review.date}, {review.location}</DetailValue>
             <Text>{review.text}</Text>
           </ReviewCard>
@@ -470,7 +470,8 @@ const Reviews = ({ profile }) => (
   </Card>
 );
 
-const VolProfileCard = ({ profile, onSave, approvedRequests, user }) => {
+
+const VolProfileCard = ({ profile, onSave, approvedRequests, user, reviews }) => {
   const [isEditing, setIsEditing] = useState(false);
   const [formData, setFormData] = useState(profile);
 
@@ -556,7 +557,7 @@ const VolProfileCard = ({ profile, onSave, approvedRequests, user }) => {
           )}
         </Section>
         <Section>
-          <Reviews profile={profile} />
+          <Reviews reviews={reviews} />
           <RequestDOS requests={approvedRequests} />
         </Section>
       </ProfileSectionWrapper>
@@ -566,9 +567,11 @@ const VolProfileCard = ({ profile, onSave, approvedRequests, user }) => {
 
 
 
+
 const VolProfile = () => {
   const { user, updateUserDetails } = useContext(UserContext);
   const [approvedRequests, setApprovedRequests] = useState([]);
+  const [reviews, setReviews] = useState([]);
 
   useEffect(() => {
     const fetchApprovedRequests = async () => {
@@ -579,49 +582,53 @@ const VolProfile = () => {
         if (docSnap.exists()) {
           const data = docSnap.data();
           setApprovedRequests(data.approvedRequests || []);
+          setReviews(data.reviews || []);
         } else {
           setApprovedRequests([]);
+          setReviews([]);
         }
       } catch (error) {
         console.error("Error fetching user data:", error);
         setApprovedRequests([]);
+        setReviews([]);
       }
     };
 
     fetchApprovedRequests();
   }, [user.firebaseUser.uid]);
 
-  const dummyProfile = {
-    ...user.details,
-    reviews: [
-      {
-        reviewer: 'Alice',
-        date: '2023-01-01',
-        location: 'New York',
-        text: 'Great volunteer! Very reliable and kind.'
-      },
-      {
-        reviewer: 'Bob',
-        date: '2023-02-15',
-        location: 'Los Angeles',
-        text: 'Took excellent care of the animals.'
-      },
-      {
-        reviewer: 'Charlie',
-        date: '2023-03-10',
-        location: 'Chicago',
-        text: 'Would definitely recommend!'
-      }
-    ]
-  };
+  // const dummyProfile = {
+  //   ...user.details,
+  //   reviews: [
+  //     {
+  //       reviewer: 'Alice',
+  //       date: '2023-01-01',
+  //       location: 'New York',
+  //       text: 'Great volunteer! Very reliable and kind.'
+  //     },
+  //     {
+  //       reviewer: 'Bob',
+  //       date: '2023-02-15',
+  //       location: 'Los Angeles',
+  //       text: 'Took excellent care of the animals.'
+  //     },
+  //     {
+  //       reviewer: 'Charlie',
+  //       date: '2023-03-10',
+  //       location: 'Chicago',
+  //       text: 'Would definitely recommend!'
+  //     }
+  //   ]
+  // };
 
   return (
     <div>
       <VolProfileCard
-        profile={dummyProfile}
+        profile={user.details}
         onSave={updateUserDetails}
         approvedRequests={approvedRequests}
         user={user}
+        reviews={reviews}
       />
     </div>
   );

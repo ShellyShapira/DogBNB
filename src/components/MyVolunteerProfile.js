@@ -536,7 +536,10 @@ const VolProfileCard = ({ profile, onSave, approvedRequests, user, reviews }) =>
           <Text>{formData.address}</Text>
         </BasicInfo>
         <ProfileImage>
-          <ProfilePic src={formData.profilePic} alt={`${profile.name}`} />
+          <ProfilePic src={formData.profilePic} alt={`${profile.name}`} onError={(e) => {
+    console.error("Error loading profile picture:", e);
+    e.target.src = 'path/to/default/image.jpg'; // Fallback to a default image
+  }}/>
           <ProfileUploadButton onClick={() => document.getElementById('profileImageUpload').click()}>+</ProfileUploadButton>
           <input
             type="file"

@@ -1,5 +1,5 @@
 import React, { useContext } from 'react';
-import styled from 'styled-components';
+import styled, { css } from 'styled-components';
 import { Link, useNavigate } from 'react-router-dom';
 import { UserContext } from '../App';
 import { logOut } from '../components/Config'; // Adjust this import path if necessary
@@ -21,26 +21,27 @@ const NavbarItem = styled.li`
   margin: 0 1rem;
 `;
 
-const NavbarLink = styled(Link)`
+const linkStyles = css`
   color: white;
   text-decoration: none;
-
+  font-size: 1em;
+  padding: 0;
+  cursor: pointer;
+  background: none;
+  border: none;
+  font-family: 'Roboto', sans-serif; /* Ensure consistent font */
+  
   &:hover {
     text-decoration: underline;
   }
 `;
 
-const LogoutButton = styled.button`
-  background: none;
-  border: none;
-  color: white;
-  cursor: pointer;
-  font-size: 1em;
-  padding: 0;
+const NavbarLink = styled(Link)`
+  ${linkStyles}
+`;
 
-  &:hover {
-    text-decoration: underline;
-  }
+const LogoutButton = styled.button`
+  ${linkStyles}
 `;
 
 const Navbar = () => {

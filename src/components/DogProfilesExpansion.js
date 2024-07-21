@@ -2,14 +2,12 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useParams } from 'react-router-dom';
 import styled, { createGlobalStyle } from 'styled-components';
-import { doc, getDoc } from 'firebase/firestore';
+import { doc, getDoc, updateDoc, arrayUnion } from 'firebase/firestore';
 import { DB } from './Config';
 import dog1 from '../images/dog1.jpg';
 import dog2 from '../images/dog2.jpg';
 import pawPrint from '../images/pawprint5.svg';
-import { updateDoc, arrayUnion } from 'firebase/firestore';
 import { getAuth } from 'firebase/auth'; // Ensure this import is present
-
 
 const GlobalStyle = createGlobalStyle`
   :root {
@@ -185,13 +183,16 @@ const PopupContainer = styled.div`
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
-  background-color: white;
+  background-color: rgba(0, 0, 0, 0.8);
   padding: 20px;
   border-radius: 10px;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-  width: 300px;
   z-index: 1000;
-  text-align: center;
+`;
+
+const PopupMessage = styled.p`
+  color: white;
+  font-size: 1.5rem;
+  margin: 0;
 `;
 
 const CloseButton = styled.button`
@@ -294,6 +295,7 @@ const DogProfiles = () => {
   });
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [showMessage, setShowMessage] = useState(false); // New state for message
 
   useEffect(() => {
     const fetchProfile = async () => {
@@ -331,7 +333,6 @@ const DogProfiles = () => {
     
     if (!currentUser) {
       console.error("No user is signed in");
-      // You might want to show an error message to the user or redirect to login
       return;
     }
   
@@ -341,7 +342,6 @@ const DogProfiles = () => {
   
       if (!userDocSnap.exists()) {
         console.error("User document does not exist");
-        // You might want to show an error message to the user
         return;
       }
   
@@ -354,20 +354,18 @@ const DogProfiles = () => {
   
       console.log("Sending connection request:", connectionRequest);
       
-      const recipientDocRef = doc(DB, 'users', uid); // Ensure 'uid' is defined elsewhere in your code
+      const recipientDocRef = doc(DB, 'users', uid); 
       await updateDoc(recipientDocRef, {
         connectionRequests: arrayUnion(connectionRequest)
       });
   
       console.log("Connection request sent successfully");
-      // You might want to show a success message to the user
+      setShowMessage(true);
+      setTimeout(() => setShowMessage(false), 3000); 
     } catch (error) {
       console.error("Error sending connection request:", error);
-      // You might want to show an error message to the user
     }
   };
-  
-
 
   return (
     <Container>
@@ -392,6 +390,11 @@ const DogProfiles = () => {
           <Gallery images={[dog1, dog2]} />
         </Section>
       </ProfileSectionWrapper>
+      {showMessage && (
+        <PopupContainer>
+          <PopupMessage>Thank you for reaching out! Your request has been sent</PopupMessage>
+        </PopupContainer>
+      )}
     </Container>
   );
 };

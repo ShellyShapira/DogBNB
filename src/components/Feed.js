@@ -53,10 +53,10 @@ const Feed = () => {
       startDate: postData.startDate,
       endDate: postData.endDate,
       gender: postOwnerDetails.dogGender || '',
-      needsGarden: postOwnerDetails.suitableFor?.includes('house with a yard') || postOwnerDetails.suitableFor?.includes('all spaces') || postOwnerDetails.suitableFor === '' ? 'yes' : postOwnerDetails.suitableFor?.includes('apartment') ? 'no' : '',
+      needsGarden: postOwnerDetails.suitableFor?.includes('House with yard') || postOwnerDetails.suitableFor === '' ? 'yes' : postOwnerDetails.suitableFor?.includes('apartment') ? 'no' : '',
       immune: postOwnerDetails.dogImmune || '',
       neutered: postOwnerDetails.dogNeutered || '',
-      friendlyToChildren: postOwnerDetails.friendlyToChildren !== undefined ? (postOwnerDetails.friendlyToChildren === 'yes' ? 'yes' : 'no') : ''
+      friendlyToChildren: postOwnerDetails.friendlyWithChildren !== undefined ? (postOwnerDetails.friendlyWithChildren.toLowerCase() === 'yes' ? 'yes' : 'no') : ''
     };
   };
 
@@ -107,7 +107,7 @@ const Feed = () => {
       (filterNeedsGarden === '' || post.needsGarden.toLowerCase() === filterNeedsGarden.toLowerCase() || post.needsGarden === '') &&
       (filterImmune === '' || post.immune.toLowerCase() === filterImmune.toLowerCase() || post.immune === '') &&
       (filterNeutered === '' || post.neutered.toLowerCase() === filterNeutered.toLowerCase() || post.neutered === '') &&
-      (filterFriendlyToChildren === '' || post.friendlyToChildren === '' || post.friendlyToChildren.toLowerCase() === filterFriendlyToChildren.toLowerCase())
+      (filterFriendlyToChildren === '' || post.friendlyToChildren.toLowerCase() === filterFriendlyToChildren.toLowerCase())
     );
   }).sort((a, b) => {
     const aStartDate = new Date(a.startDate.split('/').reverse().join('-'));
@@ -253,6 +253,7 @@ const Feed = () => {
             </div>
             <div className="apply-button-container">
               <button className="apply-button" onClick={applyFilterChanges} style={{ width: '100%' }}>Apply</button>
+              <button className="clear-button" onClick={clearFilters} style={{ width: '80%', marginTop: '10px' }}>Clear</button>
             </div>
           </div>
         </div>
@@ -299,4 +300,3 @@ const Feed = () => {
 };
 
 export default Feed;
-

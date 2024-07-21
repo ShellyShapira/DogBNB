@@ -1,15 +1,12 @@
-import React, { useState, useContext, useEffect} from 'react';
+import React, { useState, useContext, useEffect } from 'react';
 import styled, { createGlobalStyle } from 'styled-components';
 import { useNavigate } from 'react-router-dom';
 import pawPrint from '../images/pawprint5.svg';
 import { UserContext } from '../App';
 import { DB } from './Config';
 import { getAuth } from 'firebase/auth';
-import {  doc, getDoc, updateDoc, arrayUnion, arrayRemove, writeBatch, serverTimestamp } from 'firebase/firestore';
+import { doc, getDoc, updateDoc, arrayUnion, arrayRemove, writeBatch, serverTimestamp } from 'firebase/firestore';
 import { getStorage, ref, uploadBytes, getDownloadURL } from 'firebase/storage';
-
-
-
 
 const GlobalStyle = createGlobalStyle`
   :root {
@@ -69,6 +66,11 @@ const Header = styled.div`
   margin-bottom: 20px;
 `;
 
+const ProfileImageWrapper = styled.div`
+  position: relative;
+  display: inline-block;
+`;
+
 const ProfileImage = styled.img`
   border-radius: 50%;
   width: 150px;
@@ -76,6 +78,27 @@ const ProfileImage = styled.img`
   object-fit: cover;
   margin-left: 20px;
   z-index: 2;
+`;
+
+const ProfileUploadButton = styled.button`
+  background-color: #6591A4;
+  color: white;
+  border: none;
+  border-radius: 50%;
+  cursor: pointer;
+  font-size: 1.5rem;
+  width: 30px;
+  height: 30px;
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  &:hover {
+    box-shadow: 0px 8px 20px rgba(0, 0, 0, 0.5);
+  }
 `;
 
 const BasicInfo = styled.div`
@@ -208,7 +231,7 @@ const ActionButtons = styled.div`
 `;
 
 const Button = styled.button`
-  background-color: ${props => props.primary ? '#628991' : '#B05D5D'};
+  background-color: ${props => props.primary ? '#4C7572' : '#B05D5D'};
   color: white;
   border: none;
   padding: 5px 10px;
@@ -218,7 +241,7 @@ const Button = styled.button`
 
   &:hover {
     box-shadow: 0px 8px 20px rgba(0, 0, 0, 0.5);
-    background-color: ${props => props.primary ? '#628991' : '#B05D5D'};
+    background-color: ${props => props.primary ? '#4C7572' : '#B05D5D'};
   }
 `;
 
@@ -284,7 +307,7 @@ const CloseButton = styled.button`
 
 const RadioGroup = styled.div`
   display: flex;
-  justify-content: flex-end; /* שינוי זה מבטיח שכפתורי הרדיו יהיו צמודים לימין */
+  justify-content: flex-end;
   gap: 0.5px;
 `;
 
@@ -293,7 +316,7 @@ const ModalOverlay = styled.div`
   top: 0;
   left: 0;
   width: 100%;
-  height: 100%;
+   height: 100%;
   background: rgba(0, 0, 0, 0.5);
   display: flex;
   align-items: center;
@@ -333,9 +356,26 @@ const ArrowButton = styled.button`
   transform: translateY(-50%);
   z-index: 1001;
 
-    &:hover {
+  &:hover {
     background-color: #527882;
   }
+`;
+
+const MessageContainer = styled.div`
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background: rgba(0, 0, 0, 0.8);
+  padding: 20px;
+  border-radius: 10px;
+  z-index: 1000;
+`;
+
+const Message = styled.p`
+  color: white;
+  font-size: 1.5rem;
+  margin: 0;
 `;
 
 const GalleryImage = styled.img`
@@ -345,7 +385,6 @@ const GalleryImage = styled.img`
   border-radius: 10px;
   cursor: pointer;
 `;
-
 
 const Gallery = ({ images, onUpload }) => {
   const [selectedImageIndex, setSelectedImageIndex] = useState(null);
@@ -532,7 +571,7 @@ const PersonalDetails = ({ profile, isEditing, formData, handleChange }) => (
                 Apartment
               </label>
               <label>
-                <input type="radio" name="suitableFor" value="House with yard" checked={formData.suitableFor === 'House with yard'} onChange={handleChange} />
+                <input type="radio" name="suitableFor" value="House with yard" checked={formData.suitableFor === 'House with yard'}               onChange={handleChange} />
                 House with yard
               </label>
             </RadioGroup>
@@ -667,7 +706,7 @@ const RequestActions = ({ requests, onAccept, onDelete, isLoading }) => {
           </Info>
           <ActionButtons>
             <Button onClick={() => onDelete(index)}>Delete</Button>
-            <Button $primary onClick={() => onAccept(index)}>Accept</Button>
+            <Button primary onClick={() => onAccept(index)}>Accept</Button>
           </ActionButtons>
         </RequestItem>
       ))}
@@ -679,15 +718,18 @@ const DogSitters = ({ sitters, onDelete, onAddReview }) => {
   const navigate = useNavigate();
   const [reviewIndex, setReviewIndex] = useState(null);
   const [reviewText, setReviewText] = useState('');
+  const [showMessage, setShowMessage] = useState(false);
 
   const handleAddReview = (index) => {
     setReviewIndex(index);
   };
 
-  const handleSaveReview = () => {
-    onAddReview(reviewIndex, reviewText);
+  const handleSaveReview = async () => {
+    await onAddReview(reviewIndex, reviewText);
     setReviewIndex(null);
     setReviewText('');
+    setShowMessage(true);
+    setTimeout(() => setShowMessage(false), 2000);
   };
 
   const handleCloseReview = () => {
@@ -701,6 +743,11 @@ const DogSitters = ({ sitters, onDelete, onAddReview }) => {
 
   return (
     <Card>
+      {showMessage && (
+        <MessageContainer>
+          <Message>Review Posted</Message>
+        </MessageContainer>
+      )}
       <TitleSection>
         <TitleWithIcon>
           <img src={pawPrint} alt="Paw Print" />
@@ -717,7 +764,7 @@ const DogSitters = ({ sitters, onDelete, onAddReview }) => {
             </Info>
             <ActionButtons>
               <Button onClick={() => onDelete(index)}>Delete</Button>
-              <Button $primary onClick={() => handleAddReview(index)}>Add Review</Button>
+              <Button primary onClick={() => handleAddReview(index)}>Add Review</Button>
             </ActionButtons>
           </RequestItem>
           {reviewIndex === index && (
@@ -744,7 +791,7 @@ const DogSitters = ({ sitters, onDelete, onAddReview }) => {
                 style={{ width: 'calc(100% - 20px)', margin: '10px 10px 0 10px' }}
               />
               <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: '10px', marginLeft: '10px', marginRight: '10px' }}>
-                <Button style={{ backgroundColor: 'blue' }} onClick={handleSaveReview}>Save</Button>
+                <Button primary onClick={handleSaveReview}>Save</Button>
               </div>
             </div>
           )}
@@ -788,6 +835,43 @@ const DogProfileCard = ({
     });
   };
 
+  // Adding profile image upload functionality
+  const handleProfileImageUpload = async (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      const localURL = URL.createObjectURL(file);
+      setFormData({
+        ...formData,
+        profilePic: localURL,
+      });
+
+      const storage = getStorage();
+      const storageRef = ref(storage, `profile_pics/${profile.uid}/${file.name}`);
+
+      try {
+        await uploadBytes(storageRef, file);
+        const profilePicURL = await getDownloadURL(storageRef);
+
+        await updateDoc(doc(DB, 'users', profile.uid), {
+          profilePic: profilePicURL
+        });
+
+        setFormData({
+          ...formData,
+          profilePic: profilePicURL,
+        });
+
+        URL.revokeObjectURL(localURL);
+      } catch (error) {
+        console.error("Error uploading image:", error);
+        setFormData({
+          ...formData,
+          profilePic: profile.profilePic,
+        });
+      }
+    }
+  };
+
   // Removing extra commas from the address
   const formattedAddress = formData.address?.replace(/,+/g, ',').replace(/^,|,$/g, '').trim();
 
@@ -801,7 +885,16 @@ const DogProfileCard = ({
           <Text>{[formData.dogType, formData.dogAge, formData.dogSize].filter(Boolean).join(', ')}</Text>
           <Text>{formattedAddress}</Text>
         </BasicInfo>
-        <ProfileImage src={formData.profilePic} alt={`${profile.name}`} />
+        <ProfileImageWrapper>
+          <ProfileImage src={formData.profilePic} alt={`${profile.name}`} />
+          <ProfileUploadButton onClick={() => document.getElementById('profileImageUpload').click()}>+</ProfileUploadButton>
+          <input
+            type="file"
+            id="profileImageUpload"
+            style={{ display: 'none' }}
+            onChange={handleProfileImageUpload}
+          />
+        </ProfileImageWrapper>
       </Header>
       <ProfileSectionWrapper>
         <Section>
@@ -813,9 +906,9 @@ const DogProfileCard = ({
           )}
         </Section>
         <Section>
-        <RequestActions
+          <RequestActions
             requests={requests}
-            onAccept={handleRequestAccept} 
+            onAccept={handleRequestAccept}
             onDelete={handleRequestDelete}
             isLoading={isLoading}
           />
@@ -844,7 +937,7 @@ const MyProfile = () => {
         setIsLoading(true);
         const docRef = doc(DB, 'users', user.firebaseUser.uid);
         const docSnap = await getDoc(docRef);
-  
+
         if (docSnap.exists()) {
           const data = docSnap.data();
           setRequests(data.connectionRequests || []);
@@ -861,34 +954,33 @@ const MyProfile = () => {
         setIsLoading(false);
       }
     };
-  
+
     fetchUserData();
   }, [user.firebaseUser.uid]);
 
   const handleRequestAccept = async (index) => {
     const acceptedRequest = requests[index];
     const userDocRef = doc(DB, 'users', user.firebaseUser.uid);
-    const volunteerDocRef = doc(DB, 'users', acceptedRequest.userId);  // Updated to point to the users collection
-  
+    const volunteerDocRef = doc(DB, 'users', acceptedRequest.userId);
+
     try {
       const userDoc = await getDoc(userDocRef);
       if (!userDoc.exists()) {
         console.log("User document does not exist!");
         return;
       }
-  
+
       const userData = userDoc.data();
       const newConnectionRequests = userData.connectionRequests.filter(
         (request) => request.userId !== acceptedRequest.userId
       );
-  
+
       const batch = writeBatch(DB);
       batch.update(userDocRef, {
         connectionRequests: newConnectionRequests,
         sitters: arrayUnion(acceptedRequest)
       });
-  
-      console.log("Updating volunteer profile with dog profile UID and name:", user.firebaseUser.uid, userData.name);
+
       batch.update(volunteerDocRef, {
         approvedRequests: arrayUnion({
           uid: user.firebaseUser.uid,
@@ -897,20 +989,18 @@ const MyProfile = () => {
           mobile: userData.mobile
         })
       });
-  
+
       await batch.commit();
-  
+
       setSitters((prevSitters) => [...prevSitters, acceptedRequest]);
       setRequests((prevRequests) => prevRequests.filter((_, i) => i !== index));
-  
+
       console.log("Request accepted successfully");
     } catch (error) {
       console.error("Error accepting request:", error);
     }
   };
-  
-  
-  
+
   const handleRequestDelete = async (index) => {
     try {
       const requestToDelete = requests[index];
@@ -946,37 +1036,22 @@ const MyProfile = () => {
       const sitterToUpdate = sitters[index];
       const userDocRef = doc(DB, 'users', user.firebaseUser.uid);
       const volunteerDocRef = doc(DB, 'users', sitterToUpdate.userId);
-  
-      console.log("Adding review for volunteer:", sitterToUpdate.userId);
-  
-      
+
       const review = {
         reviewerId: user.firebaseUser.uid,
         reviewerName: user.details.name,
         text: reviewText,
-        // date: serverTimestamp()
       };
-  
-      // Update the volunteer's document
+
       await updateDoc(volunteerDocRef, {
         reviews: arrayUnion(review)
       });
-  
-      console.log("Review added successfully to Firestore");
-  
-      // Fetch the updated document to confirm the change
-      const updatedVolunteerDoc = await getDoc(volunteerDocRef);
-      console.log("Updated volunteer document:", updatedVolunteerDoc.data());
-  
-      // Update the local state
-      setSitters(prevSitters => prevSitters.map((sitter, i) => 
+
+      setSitters(prevSitters => prevSitters.map((sitter, i) =>
         i === index ? { ...sitter, review: reviewText } : sitter
       ));
-  
-      console.log("Local state updated");
     } catch (error) {
       console.error("Error adding review:", error);
-      // You might want to show an error message to the user here
     }
   };
 
@@ -1019,3 +1094,5 @@ const MyProfile = () => {
 };
 
 export default MyProfile;
+
+       

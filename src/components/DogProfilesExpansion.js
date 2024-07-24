@@ -183,16 +183,19 @@ const PopupContainer = styled.div`
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
-  background-color: rgba(0, 0, 0, 0.8);
+  background-color: white;
+  font-family: 'Quicksand', sans-serif;
   padding: 20px;
   border-radius: 10px;
+  border: 2px solid #8A89AC;
   z-index: 1000;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 `;
 
 const PopupMessage = styled.p`
-  color: white;
+  color: #46454A;
   font-size: 1.5rem;
-  margin: 0;
+  margin: 10;
 `;
 
 const CloseButton = styled.button`
@@ -211,6 +214,8 @@ const CloseButton = styled.button`
     background-color: #A04B4B;
   }
 `;
+
+
 
 const GalleryImage = styled.img`
   width: 150px;
@@ -361,11 +366,30 @@ const DogProfiles = () => {
   
       console.log("Connection request sent successfully");
       setShowMessage(true);
-      setTimeout(() => setShowMessage(false), 3000); 
     } catch (error) {
       console.error("Error sending connection request:", error);
     }
   };
+  
+  const handleCloseMessage = () => {
+    setShowMessage(false);
+  };
+  
+  
+  {showMessage && (
+    <PopupContainer>
+      <PopupMessage>
+        Thank you for reaching out!<br />
+        Your request has been sent
+      </PopupMessage>
+      <CloseButton onClick={handleCloseMessage}>X</CloseButton>
+    </PopupContainer>
+  )}
+  
+  
+  
+  
+
 
   return (
     <Container>
@@ -393,6 +417,7 @@ const DogProfiles = () => {
       {showMessage && (
         <PopupContainer>
           <PopupMessage>Thank you for reaching out! Your request has been sent</PopupMessage>
+          <CloseButton onClick={handleCloseMessage}>X</CloseButton>
         </PopupContainer>
       )}
     </Container>

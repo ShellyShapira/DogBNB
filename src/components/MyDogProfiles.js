@@ -281,11 +281,18 @@ const PopupContainer = styled.div`
   left: 50%;
   transform: translate(-50%, -50%);
   background-color: white;
+  font-family: 'Quicksand', sans-serif;
   padding: 20px;
   border-radius: 10px;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-  width: 400px;
+  border: 2px solid #8A89AC;
   z-index: 1000;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+`;
+
+const PopupMessage = styled.p`
+  color: #46454A;
+  font-size: 1.5rem;
+  margin: 10;
 `;
 
 const CloseButton = styled.button`
@@ -304,6 +311,7 @@ const CloseButton = styled.button`
     background-color: #A04B4B;
   }
 `;
+
 
 const RadioGroup = styled.div`
   display: flex;
@@ -930,6 +938,7 @@ const MyProfile = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [sitters, setSitters] = useState([]);
   const [galleryImages, setGalleryImages] = useState([user.details.profilePic]);
+  const [showDetailsPopup, setShowDetailsPopup] = useState(false);
 
   useEffect(() => {
     const fetchUserData = async () => {
@@ -937,11 +946,15 @@ const MyProfile = () => {
         setIsLoading(true);
         const docRef = doc(DB, 'users', user.firebaseUser.uid);
         const docSnap = await getDoc(docRef);
-
+  
         if (docSnap.exists()) {
           const data = docSnap.data();
           setRequests(data.connectionRequests || []);
           setSitters(data.sitters || []);
+  
+          if (!checkUserDetails(data)) {
+            setShowDetailsPopup(true);
+          }
         } else {
           setRequests([]);
           setSitters([]);
@@ -954,9 +967,19 @@ const MyProfile = () => {
         setIsLoading(false);
       }
     };
-
+  
     fetchUserData();
   }, [user.firebaseUser.uid]);
+  
+
+  const checkUserDetails = (details) => {
+    const requiredFields = [
+      'name', 'address', 'dogName', 'dogType', 'dogAge', 'dogGender', 'dogSize', 'dogImmune', 'dogNeutered', 'suitableFor', 'friendlyWithChildren'
+    ];
+    return requiredFields.every(field => details[field]);
+  };
+  
+
 
   const handleRequestAccept = async (index) => {
     const acceptedRequest = requests[index];
@@ -1056,26 +1079,48 @@ const MyProfile = () => {
   };
 
   const handleImageUpload = async (file) => {
-    try {
-      const storage = getStorage();
-      const storageRef = ref(storage, `gallery/${user.firebaseUser.uid}/${file.name}`);
-
-      await uploadBytes(storageRef, file);
-      const downloadURL = await getDownloadURL(storageRef);
-
-      const userDocRef = doc(DB, 'users', user.firebaseUser.uid);
-      await updateDoc(userDocRef, {
-        galleryImages: arrayUnion(downloadURL)
+    const reader = new FileReader();
+    reader.onloadend = async () => {
+      const newImage = reader.result;
+      
+      // עדכון המצב עם התמונה החדשה
+      setGalleryImages((prevImages) => {
+        console.log("Previous Images: ", prevImages);
+        console.log("New Image: ", newImage);
+        return [...prevImages, newImage];
       });
-
-      setGalleryImages(prevImages => [...prevImages, downloadURL]);
-    } catch (error) {
-      console.error("Error uploading image:", error);
-    }
+  
+      // העלאת התמונה לשרת
+      try {
+        const storage = getStorage();
+        const storageRef = ref(storage, `gallery/${user.firebaseUser.uid}/${file.name}`);
+        await uploadBytes(storageRef, file);
+        const downloadURL = await getDownloadURL(storageRef);
+        
+        const userDocRef = doc(DB, 'users', user.firebaseUser.uid);
+        await updateDoc(userDocRef, {
+          galleryImages: arrayUnion(downloadURL)
+        });
+  
+        console.log("Image uploaded and state updated successfully");
+      } catch (error) {
+        console.error("Error uploading image:", error);
+      }
+    };
+    reader.readAsDataURL(file);
   };
+  
 
   return (
     <div>
+      {showDetailsPopup && (
+        <PopupContainer>
+          <PopupMessage>
+            Don't forget to fill all your details :)<br />
+          </PopupMessage>
+          <CloseButton onClick={() => setShowDetailsPopup(false)}>X</CloseButton>
+        </PopupContainer>
+      )}
       <DogProfileCard
         profile={user.details}
         onSave={updateUserDetails}

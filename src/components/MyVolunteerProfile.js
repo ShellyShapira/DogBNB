@@ -257,6 +257,44 @@ const PhoneButton = styled.a`
   }
 `;
 
+
+const PopupContainer = styled.div`
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background-color: white;
+  font-family: 'Quicksand', sans-serif;
+  padding: 20px;
+  border-radius: 10px;
+  border: 2px solid #8A89AC;
+  z-index: 1000;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+`;
+
+const PopupMessage = styled.p`
+  color: #46454A;
+  font-size: 1.5rem;
+  margin: 10;
+`;
+
+const CloseButton = styled.button`
+  background-color: #B05D5D;
+  color: white;
+  border: none;
+  padding: 5px 10px;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 1rem;
+  position: absolute;
+  top: 10px;
+  right: 10px;
+
+  &:hover {
+    background-color: #A04B4B;
+  }
+`;
+
 const RequestDOS = ({ requests }) => {
   const navigate = useNavigate();
 
@@ -569,12 +607,19 @@ const VolProfileCard = ({ profile, onSave, approvedRequests, user, reviews }) =>
 };
 
 
-
+const checkUserDetails = (details) => {
+  const requiredFields = [
+    'name', 'address', 'age', 'gender', 'numberOfAdoptions', 'animalExperience', 'additionalAnimalsAtHome', 'yard', 'childrenAtHome'
+  ];
+  return requiredFields.every(field => details[field]);
+};
 
 const VolProfile = () => {
   const { user, updateUserDetails } = useContext(UserContext);
   const [approvedRequests, setApprovedRequests] = useState([]);
   const [reviews, setReviews] = useState([]);
+  const [showDetailsPopup, setShowDetailsPopup] = useState(false);
+
 
   useEffect(() => {
     const fetchApprovedRequests = async () => {
@@ -586,6 +631,9 @@ const VolProfile = () => {
           const data = docSnap.data();
           setApprovedRequests(data.approvedRequests || []);
           setReviews(data.reviews || []);
+          if (!checkUserDetails(data)) {
+            setShowDetailsPopup(true);
+          }
         } else {
           setApprovedRequests([]);
           setReviews([]);
@@ -626,6 +674,14 @@ const VolProfile = () => {
 
   return (
     <div>
+      {showDetailsPopup && (
+        <PopupContainer>
+          <PopupMessage>
+            Don't forget to fill all your details :)<br />
+          </PopupMessage>
+          <CloseButton onClick={() => setShowDetailsPopup(false)}>X</CloseButton>
+        </PopupContainer>
+      )}
       <VolProfileCard
         profile={user.details}
         onSave={updateUserDetails}

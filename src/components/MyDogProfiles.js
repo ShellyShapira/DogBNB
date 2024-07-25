@@ -726,7 +726,6 @@ const DogSitters = ({ sitters, onDelete, onAddReview }) => {
   const navigate = useNavigate();
   const [reviewIndex, setReviewIndex] = useState(null);
   const [reviewText, setReviewText] = useState('');
-  const [showMessage, setShowMessage] = useState(false);
 
   const handleAddReview = (index) => {
     setReviewIndex(index);
@@ -736,8 +735,6 @@ const DogSitters = ({ sitters, onDelete, onAddReview }) => {
     await onAddReview(reviewIndex, reviewText);
     setReviewIndex(null);
     setReviewText('');
-    setShowMessage(true);
-    setTimeout(() => setShowMessage(false), 2000);
   };
 
   const handleCloseReview = () => {
@@ -751,11 +748,6 @@ const DogSitters = ({ sitters, onDelete, onAddReview }) => {
 
   return (
     <Card>
-      {showMessage && (
-        <MessageContainer>
-          <Message>Review Posted</Message>
-        </MessageContainer>
-      )}
       <TitleSection>
         <TitleWithIcon>
           <img src={pawPrint} alt="Paw Print" />
@@ -847,35 +839,30 @@ const DogProfileCard = ({
   const handleProfileImageUpload = async (e) => {
     const file = e.target.files[0];
     if (file) {
-      const localURL = URL.createObjectURL(file);
-      setFormData({
-        ...formData,
-        profilePic: localURL,
-      });
-
       const storage = getStorage();
       const storageRef = ref(storage, `profile_pics/${profile.uid}/${file.name}`);
-
+  
       try {
+        // העלאת התמונה ל-Firebase Storage
         await uploadBytes(storageRef, file);
+        
+        // קבלת URL של התמונה שהועלתה
         const profilePicURL = await getDownloadURL(storageRef);
-
+  
+        // עדכון התמונה ב-Firestore
         await updateDoc(doc(DB, 'users', profile.uid), {
           profilePic: profilePicURL
         });
-
+  
+        // עדכון ה-state עם ה-URL של התמונה שהועלתה
         setFormData({
           ...formData,
           profilePic: profilePicURL,
         });
-
-        URL.revokeObjectURL(localURL);
+  
+        console.log("Profile image updated successfully:", profilePicURL);
       } catch (error) {
         console.error("Error uploading image:", error);
-        setFormData({
-          ...formData,
-          profilePic: profile.profilePic,
-        });
       }
     }
   };

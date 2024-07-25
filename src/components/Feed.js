@@ -1,10 +1,10 @@
 import React, { useState, useEffect, useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
-import '../styles/Feed.css';
 import { FaFilter, FaPlus } from 'react-icons/fa';
-import { addDoc, collection, doc, getDoc, onSnapshot } from 'firebase/firestore';
+import { addDoc, collection, doc, getDoc, onSnapshot, deleteDoc } from 'firebase/firestore';
 import { DB } from './Config';
 import { UserContext } from '../App';
+import '../styles/Feed.css';
 
 const Feed = () => {
   const { user } = useContext(UserContext);
@@ -81,6 +81,7 @@ const Feed = () => {
       startDate: reformatDate(e.target.elements.startDate.value),
       endDate: reformatDate(e.target.elements.endDate.value),
     };
+
     await uploadPost(newPost);
     setShowAddPost(false);
   };
@@ -95,6 +96,19 @@ const Feed = () => {
     return diffDays;
   };
 
+  const deletePost = async (postId) => {
+    try {
+      await deleteDoc(doc(DB, 'posts', postId));
+      setPosts(posts.filter(post => post.id !== postId));
+    } catch (error) {
+      console.error("Error deleting post:", error);
+    }
+  };
+
+  const isMyPost = (postOwnerUid) => {
+    return postOwnerUid === user.firebaseUser.uid;
+  };
+
   const filteredPosts = posts.filter(post => {
     const durationDays = calculateDurationInDays(post.startDate, post.endDate);
     return (
@@ -107,7 +121,8 @@ const Feed = () => {
       (filterNeedsGarden === '' || post.needsGarden.toLowerCase() === filterNeedsGarden.toLowerCase() || post.needsGarden === '') &&
       (filterImmune === '' || post.immune.toLowerCase() === filterImmune.toLowerCase() || post.immune === '') &&
       (filterNeutered === '' || post.neutered.toLowerCase() === filterNeutered.toLowerCase() || post.neutered === '') &&
-      (filterFriendlyToChildren === '' || post.friendlyToChildren.toLowerCase() === filterFriendlyToChildren.toLowerCase())
+      (filterFriendlyToChildren === '' || post.friendlyToChildren.toLowerCase() === filterFriendlyToChildren.toLowerCase() || post.friendlyToChildren === '' ||
+        (filterFriendlyToChildren === 'yes' && post.friendlyToChildren === '') || (filterFriendlyToChildren === 'no' && post.friendlyToChildren === ''))
     );
   }).sort((a, b) => {
     const aStartDate = new Date(a.startDate.split('/').reverse().join('-'));
@@ -166,7 +181,7 @@ const Feed = () => {
       {showFilter && (
         <div className="filter-overlay">
           <div className="filter-container" style={{ maxWidth: '300px', padding: '10px' }}>
-            <button className="exit-filters" onClick={toggleFilter}>X</button>
+          <button className="exit-filters" onClick={toggleFilter}>X</button>
             <div className="filter-options">
               <label htmlFor="city">City</label>
               <input
@@ -252,8 +267,8 @@ const Feed = () => {
               </select>
             </div>
             <div className="apply-button-container">
-              <button className="apply-button" onClick={applyFilterChanges} style={{ width: '100%' }}>Apply</button>
-              <button className="clear-button" onClick={clearFilters} style={{ width: '80%', marginTop: '10px' }}>Clear</button>
+              <button className="apply-button" onClick={applyFilterChanges}>Apply</button>
+              <button className="clear-button" onClick={clearFilters}>Clear</button>
             </div>
           </div>
         </div>
@@ -277,7 +292,16 @@ const Feed = () => {
 
       <div className="post-grid">
         {filteredPosts.map(post => (
-          <div key={post.id} className="post">
+          <div key={post.id} className="post" style={{ position: 'relative' }}>
+            {isMyPost(post.ownerUid) && (
+              <button 
+                type="button" 
+                className="delete-post" 
+                onClick={() => deletePost(post.id)}
+              >
+                delete
+              </button>
+            )}
             <img src={post.image} alt={post.name} />
             <h2>{post.name}</h2>
             <p>{post.city}</p>

@@ -191,27 +191,41 @@ button:hover,
 
 .apply-button-container {
   display: flex;
-  justify-content: center;
+  justify-content: space-between;
+  width: 100%;
   margin-top: 10px;
 }
 
-.apply-button {
+.apply-button,
+.clear-button {
+  flex: 1;
+  font-size: 14px;
   padding: 10px;
-  font-size: 12px;
-  background-color: var(--APPLY_BUTTON_COLOR);
-  color: white;
   border: none;
   border-radius: 5px;
   cursor: pointer;
-  min-width: 60px; /* הוספת רוחב מינימלי */
-  max-width: 100px; /* הוספת רוחב מקסימלי */
+  transition: box-shadow 0.3s ease-in-out;
+  text-align: center;
+}
+
+.apply-button {
+  background-color: #91cab6;
+  color: white;
+  margin-right: 10px;
 }
 
 .apply-button:hover {
-  background-color: #7AA897; /* גוון מעט כהה יותר לצבע הכפתור בעת ריחוף */
+  box-shadow: 0px 8px 20px rgba(0, 0, 0, 0.5);
 }
 
+.clear-button {
+  background-color: #577a6d;
+  color: white;
+}
 
+.clear-button:hover {
+  box-shadow: 0px 8px 20px rgba(0, 0, 0, 0.5);
+}
 .exit-filters {
   position: absolute;
   top: 10px;
@@ -263,7 +277,7 @@ button:hover,
 }
 
 .new-post-form .post-button:hover {
-  background-color: #7AA897; /* גוון מעט כהה יותר לצבע הכפתור בעת ריחוף */
+  background-color: #91cab6; /* גוון מעט כהה יותר לצבע הכפתור בעת ריחוף */
 }
 
 .new-post-form .close-button {
@@ -293,4 +307,23 @@ button:hover,
 
 .more-info:hover {
   box-shadow: 0px 8px 20px rgba(0, 0, 0, 0.5); /* Stronger shadow effect */
+}
+
+.delete-post {
+  position: absolute;
+  top: 7px;
+  right: 7px;
+  background-color: #a85757;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 12px;
+  padding: 5px 10px;
+  z-index: 1;
+  transition: box-shadow 0.3s ease-in-out;
+}
+
+.delete-post:hover {
+  box-shadow: 0px 8px 20px rgba(0, 0, 0, 0.5);
 }

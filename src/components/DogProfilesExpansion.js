@@ -194,7 +194,7 @@ const PopupContainer = styled.div`
 
 const PopupMessage = styled.p`
   color: #46454A;
-  font-size: 1.5rem;
+  font-size: 1.2rem;
   margin: 10;
 `;
 

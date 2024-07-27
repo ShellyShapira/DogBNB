@@ -232,7 +232,6 @@ const ActionButtons = styled.div`
   gap: 10px; /* רווח בין הכפתורים אם רצוי */
 `;
 
-
 const Button = styled.button`
   background-color: ${props => props.primary ? '#4C7572' : '#B05D5D'};
   color: white;
@@ -241,6 +240,8 @@ const Button = styled.button`
   border-radius: 5px;
   cursor: pointer;
   transition: box-shadow 0.3s ease-in-out;
+  min-width: 90px; /* מגדיר רוחב מינימלי אחיד לכפתורים */
+  height: 40px;
 
   &:hover {
     box-shadow: 0px 8px 20px rgba(0, 0, 0, 0.5);
@@ -392,6 +393,7 @@ const RadioGroup = styled.div`
   gap: 0.5px;
 `;
 
+
 const PopupContainer = styled.div`
   position: fixed;
   top: 50%;
@@ -404,13 +406,15 @@ const PopupContainer = styled.div`
   border: 2px solid #8A89AC;
   z-index: 1000;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  white-space: nowrap; /* Prevents line breaks */
 `;
 
-const PopupMessage = styled.p`
-  color: #46454A;
-  font-size: 1.5rem;
-  margin: 10;
+const PopupMessage = styled.div`
+  color: #46454A !important; /* Ensures the color is applied */
+  font-size: 1.2rem !important; /* Ensures the font size is applied */
+  margin: 10px !important; /* Ensures the margin is applied */
 `;
+
 
 const Gallery = ({ images, onUpload }) => {
   const [selectedImageIndex, setSelectedImageIndex] = useState(null);
@@ -707,14 +711,6 @@ const PersonalDetails = ({ profile, isEditing, formData, handleChange }) => (
           navigate(`/volunteer-profile/${id}`);
         };
       
-        if (isLoading) {
-          return <Card>Loading requests...</Card>;
-        }
-      
-        if (!requests || requests.length === 0) {
-          return <Card>No requests at this time.</Card>;
-        }
-      
         return (
           <Card>
             <TitleSection>
@@ -723,25 +719,29 @@ const PersonalDetails = ({ profile, isEditing, formData, handleChange }) => (
                 <SubTitle>Requests</SubTitle>
               </TitleWithIcon>
             </TitleSection>
-            {requests.map((request, index) => (
-              <RequestItem key={index}>
-                <Avatar src={request.profilePic} alt={request.name} onClick={() => handleNameClick(request.userId)} />
-                <Info>
-                  <Name onClick={() => handleNameClick(request.id)}>{request.name}</Name>
-                  <Date>{request.date}</Date>
-                </Info>
-                <PhoneButton href={`https://wa.me/${request.mobile}`} target="_blank">
-                  <FaWhatsapp />
-                </PhoneButton>
-                <ActionButtons>
-                  <Button onClick={() => onDelete(index)}>Delete</Button>
-                  <Button primary onClick={() => onAccept(index)}>Accept</Button>
-                </ActionButtons>
-              </RequestItem>
-            ))}
+            {isLoading ? (
+              <p>Loading requests...</p>
+            ) : !requests || requests.length === 0 ? (
+              <p>No requests at this time.</p>
+            ) : (
+              requests.map((request, index) => (
+                <RequestItem key={index}>
+                  <Avatar src={request.profilePic} alt={request.name} onClick={() => handleNameClick(request.userId)} />
+                  <Info>
+                    <Name onClick={() => handleNameClick(request.userId)}>{request.name}</Name>
+                    <Date>{request.date}</Date>
+                  </Info>
+                  <ActionButtons>
+                    <Button onClick={() => onDelete(index)}>Delete</Button>
+                    <Button primary onClick={() => onAccept(index)}>Accept</Button>
+                  </ActionButtons>
+                </RequestItem>
+              ))
+            )}
           </Card>
         );
       };
+      
       
       const DogSitters = ({ sitters, onDelete, onAddReview }) => {
         const navigate = useNavigate();
@@ -767,6 +767,11 @@ const PersonalDetails = ({ profile, isEditing, formData, handleChange }) => (
           navigate(`/volunteer-profile/${id}`);
         };
       
+        const formatPhoneNumber = (number) => {
+          if (!number) return ''; // Return empty string if number is undefined
+          return number.startsWith('0') ? `+972${number.substring(1)}` : number;
+        };
+      
         return (
           <Card>
             <TitleSection>
@@ -780,57 +785,59 @@ const PersonalDetails = ({ profile, isEditing, formData, handleChange }) => (
                 <RequestItem>
                   <Avatar src={sitter.profilePic} alt={sitter.name} onClick={() => handleNameClick(sitter.id)} />
                   <Info>
-                    <Name onClick={() => handleNameClick(sitter.id)}>{sitter.name}</Name>
+                    <Name onClick={() => handleNameClick(sitter.userId)}>{sitter.name}</Name>
                     <Date>{sitter.date}</Date>
                   </Info>
-                  <PhoneButton href={`https://wa.me/${sitter.mobile}`} target="_blank">
-                    <FaWhatsapp />
-                  </PhoneButton>
+                  <ActionButtons>
+                    <PhoneButton href={`https://wa.me/${formatPhoneNumber(sitter.mobile)}`} target="_blank">
+                      <FaWhatsapp />
+                    </PhoneButton>
+                    <Button style={{ width: '80px' }} onClick={() => onDelete(index)}>Delete</Button>
+                    <Button primary style={{ width: '110px' }} onClick={() => handleAddReview(index)}>Add Review</Button>
+                  </ActionButtons>
                 </RequestItem>
-                <ActionButtons>
-                  <Button style={{ width: '80px' }} onClick={() => onDelete(index)}>Delete</Button>
-                  <Button primary style={{ width: '110px' }} onClick={() => handleAddReview(index)}>Add Review</Button>
-                </ActionButtons>
                 {reviewIndex === index && (
                   <div style={{ position: 'relative', width: '100%' }}>
-                  <button
-                    onClick={handleCloseReview}
-                    style={{
-                      position: 'absolute',
-                      top: '-15px', /* Adjust this value to move the '×' up */
-                      left: '10px',
-                      background: 'none',
-                      border: 'none',
-                      fontSize: '1.2rem',
-                      cursor: 'pointer',
-                      color: '#B05D5D',
-                      padding: '5',
-                    }}
-                  >
-                    ×
-                  </button>
-                  <textarea
-                    rows="4"
-                    value={reviewText}
-                    onChange={(e) => setReviewText(e.target.value)}
-                    style={{ width: 'calc(100% - 20px)', margin: '10px 10px 0 10px' }}
-                  />
-                  <div style={{ display: 'flex', justifyContent: 'flex-end', marginTop: '10px', marginLeft: '10px', marginRight: '10px' }}>
-                    <Button
-                      primary
-                      style={{ backgroundColor: '#91cab6', color: '#fff' }}
-                      onClick={handleSaveReview}
+                    <button
+                      onClick={handleCloseReview}
+                      style={{
+                        position: 'absolute',
+                        top: '-15px',
+                        left: '10px',
+                        background: 'none',
+                        border: 'none',
+                        fontSize: '1.2rem',
+                        cursor: 'pointer',
+                        color: '#B05D5D',
+                        padding: '5',
+                      }}
                     >
-                      Save
-                    </Button>
+                      ×
+                    </button>
+                    <textarea
+                      rows="4"
+                      value={reviewText}
+                      onChange={(e) => setReviewText(e.target.value)}
+                      style={{ width: 'calc(100% - 20px)', margin: '10px 10px 0 10px' }}
+                    />
+                    <div style={{ display: 'flex', justifyContent: 'flex-end', marginTop: '10px', marginLeft: '10px', marginRight: '10px' }}>
+                      <Button
+                        primary
+                        style={{ backgroundColor: '#91cab6', color: '#fff' }}
+                        onClick={handleSaveReview}
+                      >
+                        Save
+                      </Button>
+                    </div>
                   </div>
-                </div>
                 )}
               </div>
             ))}
           </Card>
         );
       };
+      
+      
       
       
       const DogProfileCard = ({ 
@@ -1136,7 +1143,7 @@ const PersonalDetails = ({ profile, isEditing, formData, handleChange }) => (
             {showDetailsPopup && (
               <PopupContainer>
                 <PopupMessage>
-                  Don't forget to fill all your details :)<br />
+                  Don't forget to fill all your details :)
                 </PopupMessage>
                 <CloseButton onClick={() => setShowDetailsPopup(false)}>X</CloseButton>
               </PopupContainer>
